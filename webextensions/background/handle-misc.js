@@ -104,7 +104,7 @@ async function onShortcutCommand(command) {
   if (mInitializationPhase < PHASE_BACKGROUND_INITIALIZED)
     return;
 
-  let activeTabs = await browser.tabs.query({
+  let activeTabs = command.tab ? [command.tab] : await browser.tabs.query({
     active:        true,
     currentWindow: true,
   }).catch(ApiTabs.createErrorHandler());
