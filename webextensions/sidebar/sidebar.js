@@ -811,13 +811,11 @@ function updateTabbarLayout({ reason, reasons, timeout, justNow } = {}) {
 }
 updateTabbarLayout.lastUpdateReasons = 0;
 
-SidebarTabs.normalContainer.addEventListener('overflow', event => {
-  if (event.target != event.currentTarget)
-    return;
 
-  log('overflow');
+Scroll.onNormalTabsOverflow.addListener(() => {
+  log('Normal Tabs Overflow');
   const windowId = TabsStore.getCurrentWindowId();
-  event.currentTarget.classList.add(Constants.kTABBAR_STATE_OVERFLOW);
+  SidebarTabs.normalContainer.classList.add(Constants.kTABBAR_STATE_OVERFLOW);
   mTabBar.classList.add(Constants.kTABBAR_STATE_OVERFLOW);
   TSTAPI.broadcastMessage({
     type: TSTAPI.kNOTIFY_TABBAR_OVERFLOW,
@@ -847,12 +845,9 @@ SidebarTabs.normalContainer.addEventListener('overflow', event => {
   });
 });
 
-SidebarTabs.normalContainer.addEventListener('underflow', event => {
-  if (event.target != event.currentTarget)
-    return;
-
-  log('underflow');
-  event.currentTarget.classList.remove(Constants.kTABBAR_STATE_OVERFLOW);
+Scroll.onNormalTabsUnderflow.addListener(() => {
+  log('Normal Tabs Underflow');
+  SidebarTabs.normalContainer.classList.remove(Constants.kTABBAR_STATE_OVERFLOW);
   mTabBar.classList.remove(Constants.kTABBAR_STATE_OVERFLOW);
   TSTAPI.broadcastMessage({
     type:     TSTAPI.kNOTIFY_TABBAR_UNDERFLOW,

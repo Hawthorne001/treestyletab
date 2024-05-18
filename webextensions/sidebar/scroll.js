@@ -44,7 +44,8 @@ import {
   wait,
   nextFrame,
   configs,
-  shouldApplyAnimation
+  shouldApplyAnimation,
+  watchOverflowStateChange,
 } from '/common/common.js';
 
 import * as ApiTabs from '/common/api-tabs.js';
@@ -63,6 +64,8 @@ import * as Size from './size.js';
 
 export const onPositionUnlocked = new EventListenerManager();
 export const onVirtualScrollViewportUpdated = new EventListenerManager();
+export const onNormalTabsOverflow = new EventListenerManager();
+export const onNormalTabsUnderflow = new EventListenerManager();
 
 function log(...args) {
   internalLogger('sidebar/scroll', ...args);
@@ -95,8 +98,7 @@ export function init(scrollPosition) {
   document.addEventListener('wheel', onWheel, { capture: true, passive: false });
   mPinnedScrollBox.addEventListener('scroll', onScroll);
   mNormalScrollBox.addEventListener('scroll', onScroll);
-  mNormalScrollBox.addEventListener('overflow', onOverflow);
-  mNormalScrollBox.addEventListener('underflow', onUnderflow);
+  startObserveOverflowStateChange();
   browser.runtime.onMessage.addListener(onMessage);
   BackgroundConnection.onMessage.addListener(onBackgroundMessage);
   TSTAPI.onMessageExternal.addListener(onMessageExternal);
@@ -123,10 +125,10 @@ export function init(scrollPosition) {
 
   mScrollingInternallyCount++;
   restoreScrollPosition.scrollPosition = scrollPosition;
-  mNormalScrollBox.addEventListener('overflow', onInitialOverflow);
+  onNormalTabsOverflow.addListener(onInitialOverflow);
   onVirtualScrollViewportUpdated.addListener(onInitialUpdate);
   wait(1000).then(() => {
-    mNormalScrollBox.removeEventListener('overflow', onInitialOverflow);
+    onNormalTabsOverflow.removeListener(onInitialOverflow);
     onVirtualScrollViewportUpdated.removeListener(onInitialUpdate);
     if (restoreScrollPosition.scrollPosition != -1 &&
         mScrollingInternallyCount > 0)
@@ -136,11 +138,27 @@ export function init(scrollPosition) {
   });
 }
 
-function onInitialOverflow(event) {
-  if (event.target != event.currentTarget)
-    return;
+function startObserveOverflowStateChange() {
+  watchOverflowStateChange({
+    target: mNormalScrollBox,
+    moreResizeTargets: [
+      // We need to watch resizing of the virtual scroll container to detect the changed state correctly.
+      mNormalScrollBox.querySelector('.virtual-scroll-container'),
+    ],
+    onOverflow() { onNormalTabsOverflow.dispatch(); },
+    onUnderflow() { onNormalTabsUnderflow.dispatch(); },
+  });
 
-  mNormalScrollBox.removeEventListener('overflow', onInitialOverflow);
+  onNormalTabsOverflow.addListener(() => {
+    reserveToUpdateScrolledState(mNormalScrollBox);
+  });
+  onNormalTabsUnderflow.addListener(() => {
+    reserveToUpdateScrolledState(mNormalScrollBox);
+  });
+}
+
+function onInitialOverflow() {
+  onNormalTabsOverflow.removeListener(onInitialOverflow);
   onInitialOverflow.done = true;
   if (onInitialUpdate.done)
     restoreScrollPosition();
@@ -1021,13 +1039,6 @@ function onScroll(event) {
   reserveToSaveScrollPosition();
 }
 
-function onOverflow(event) {
-  reserveToUpdateScrolledState(event.currentTarget);
-}
-
-function onUnderflow(event) {
-  reserveToUpdateScrolledState(event.currentTarget);
-}
 
 function reserveToUpdateScrolledState(scrollBox) {
   const startAt = `${Date.now()}-${parseInt(Math.random() * 65000)}`;

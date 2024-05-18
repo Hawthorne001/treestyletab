@@ -985,6 +985,79 @@ export async function doProgressively(tabs, task, interval) {
 }
 
 
+export function watchOverflowStateChange({ target, moreResizeTargets, onOverflow, onUnderflow }) {
+  onOverflow  = onOverflow  || (() => {});
+  onUnderflow = onUnderflow || (() => {});
+  let lastOverflow = isOverflow(target);
+  let lastStarted = new Map();
+  const onObserved = () => {
+    const startAt = `${Date.now()}-${parseInt(Math.random() * 65000)}`;
+    lastStarted.set(target, startAt);
+    window.requestAnimationFrame(() => {
+      if (lastStarted.get(target) != startAt)
+        return;
+
+      const overflow = isOverflow(target);
+      if (overflow == lastOverflow)
+        return;
+
+      lastOverflow = overflow;
+
+      if (overflow) {
+        onOverflow();
+      }
+      else {
+        onUnderflow();
+      }
+    });
+  };
+
+  const resizeTargets = new Set([target, ...(moreResizeTargets || [])]);
+  let resizeObserver = new ResizeObserver(entries => {
+    for (const entry of entries) {
+      if (!resizeTargets.has(entry.target))
+        continue;
+      onObserved();
+    }
+  });
+  for (const resizeTarget of resizeTargets) {
+    resizeObserver.observe(resizeTarget);
+  }
+
+  /*
+  // ResizeObserver won't observe changes of scrollHeight/Width,
+  // Observing changes of the DOM tree can be workaround.
+  let mutationObserver = new MutationObserver(mutations => {
+    for (let mutation of mutations) {
+      if (mutation.type != 'childList' &&
+          mutation.type != 'subtree')
+        continue;
+      onObserved();
+    }
+  });
+  mutationObserver.observe(target, {
+    childList: true,
+    subtree:   true,
+  });
+  */
+
+  const unwatch = () => {
+    resizeObserver.disconnect();
+    resizeObserver = null;
+    /*
+    mutationObserver.disconnect();
+    mutationObserver = null;
+    */
+    lastStarted = null;
+  };
+  return unwatch;
+}
+
+function isOverflow(target) {
+  return target.scrollHeight > target.clientHeight || target.scrollWidth > target.clientWidth;
+}
+
+
 export async function sha1sum(string) {
   const encoder = new TextEncoder();
   const data = encoder.encode(string);

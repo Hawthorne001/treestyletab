@@ -4,6 +4,9 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
+import {
+  watchOverflowStateChange,
+} from '/common/common.js';
 import * as Constants from '/common/constants.js';
 
 export const kTAB_LABEL_ELEMENT_NAME = 'tab-label';
@@ -53,8 +56,9 @@ export class TabLabelElement extends HTMLElement {
     super();
 
     // We should initialize private properties with blank value for better performance with a fixed shape.
-    this.__onOverflow = null;
+    this.__onOverflow  = null;
     this.__onUnderflow = null;
+    this.__unwatch     = null;
   }
 
   connectedCallback() {
@@ -165,29 +169,34 @@ export class TabLabelElement extends HTMLElement {
   }
 
   _startListening() {
-    if (this.__onOverflow)
+    if (this.__unwatch)
       return;
-    this.addEventListener('overflow', this.__onOverflow = this._onOverflow.bind(this));
-    this.addEventListener('underflow', this.__onUnderflow = this._onUnderflow.bind(this));
+    this.__onOverflow  = this._onOverflow.bind(this);
+    this.__onUnderflow = this._onUnderflow.bind(this);
+    this.__unwatch     = watchOverflowStateChange({
+      target:      this,
+      onOverflow:  () => this.__onOverflow(),
+      onUnderflow: () => this.__onUnderflow(),
+    });
   }
 
   _endListening() {
-    if (!this.__onOverflow)
+    if (!this.__unwatch)
       return;
-    this.removeEventListener('overflow', this.__onOverflow);
-    this.removeEventListener('underflow', this.__onUnderflow);
-    this.__onOverflow = null;
+    this.__unwatch();
+    this.__unwatch     = null;
+    this.__onOverflow  = null;
     this.__onUnderflow = null;
   }
 
-  _onOverflow(_event) {
+  _onOverflow() {
     this.classList.add('overflow');
     for (const listener of this._overflowChangeListeners) {
       listener();
     }
   }
 
-  _onUnderflow(_event) {
+  _onUnderflow() {
     this.classList.remove('overflow');
     for (const listener of this._overflowChangeListeners) {
       listener();
