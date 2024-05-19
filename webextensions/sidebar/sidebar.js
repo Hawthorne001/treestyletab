@@ -607,7 +607,7 @@ const mImportedTabs = new Promise((resolve, _reject) => {
         resolve([]);
         return;
       }
-      log(`mImportedTabs (${windowId}): onBackgroundIsReady `, message && message.type, message && message.windowId);
+      log(`mImportedTabs (${windowId}): onBackgroundIsReady `, message?.type, message?.windowId);
       if (message?.type != Constants.kCOMMAND_NOTIFY_BACKGROUND_READY ||
           message?.windowId != windowId)
         return;
