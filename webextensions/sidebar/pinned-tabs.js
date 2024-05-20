@@ -98,9 +98,10 @@ export function reposition(options = {}) {
 
   Size.updateContainers();
 
-  let col = 1;
-  let row = 1;
+  let count = 0;
+  let row = 0;
   for (const tab of pinnedTabs) {
+    count++;
     if (options.justNow)
       tab.$TST.removeState(Constants.kTAB_STATE_ANIMATION_READY);
 
@@ -119,16 +120,15 @@ export function reposition(options = {}) {
     });
     */
 
-    col++;
-    if (col >= maxCol) {
-      col = 0;
+    if (count > 0 &&
+        count / maxCol == 0) {
       row++;
       //log('=> new row');
     }
   }
-  log('reposition: ', { maxWidth, faviconized, width, height, maxCol, maxRow, pinnedTabsAreaRatio, allTabsAreaHeight, mMaxVisibleRows, mAreaHeight, col, row });
-  log('overflow: contentsHeight > mAreaHeight : ', contentsHeight > mAreaHeight, ' , row > maxRow : ', row > maxRow);
-  SidebarTabs.pinnedContainer.classList.toggle('overflow', contentsHeight > mAreaHeight || row > maxRow);
+  log('reposition: ', { maxWidth, faviconized, width, height, maxCol, maxRow, pinnedTabsAreaRatio, allTabsAreaHeight, mMaxVisibleRows, mAreaHeight });
+  log('overflow: contentsHeight > mAreaHeight : ', contentsHeight > mAreaHeight);
+  SidebarTabs.pinnedContainer.classList.toggle('overflow', contentsHeight > mAreaHeight);
 }
 
 export function reserveToReposition(options = {}) {
