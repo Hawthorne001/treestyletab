@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 4.0.15 (2024.5.21)
    * Treat drag and drop of a parent tab to its descendant as a dragging of an individual tab and attach it to the drop position, even if the default action is configured to drag the whole tree. You can deactivate this behavior and prevent dropping of a parent tab to its descendant to turn the hidden option `moveSoloTabOnDropParentToDescendant` to `false`.
    * Don't inherit container to an opened tab if it is opened by "Open in Container Tab" => "No Container" inin the native tab context menu.
    * Never use `overflow` and `underflow` events to become compatible with Firefox 128 and later.
