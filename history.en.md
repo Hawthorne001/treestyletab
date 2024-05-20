@@ -1,6 +1,14 @@
 # History
 
  - master/HEAD
+   * Treat drag and drop of a parent tab to its descendant as a dragging of an individual tab and attach it to the drop position, even if the default action is configured to drag the whole tree. You can deactivate this behavior and prevent dropping of a parent tab to its descendant to turn the hidden option `moveSoloTabOnDropParentToDescendant` to `false`.
+   * Don't inherit container to an opened tab if it is opened by "Open in Container Tab" => "No Container" inin the native tab context menu.
+   * Never use `overflow` and `underflow` events to become compatible with Firefox 128 and later.
+   * Add new keyboard shortcut slots for "Toggle Tree Collapsed" and "Toggle Tree Collapsed Recursively" commands.
+   * Add a new option to show/hide TST's context menu commands on the native tab bar.
+   * Become more robust for cases that tabs are opened while the initialization process.
+   * Fix odd behavior after rendering error when the sidebar panel is shown with zero-width.
+   * Show container marker with thin width even if tabs are shown with expanded height.
  - 4.0.14 (2024.4.17)
    * Allow to detach tab from window even if the source window is maximized or fullscreen. (regression on 4.0.13)
    * Prevent unexpected jumping of tabs on scrolling, when tab height is expanded by extra tab contents above/below tabs provided by helper addons.
