@@ -319,11 +319,11 @@ function reserveToNotifyTabsRendered() {
     return;
   }
 
-  const startAt = `${Date.now()}-${parseInt(Math.random() * 65000)}`;
-  reserveToNotifyTabsRendered.lastStartedAt = startAt;
+  if (reserveToNotifyTabsRendered.invoked)
+    return;
+  reserveToNotifyTabsRendered.invoked = true;
   window.requestAnimationFrame(() => {
-    if (reserveToNotifyTabsRendered.lastStartedAt != startAt)
-      return;
+    reserveToNotifyTabsRendered.invoked = false;
 
     const ids = [...mRenderedTabIds];
     mRenderedTabIds.clear();
@@ -362,11 +362,10 @@ export function unrenderTab(tab) {
   const hasInternalListener = onTabsUnrendered.hasListener();
   const hasExternalListener = TSTAPI.hasListenerForMessageType(TSTAPI.kNOTIFY_TABS_UNRENDERED);
   if (hasInternalListener || hasExternalListener) {
-    const startAt = `${Date.now()}-${parseInt(Math.random() * 65000)}`;
-    unrenderTab.lastStartedAt = startAt;
+    if (!unrenderTab.invoked) {
+    unrenderTab.invoked = true;
     window.requestAnimationFrame(() => {
-      if (unrenderTab.lastStartedAt != startAt)
-        return;
+      unrenderTab.invoked = false;
 
       const ids = [...mUnrenderedTabIds];
       mUnrenderedTabIds.clear();
@@ -384,6 +383,7 @@ export function unrenderTab(tab) {
         cache = null;
       }
     });
+    }
   }
   else {
     mUnrenderedTabIds.clear();
@@ -631,11 +631,11 @@ async function activateRealActiveTab(windowId) {
 const mReindexedTabIds = new Set();
 
 function reserveToUpdateTabsIndex() {
-  const startAt = `${Date.now()}-${parseInt(Math.random() * 65000)}`;
-  reserveToUpdateTabsIndex.lastStartedAt = startAt;
+  if (reserveToUpdateTabsIndex.invoked)
+    return;
+  reserveToUpdateTabsIndex.invoked = true;
   window.requestAnimationFrame(() => {
-    if (reserveToUpdateTabsIndex.lastStartedAt != startAt)
-      return;
+    reserveToUpdateTabsIndex.invoked = false;
 
     const ids = [...mReindexedTabIds];
     mReindexedTabIds.clear();

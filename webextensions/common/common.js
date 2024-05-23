@@ -995,13 +995,13 @@ export function watchOverflowStateChange({ target, moreResizeTargets, onOverflow
     (horizontal && isOverflowHorizontally(target)) ||
     (vertical && isOverflowVertically(target))
   );
-  let lastStarted = new Map();
+  let invoked = false;
   const onObserved = () => {
-    const startAt = `${Date.now()}-${parseInt(Math.random() * 65000)}`;
-    lastStarted.set(target, startAt);
+    if (invoked)
+      return;
+    invoked = true;
     window.requestAnimationFrame(() => {
-      if (lastStarted.get(target) != startAt)
-        return;
+      invoked = false;
 
       const overflow = (
         (horizontal && isOverflowHorizontally(target)) ||
@@ -1057,7 +1057,6 @@ export function watchOverflowStateChange({ target, moreResizeTargets, onOverflow
     mutationObserver.disconnect();
     mutationObserver = null;
     */
-    lastStarted = null;
   };
   return unwatch;
 }

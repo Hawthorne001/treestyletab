@@ -202,15 +202,13 @@ export function reserveToRenderVirtualScrollViewport({ trigger, force } = {}) {
       mScrollingInternallyCount > 0)
     return;
 
-  const startAt = `${Date.now()}-${parseInt(Math.random() * 65000)}`;
-  renderVirtualScrollViewport.lastStartedAt = startAt;
   if (trigger)
     renderVirtualScrollViewport.triggers.add(trigger);
-  window.requestAnimationFrame(() => {
-    if (renderVirtualScrollViewport.lastStartedAt != startAt)
-      return;
-    renderVirtualScrollViewport();
-  });
+
+  if (renderVirtualScrollViewport.invoked)
+    return;
+  renderVirtualScrollViewport.invoked = true;
+  window.requestAnimationFrame(renderVirtualScrollViewport);
 }
 
 let mLastRenderableTabs;
@@ -222,7 +220,7 @@ let mScrollPosition = 0;
 renderVirtualScrollViewport.triggers = new Set();
 
 function renderVirtualScrollViewport(scrollPosition = undefined) {
-  renderVirtualScrollViewport.lastStartedAt = null;
+  renderVirtualScrollViewport.invoked = false;
   const triggers = new Set([...renderVirtualScrollViewport.triggers]);
   renderVirtualScrollViewport.triggers.clear();
 
@@ -927,18 +925,18 @@ function scrollToTabs(tabs) {
 */
 
 export function autoScrollOnMouseEvent(event) {
-  if (!event.target.closest)
+  if (!event.target.closest ||
+      autoScrollOnMouseEvent.invoked)
     return;
 
   const scrollBox = event.target.closest(`#${mPinnedScrollBox.id}, #${mNormalScrollBox.id}`);
-  if (!scrollBox || !scrollBox.classList.contains(Constants.kTABBAR_STATE_OVERFLOW))
+  if (!scrollBox ||
+      !scrollBox.classList.contains(Constants.kTABBAR_STATE_OVERFLOW))
     return;
 
-  const startAt = `${Date.now()}-${parseInt(Math.random() * 65000)}`;
-  autoScrollOnMouseEvent.lastStartedAt = startAt;
+  autoScrollOnMouseEvent.invoked = true;
   window.requestAnimationFrame(() => {
-    if (autoScrollOnMouseEvent.lastStartedAt != startAt)
-      return;
+    autoScrollOnMouseEvent.invoked = false;
 
     const tabbarRect = Size.getScrollBoxRect(scrollBox);
     const scrollPixels = Math.round(Size.getRenderedTabHeight() * 0.5);
@@ -1042,11 +1040,11 @@ function onScroll(event) {
 
 
 function reserveToUpdateScrolledState(scrollBox) {
-  const startAt = `${Date.now()}-${parseInt(Math.random() * 65000)}`;
-  scrollBox.__reserveToUpdateScrolledState_lastStartedAt = startAt; // eslint-disable-line no-underscore-dangle
+  if (scrollBox.__reserveToUpdateScrolledState_invoked) // eslint-disable-line no-underscore-dangle
+    return;
+  scrollBox.__reserveToUpdateScrolledState_invoked = true; // eslint-disable-line no-underscore-dangle
   window.requestAnimationFrame(() => {
-    if (scrollBox.__reserveToUpdateScrolledState_lastStartedAt != startAt) // eslint-disable-line no-underscore-dangle
-      return;
+    scrollBox.__reserveToUpdateScrolledState_invoked = false; // eslint-disable-line no-underscore-dangle
 
     const scrolled = scrollBox.$scrollTop > 0;
     const fullyScrolled = scrollBox.$scrollTop == scrollBox.$scrollTopMax;
