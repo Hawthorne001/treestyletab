@@ -141,6 +141,7 @@ export function init(scrollPosition) {
 function startObserveOverflowStateChange() {
   watchOverflowStateChange({
     target: mNormalScrollBox,
+    vertical: true,
     moreResizeTargets: [
       // We need to watch resizing of the virtual scroll container to detect the changed state correctly.
       mNormalScrollBox.querySelector('.virtual-scroll-container'),

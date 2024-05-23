@@ -175,6 +175,7 @@ export class TabLabelElement extends HTMLElement {
     this.__onUnderflow = this._onUnderflow.bind(this);
     this.__unwatch     = watchOverflowStateChange({
       target:      this,
+      horizontal:  true,
       onOverflow:  () => this.__onOverflow(),
       onUnderflow: () => this.__onUnderflow(),
     });

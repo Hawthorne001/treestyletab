@@ -985,10 +985,16 @@ export async function doProgressively(tabs, task, interval) {
 }
 
 
-export function watchOverflowStateChange({ target, moreResizeTargets, onOverflow, onUnderflow }) {
+export function watchOverflowStateChange({ target, moreResizeTargets, onOverflow, onUnderflow, horizontal, vertical }) {
+  if (!horizontal && !vertical)
+    return;
+
   onOverflow  = onOverflow  || (() => {});
   onUnderflow = onUnderflow || (() => {});
-  let lastOverflow = isOverflow(target);
+  let lastOverflow = (
+    (horizontal && isOverflowHorizontally(target)) ||
+    (vertical && isOverflowVertically(target))
+  );
   let lastStarted = new Map();
   const onObserved = () => {
     const startAt = `${Date.now()}-${parseInt(Math.random() * 65000)}`;
@@ -997,7 +1003,10 @@ export function watchOverflowStateChange({ target, moreResizeTargets, onOverflow
       if (lastStarted.get(target) != startAt)
         return;
 
-      const overflow = isOverflow(target);
+      const overflow = (
+        (horizontal && isOverflowHorizontally(target)) ||
+        (vertical && isOverflowVertically(target))
+      );
       if (overflow == lastOverflow)
         return;
 
@@ -1053,8 +1062,12 @@ export function watchOverflowStateChange({ target, moreResizeTargets, onOverflow
   return unwatch;
 }
 
-function isOverflow(target) {
-  return target.scrollHeight > target.clientHeight || target.scrollWidth > target.clientWidth;
+function isOverflowHorizontally(target) {
+  return target.scrollWidth > target.clientWidth;
+}
+
+function isOverflowVertically(target) {
+  return target.scrollHeight > target.clientHeight;
 }
 
 
