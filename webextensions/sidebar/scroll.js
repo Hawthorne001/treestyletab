@@ -208,7 +208,7 @@ export function reserveToRenderVirtualScrollViewport({ trigger, force } = {}) {
   if (renderVirtualScrollViewport.invoked)
     return;
   renderVirtualScrollViewport.invoked = true;
-  window.requestAnimationFrame(renderVirtualScrollViewport);
+  window.requestAnimationFrame(() => renderVirtualScrollViewport());
 }
 
 let mLastRenderableTabs;
