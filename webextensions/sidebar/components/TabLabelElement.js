@@ -56,8 +56,6 @@ export class TabLabelElement extends HTMLElement {
     super();
 
     // We should initialize private properties with blank value for better performance with a fixed shape.
-    this.__onOverflow  = null;
-    this.__onUnderflow = null;
     this.__unwatch     = null;
   }
 
@@ -176,20 +174,18 @@ export class TabLabelElement extends HTMLElement {
     // Accessing to the real size of the element triggers layouting and hits the performance,
     // like https://github.com/piroor/treestyletab/issues/3557 .
     // So we need to throttle the process for better formance.
-    if (this._startListening.invoked)
+    if (this._startListening_invoked)
       return;
-    this._startListening.invoked = true;
+    this._startListening_invoked = true;
     window.requestAnimationFrame(() => {
-      this._startListening.invoked = false;
+      this._startListening_invoked = false;
       if (!this.closest('body')) // already detached from document!
         return;
-      this.__onOverflow  = this._onOverflow.bind(this);
-      this.__onUnderflow = this._onUnderflow.bind(this);
       this.__unwatch     = watchOverflowStateChange({
         target:      this,
         horizontal:  true,
-        onOverflow:  () => this.__onOverflow(),
-        onUnderflow: () => this.__onUnderflow(),
+        onOverflow:  () => this._onOverflow(),
+        onUnderflow: () => this._onUnderflow(),
       });
     });
   }
@@ -198,9 +194,7 @@ export class TabLabelElement extends HTMLElement {
     if (!this.__unwatch)
       return;
     this.__unwatch();
-    this.__unwatch     = null;
-    this.__onOverflow  = null;
-    this.__onUnderflow = null;
+    this.__unwatch = null;
   }
 
   _onOverflow() {
