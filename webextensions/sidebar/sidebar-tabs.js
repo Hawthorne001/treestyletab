@@ -363,26 +363,26 @@ export function unrenderTab(tab) {
   const hasExternalListener = TSTAPI.hasListenerForMessageType(TSTAPI.kNOTIFY_TABS_UNRENDERED);
   if (hasInternalListener || hasExternalListener) {
     if (!unrenderTab.invoked) {
-    unrenderTab.invoked = true;
-    window.requestAnimationFrame(() => {
-      unrenderTab.invoked = false;
+      unrenderTab.invoked = true;
+      window.requestAnimationFrame(() => {
+        unrenderTab.invoked = false;
 
-      const ids = [...mUnrenderedTabIds];
-      mUnrenderedTabIds.clear();
-      const tabs = mapAndFilter(ids, id => Tab.get(id));
+        const ids = [...mUnrenderedTabIds];
+        mUnrenderedTabIds.clear();
+        const tabs = mapAndFilter(ids, id => Tab.get(id));
 
-      if (hasInternalListener)
-        onTabsUnrendered.dispatch(tabs);
+        if (hasInternalListener)
+          onTabsUnrendered.dispatch(tabs);
 
-      if (hasExternalListener) {
-        let cache = {};
-        TSTAPI.broadcastMessage({
-          type: TSTAPI.kNOTIFY_TABS_UNRENDERED,
-          tabs,
-        }, { tabProperties: ['tabs'], cache }).catch(_error => {});
-        cache = null;
-      }
-    });
+        if (hasExternalListener) {
+          let cache = {};
+          TSTAPI.broadcastMessage({
+            type: TSTAPI.kNOTIFY_TABS_UNRENDERED,
+            tabs,
+          }, { tabProperties: ['tabs'], cache }).catch(_error => {});
+          cache = null;
+        }
+      });
     }
   }
   else {
