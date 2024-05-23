@@ -172,6 +172,17 @@ export class TabLabelElement extends HTMLElement {
   _startListening() {
     if (this.__unwatch)
       return;
+
+    // Accessing to the real size of the element triggers layouting and hits the performance,
+    // like https://github.com/piroor/treestyletab/issues/3557 .
+    // So we need to throttle the process for better formance.
+    if (this._startListening.invoked)
+      return;
+    this._startListening.invoked = true;
+    window.requestAnimationFrame(() => {
+      this._startListening.invoked = false;
+      if (!this.closest('body')) // already detached from document!
+        return;
     this.__onOverflow  = this._onOverflow.bind(this);
     this.__onUnderflow = this._onUnderflow.bind(this);
     this.__unwatch     = watchOverflowStateChange({
@@ -179,6 +190,7 @@ export class TabLabelElement extends HTMLElement {
       horizontal:  true,
       onOverflow:  () => this.__onOverflow(),
       onUnderflow: () => this.__onUnderflow(),
+    });
     });
   }
 
