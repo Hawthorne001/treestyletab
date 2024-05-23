@@ -68,6 +68,12 @@
   "command_tabbarEnd": {
     "message": "将标签页滚动到底部"
   },
+  "command_toggleTreeCollapsed": {
+    "message": "折叠/展开 已折叠标签树"
+  },
+  "command_toggleTreeCollapsedRecursively": {
+    "message": "逐层 折叠/展开 已折叠标签树"
+  },
   "command_toggleSubPanel": {
     "message": "开关子面板"
   },
@@ -135,7 +141,7 @@
     "message": "播放标签页"
   },
   "tab_twisty_aria_label": {
-    "message": "展开/折叠 标签树 #$ID$",
+    "message": "折叠/展开 标签树 #$ID$",
     "placeholders": {
       "id": {
         "content": "$1",
@@ -473,7 +479,7 @@
     "message": "标签页可以在您的设备间传输。请点击此按钮为此设备设置一个可识别的名称。"
   },
   "sentTabs_notification_title": {
-    "message": "\u200b"
+    "message": "​"
   },
   "sentTabs_notification_message": {
     "message": "标签页已被发送到 $DEVICE$",
@@ -485,7 +491,7 @@
     }
   },
   "sentTabs_notification_title_multiple": {
-    "message": "\u200b"
+    "message": "​"
   },
   "sentTabs_notification_message_multiple": {
     "message": "标签页已被发送到 $DEVICE$",
@@ -497,13 +503,13 @@
     }
   },
   "sentTabsToAllDevices_notification_title": {
-    "message": "\u200b"
+    "message": "​"
   },
   "sentTabsToAllDevices_notification_message": {
     "message": "标签页已被发送到所有设备"
   },
   "sentTabsToAllDevices_notification_title_multiple": {
-    "message": "\u200b"
+    "message": "​"
   },
   "sentTabsToAllDevices_notification_message_multiple": {
     "message": "标签页已被发送到所有设备"
@@ -887,6 +893,9 @@
   "context_openAllBookmarksWithStructureRecursively_label": {
     "message": "将全部项打开为一个包含子文件夹的标签树(&A)"
   },
+  "config_showTreeCommandsInTabsContextMenuGlobally_label": {
+    "message": "在标签页的所有上下文菜单中（比如在原生标签栏上时）均显示标签树相关命令，"
+  },
   "config_title": {
     "message": "Tree Style Tab 选项"
   },
@@ -1106,6 +1115,8 @@
   "config_autoAttachOnContextNewTabCommand_nextSiblingWithInheritedContainer": {
     "message": "相同身份的右邻同级项"
   },
+  "config_autoAttachOnContextNewTabCommand_after": {
+  },
   "config_newTabWithOwner_caption": {
     "message": "标签页（打开自现有标签页）"
   },
@@ -1132,6 +1143,8 @@
   },
   "config_autoAttachOnOpenedWithOwner_nextSibling": {
     "message": "父标签页的右邻同级项"
+  },
+  "config_autoAttachOnOpenedWithOwner_after": {
   },
   "config_insertNewTabFromFirefoxViewAt_caption": {
     "message": "来自 Firefox View 的新建子标签页（将会作为根标签页）的插入位置"
@@ -1194,7 +1207,7 @@
     "message": "(无)"
   },
   "config_longPressOnNewTabButton_after": {
-    "message": "\u200b"
+    "message": "​"
   },
   "config_showNewTabActionSelector_label": {
     "message": "当鼠标指向 “新键标签页” 按钮时，在其上显示选择器按钮，用以指定新标签页打开位置"
@@ -1227,7 +1240,7 @@
     "message": "当前标签页的右邻同级项"
   },
   "config_autoAttachOnNewTabCommand_after": {
-    "message": "\u200b"
+    "message": "​"
   },
   "config_guessNewOrphanTabAsOpenedByNewTabCommandTitle_before": {
     "message": "当一个新打开的标签页的标题为"
@@ -1263,7 +1276,7 @@
     "message": "等同于按住 Ctrl 后再点击（身份相同的右邻同级项）"
   },
   "config_autoAttachOnNewTabButtonMiddleClick_after": {
-    "message": "\u200b"
+    "message": "​"
   },
   "config_middleClickPasteURLOnNewTabButton_label": {
     "message": "用新标签页打开剪贴板中的地址（ * 模拟浏览器中对应于 \"browser.tabs.searchclipboardfor.middleclick\"=\"true\" 的内置行为，您可能需要开启 \"dom.events.asyncClipboard.clipboardItem\"）"
@@ -1293,7 +1306,7 @@
     "message": "身份相同的右邻同级项"
   },
   "config_autoAttachOnNewTabButtonAccelClick_after": {
-    "message": "\u200b"
+    "message": "​"
   },
   "config_autoAttachWithURL_caption": {
     "message": "非空白新建标签页"
@@ -1323,7 +1336,7 @@
     "message": "当前标签页的右邻同级项"
   },
   "config_autoAttachOnDuplicated_after": {
-    "message": "\u200b"
+    "message": "​"
   },
   "config_fromExternal_caption": {
     "message": "对于打开自其它应用的新建标签页"
@@ -1350,7 +1363,7 @@
     "message": "当前标签页的右邻同级项"
   },
   "config_autoAttachOnOpenedFromExternal_after": {
-    "message": "\u200b"
+    "message": "​"
   },
   "config_inheritContextualIdentityToTabsFromExternalMode_label": {
     "message": "身份："
@@ -1389,7 +1402,7 @@
     "message": "当前标签页的右邻同级项"
   },
   "config_autoAttachSameSiteOrphan_after": {
-    "message": "\u200b"
+    "message": "​"
   },
   "config_inheritContextualIdentityToSameSiteOrphanMode_label": {
     "message": "身份："
@@ -1428,7 +1441,7 @@
     "message": "当前标签页的右邻同级项"
   },
   "config_autoAttachOnAnyOtherTrigger_after": {
-    "message": "\u200b"
+    "message": "​"
   },
   "config_autoAttachOnAnyOtherTrigger_caution": {
     "message": "* 请注意：此选项有破坏其它附加组件行为的风险。"
@@ -1860,7 +1873,7 @@
     "message": "用于 “将此标签树添加到书签” 的文件夹名称："
   },
   "config_bookmarkTreeFolderName_after": {
-    "message": "\u200b"
+    "message": "​"
   },
   "config_bookmarkTreeFolderName_description": {
     "message": "可用占位符：%TITLE%（第一个标签页的标题）、%URL%（第一个标签页的网址）、%YEAR%（年，四位数）、%MONTH%（月，两位数）、%DATE%（日，两位数）、%HOURS% (时，两位数)、%MINUTES% (分，两位数)、%SECONDS% (秒，两位数)、%MILLISECONDS% (毫秒，三位数)、%GROUP% (如果是标签页分组，则为其第一个标签页的标题 - 如果不是，则为空白)、%ANY(值 1, 值 2, ...)% (给定参数列表中的第一个有效值)"
@@ -2122,6 +2135,8 @@
   },
   "config_all_caption": {
     "message": "所有配置"
+  },
+  "config_terms_delimiter": {
   },
   "tabContextMenu_newTab_label": {
     "message": "新建标签页(&W)"
