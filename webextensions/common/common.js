@@ -991,10 +991,7 @@ export function watchOverflowStateChange({ target, moreResizeTargets, onOverflow
 
   onOverflow  = onOverflow  || (() => {});
   onUnderflow = onUnderflow || (() => {});
-  let lastOverflow = (
-    (horizontal && isOverflowHorizontally(target)) ||
-    (vertical && isOverflowVertically(target))
-  );
+  let lastOverflow = null;
   let invoked = false;
   const onObserved = () => {
     if (invoked)
@@ -1007,7 +1004,7 @@ export function watchOverflowStateChange({ target, moreResizeTargets, onOverflow
         (horizontal && isOverflowHorizontally(target)) ||
         (vertical && isOverflowVertically(target))
       );
-      if (overflow == lastOverflow)
+      if (overflow === lastOverflow)
         return;
 
       lastOverflow = overflow;
