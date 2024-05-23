@@ -183,14 +183,14 @@ export class TabLabelElement extends HTMLElement {
       this._startListening.invoked = false;
       if (!this.closest('body')) // already detached from document!
         return;
-    this.__onOverflow  = this._onOverflow.bind(this);
-    this.__onUnderflow = this._onUnderflow.bind(this);
-    this.__unwatch     = watchOverflowStateChange({
-      target:      this,
-      horizontal:  true,
-      onOverflow:  () => this.__onOverflow(),
-      onUnderflow: () => this.__onUnderflow(),
-    });
+      this.__onOverflow  = this._onOverflow.bind(this);
+      this.__onUnderflow = this._onUnderflow.bind(this);
+      this.__unwatch     = watchOverflowStateChange({
+        target:      this,
+        horizontal:  true,
+        onOverflow:  () => this.__onOverflow(),
+        onUnderflow: () => this.__onUnderflow(),
+      });
     });
   }
 
