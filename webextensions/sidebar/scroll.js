@@ -394,7 +394,7 @@ function renderVirtualScrollViewport(scrollPosition = undefined) {
               spacer.setAttribute('data-tab-id', RegExp.$1);
               win.containerElement.insertBefore(
                 spacer,
-                win.containerElement.querySelector(`.sticky-tab-spacer[data-tab-id="${referenceTab?.id}"]`) ||
+                (referenceTab && win.containerElement.querySelector(`.sticky-tab-spacer[data-tab-id="${referenceTab.id}"]`)) ||
                 (referenceTabHasValidReferenceElement &&
                  referenceTab.$TST.element) ||
                 null
@@ -403,7 +403,7 @@ function renderVirtualScrollViewport(scrollPosition = undefined) {
             }
             SidebarTabs.renderTab(Tab.get(id), {
               insertBefore: referenceTabHasValidReferenceElement ? referenceTab :
-                win.containerElement.querySelector(`.sticky-tab-spacer[data-tab-id="${referenceTab?.id}"]`) ||
+                (referenceTab && win.containerElement.querySelector(`.sticky-tab-spacer[data-tab-id="${referenceTab.id}"]`)) ||
                 null,
             });
           }
