@@ -182,8 +182,17 @@ async function updateInternal(tabId) {
         closeParentBehavior != Constants.kPARENT_TAB_OPERATION_BEHAVIOR_REPLACE_WITH_GROUP_TAB
       );
       const firstChild = collapsedChildSuccessorAllowed ? tab.$TST.firstChild : tab.$TST.firstVisibleChild;
-      successor = firstChild || tab.$TST.nextVisibleSiblingTab || tab.$TST.nearestVisiblePrecedingTab;
-      log(`  possible successor: ${dumpTab(tab)}: `, successor, { closeParentBehavior, collapsedChildSuccessorAllowed, firstChild });
+      const nextVisibleSibling = tab.$TST.nextVisibleSiblingTab;
+      const nearestVisiblePreceding = tab.$TST.nearestVisiblePrecedingTab;
+      successor = firstChild || nextVisibleSibling || nearestVisiblePreceding;
+      log(`  possible successor: ${dumpTab(tab)}: `, successor, {
+        closeParentBehavior,
+        collapsedChildSuccessorAllowed,
+        parent: tab.$TST.parentId,
+        firstChild: firstChild?.id,
+        nextVisibleSibling: nextVisibleSibling?.id,
+        nearestVisiblePreceding: nearestVisiblePreceding?.id,
+      });
       if (successor &&
           successor.discarded &&
           configs.avoidDiscardedTabToBeActivatedIfPossible) {
