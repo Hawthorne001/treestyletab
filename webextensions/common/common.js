@@ -1021,34 +1021,37 @@ export function watchOverflowStateChange({ target, moreResizeTargets, onOverflow
     });
   };
 
-  const resizeTargets = new Set([target, ...(moreResizeTargets || [])]);
-  let resizeObserver = new ResizeObserver(entries => {
-    for (const entry of entries) {
-      if (!resizeTargets.has(entry.target))
-        continue;
-      onObserved();
+  let resizeObserver/*, mutationObserver*/;
+  if (useLegacyOverflowEvents) {
+    const resizeTargets = new Set([target, ...(moreResizeTargets || [])]);
+    resizeObserver = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        if (!resizeTargets.has(entry.target))
+          continue;
+        onObserved();
+      }
+    });
+    for (const resizeTarget of resizeTargets) {
+      resizeObserver.observe(resizeTarget);
     }
-  });
-  for (const resizeTarget of resizeTargets) {
-    resizeObserver.observe(resizeTarget);
-  }
 
-  /*
-  // ResizeObserver won't observe changes of scrollHeight/Width,
-  // Observing changes of the DOM tree can be workaround.
-  let mutationObserver = new MutationObserver(mutations => {
-    for (let mutation of mutations) {
-      if (mutation.type != 'childList' &&
-          mutation.type != 'subtree')
-        continue;
-      onObserved();
-    }
-  });
-  mutationObserver.observe(target, {
-    childList: true,
-    subtree:   true,
-  });
-  */
+    /*
+    // ResizeObserver won't observe changes of scrollHeight/Width,
+    // Observing changes of the DOM tree can be workaround.
+    mutationObserver = new MutationObserver(mutations => {
+      for (let mutation of mutations) {
+        if (mutation.type != 'childList' &&
+            mutation.type != 'subtree')
+          continue;
+        onObserved();
+      }
+    });
+    mutationObserver.observe(target, {
+      childList: true,
+      subtree:   true,
+    });
+    */
+  }
 
   const destroyObserver = () => {
     if (!resizeObserver)
