@@ -985,12 +985,15 @@ export async function doProgressively(tabs, task, interval) {
 }
 
 
+let useLegacyOverflowEvents = false;
+
 export function watchOverflowStateChange({ target, moreResizeTargets, onOverflow, onUnderflow, horizontal, vertical }) {
   if (!horizontal && !vertical)
     return;
 
   onOverflow  = onOverflow  || (() => {});
   onUnderflow = onUnderflow || (() => {});
+
   let lastOverflow = null;
   let invoked = false;
   const onObserved = () => {
@@ -1047,13 +1050,37 @@ export function watchOverflowStateChange({ target, moreResizeTargets, onOverflow
   });
   */
 
-  const unwatch = () => {
+  const destroyObserver = () => {
+    if (!resizeObserver)
+      return;
     resizeObserver.disconnect();
     resizeObserver = null;
     /*
     mutationObserver.disconnect();
     mutationObserver = null;
     */
+  };
+
+  const onOverflowEvent = event => {
+    if (!useLegacyOverflowEvents) {
+      useLegacyOverflowEvents = true;
+      destroyObserver();
+    }
+    if (event.target != target)
+      return;
+    if (event.type == 'overflow')
+      onOverflow();
+    else
+      onUnderflow();
+  };
+
+  target.addEventListener('overflow', onOverflowEvent);
+  target.addEventListener('underflow', onOverflowEvent);
+
+  const unwatch = () => {
+    target.removeEventListener('overflow', onOverflowEvent);
+    target.removeEventListener('underflow', onOverflowEvent);
+    destroyObserver();
   };
   return unwatch;
 }
