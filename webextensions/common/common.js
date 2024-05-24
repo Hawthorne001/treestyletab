@@ -1064,6 +1064,8 @@ export function watchOverflowStateChange({ target, moreResizeTargets, onOverflow
     */
   };
 
+  // Legacy method for Firefox 127 or older.
+  // See also: https://bugzilla.mozilla.org/show_bug.cgi?id=1888737
   const onOverflowEvent = event => {
     if (!useLegacyOverflowEvents) {
       useLegacyOverflowEvents = true;
@@ -1076,7 +1078,6 @@ export function watchOverflowStateChange({ target, moreResizeTargets, onOverflow
     else
       onUnderflow();
   };
-
   target.addEventListener('overflow', onOverflowEvent);
   target.addEventListener('underflow', onOverflowEvent);
 
