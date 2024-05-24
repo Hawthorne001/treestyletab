@@ -8,7 +8,8 @@
 import {
   log as internalLogger,
   dumpTab,
-  configs
+  configs,
+  wait,
 } from '/common/common.js';
 import * as ApiTabs from '/common/api-tabs.js';
 import * as Constants from '/common/constants.js';
@@ -62,8 +63,26 @@ function setSuccessor(tabId, successorTabId = -1) {
   });
   mPromisedUpdatedSuccessorTabId.set(tabId, promisedUpdate);
 
+  const initialSuccessorTabId = tab.successorTabId;
   browser.tabs.update(tabId, {
     successorTabId
+  }).then(async () => {
+    // tabs.onUpdated listener won't be called sometimes, so this is a failsafe.
+    while (true) {
+      const promisedUpdate = mPromisedUpdatedSuccessorTabId.get(tabId);
+      if (!promisedUpdate)
+        break;
+
+      const tab = await browser.tabs.get(tabId);
+      if (tab.successorTabId == initialSuccessorTabId &&
+          tab.successorTabId != successorTabId) {
+        await wait(200);
+        continue;
+      }
+
+      mPromisedUpdatedSuccessorTabId.delete(tabId);
+      promisedUpdate.resolver(tab.successorTabId);
+    }
   }).catch(ApiTabs.createErrorHandler(ApiTabs.handleMissingTabError, error => {
     // ignore error for already closed tab
     if (!error ||
