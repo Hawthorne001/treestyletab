@@ -550,7 +550,12 @@ function onExtraContentsAboveChanged(id, params) {
   onExtraContentsAboveChanged.invoked = true;
   window.requestAnimationFrame(() => {
     onExtraContentsAboveChanged.invoked = false;
-    setExtraContentsToContainer(mDummyTab.extraItemsContainerAboveRoot, id, params);
+    if (params.container != mDummyTab.extraItemsContainerAboveRoot) {
+      setExtraContentsToContainer(mDummyTab.extraItemsContainerAboveRoot, id, {
+        ...params,
+        container: mDummyTab.extraItemsContainerAboveRoot,
+      });
+    }
     throttledUpdateSize();
   });
 }
@@ -565,7 +570,12 @@ function onExtraContentsBelowChanged(id, params) {
   onExtraContentsBelowChanged.invoked = true;
   window.requestAnimationFrame(() => {
     onExtraContentsBelowChanged.invoked = false;
-    setExtraContentsToContainer(mDummyTab.extraItemsContainerBelowRoot, id, params);
+    if (params.container != mDummyTab.extraItemsContainerBelowRoot) {
+      setExtraContentsToContainer(mDummyTab.extraItemsContainerBelowRoot, id, {
+        ...params,
+        container: mDummyTab.extraItemsContainerBelowRoot,
+      });
+    }
     throttledUpdateSize();
   });
 }
