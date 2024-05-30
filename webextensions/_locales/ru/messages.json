@@ -5,25 +5,27 @@
   "sidebarTitle": { "message": "Tree Style Tab" },
   "sidebarToggleDescription": { "message": "Переключить боковую панель \"Tree Style Tab\" " },
 
-  "command_tabMoveUp":             { "message": "Переместить текущую вкладку вверх" },
-  "command_treeMoveUp":            { "message": "Переместить текущее дерево вверх" },
-  "command_tabMoveDown":           { "message": "Переместить текущую вкладку вниз" },
-  "command_treeMoveDown":          { "message": "Переместить текущее дерево вниз" },
+  "command_tabMoveUp":             { "message": "Переместить текущую вкладку выше" },
+  "command_treeMoveUp":            { "message": "Переместить текущее дерево выше" },
+  "command_tabMoveDown":           { "message": "Переместить текущую вкладку ниже" },
+  "command_treeMoveDown":          { "message": "Переместить текущее дерево ниже" },
   "command_focusPrevious":         { "message": "Перейти к предыдущей вкладке (развернуть дерево)" },
   "command_focusPreviousSilently": { "message": "Перейти к предыдущей вкладке (не разворачивать дерево)" },
   "command_focusNext":             { "message": "Перейти к следующей вкладке (развернуть дерево)" },
   "command_focusNextSilently":     { "message": "Перейти к следующей вкладке (не разворачивать дерево)" },
   "command_focusParent":           { "message": "Перейти к родительской вкладке" },
-  "command_focusFirstChild":       { "message": "Перейти к первой дочерней вкладке" },  
-  "command_focusLastChild":        { "message": "Фокус на последнюю дочернюю вкладку" },
-  "command_focusPreviousSibling":  { "message": "Фокус на предыдущую одноуровневую вкладку" },
+  "command_focusFirstChild":       { "message": "Перейти к первой дочерней вкладке" },
+  "command_focusLastChild":        { "message": "Перейти на последнюю дочернюю вкладку" },
+  "command_focusPreviousSibling":  { "message": "Перейти на предыдущую одноуровневую вкладку" },
   "command_focusNextSibling":      { "message": "Фокус на следующую одноуровневую вкладку" },
   "command_tabbarUp":              { "message": "Листать вкладки вверх построчно" },
   "command_tabbarPageUp":          { "message": "Листать вкладки вверх постранично" },
-  "command_tabbarHome":            { "message": "Листать вкладки вверх" },
+  "command_tabbarHome":            { "message": "Листать вкладки в самый верх" },
   "command_tabbarDown":            { "message": "Листать вкладки вниз построчно" },
   "command_tabbarPageDown":        { "message": "Листать вкладки вниз постранично" },
-  "command_tabbarEnd":             { "message": "Листать вкладки вниз" },
+  "command_tabbarEnd":             { "message": "Листать вкладки в самый низ" },
+  "command_toggleTreeCollapsed":   { "message": "Переключить сворачивание дерева" },
+  "command_toggleTreeCollapsedRecursively": { "message": "Переключить рекурсивное сворачивание дерева" },
   "command_toggleSubPanel":        { "message": "Переключить суб-панель" },
   "command_switchSubPanel":        { "message": "Переключить содержимое суб-панели" },
   "command_increaseSubPanel":      { "message": "Увеличить размер суб-панели" },
@@ -40,10 +42,15 @@
     "placeholders": {
       "id": { "content": "$1", "example": "1" }
     }},
+  "tab_sharingState_sharingCamera_tooltip": { "message": "Дается доступ к камере" },
+  "tab_sharingState_sharingMicrophone_tooltip": { "message": "Дается доступ к микрофону" },
+  "tab_sharingState_sharingScreen_tooltip": { "message": "Дается доступ к окну или экрану" },
   "tab_soundButton_muted_tooltip": { "message": "Включить звук вкладки" },
   "tab_soundButton_muted_tooltip_multiselected": { "message": "Включить звук вкладок" },
   "tab_soundButton_playing_tooltip": { "message": "Выключить звук вкладки" },
   "tab_soundButton_playing_tooltip_multiselected": { "message": "Выключить звук вкладок" },
+  "tab_soundButton_autoplayBlocked_tooltip": { "message": "Воспроизведение вкладки" },
+  "tab_soundButton_autoplayBlocked_tooltip_multiselected": { "message": "Воспроизведение вкладок" },
   "tab_twisty_aria_label": { "message": "Свернуть/развернуть дерево #$ID$",
     "placeholders": {
       "id": { "content": "$1", "example": "1" }
@@ -62,6 +69,8 @@
   "tabbar_newTabAction_independent_command": { "message": "Отдельную вкладку" },
   "tabbar_newTabAction_child_label":       { "message": "Дочернюю вкладку" },
   "tabbar_newTabAction_child_command":       { "message": "Дочернюю вкладку" },
+  "tabbar_newTabAction_childTop_command":    { "message": "Первая дочерняя вкладка" },
+  "tabbar_newTabAction_childEnd_command":    { "message": "Последняя дочерняя вкладка" },
   "tabbar_newTabAction_sibling_label":     { "message": "Одноуровневую вкладку" },
   "tabbar_newTabAction_sibling_command":     { "message": "Одноуровневую вкладку" },
   "tabbar_newTabAction_nextSibling_label": { "message": "Следующую одноуровневую вкладку" },
@@ -76,7 +85,7 @@
     }},
   "groupTab_label_default": { "message": "Группа" },
   "groupTab_temporary_label": { "message": "Закрыть эту вкладку, когда не останется дочерних вкладок" },
-  "groupTab_temporaryAggressive_label": { "message": "Закрыть эту вкладку, когда одна или нет дочерних вкладок" },
+  "groupTab_temporaryAggressive_label": { "message": "Закрыть эту вкладку, когда дочерних вкладок нету или одна" },
   "groupTab_fromPinnedTab_label": { "message": "Вкладки с $TITLE$",
     "placeholders": {
       "title": { "content": "$1", "example": "title" }
@@ -89,12 +98,12 @@
       "title": { "content": "$1", "example": "Title" }
     }},
 
-  "bookmark_notification_notPermitted_title": { "message": "Ошибка разрешений" },
+  "bookmark_notification_notPermitted_title": { "message": "Ошибка разрешения" },
   "bookmark_notification_notPermitted_message": { "message": "Нет разрешения на создание закладок. Нажмите здесь, чтобы предоставить разрешения." },
   "bookmark_notification_notPermitted_message_linux": { "message": "Не удалось получить разрешение на создание закладок. Нажмите кнопку, чтобы предоставить дополнительные разрешения." },
 
   "bookmarkContext_notification_notPermitted_title": { "message": "Ошибка разрешения" },
-  "bookmarkContext_notification_notPermitted_message": { "message": "Нет разрешения на открытие контекстного меню закладок. Нажмите здесь, чтобы предоставить дополнительное разрешение." },
+  "bookmarkContext_notification_notPermitted_message": { "message": "Нет разрешения на открытие контекстного меню закладок. Нажмите здесь, чтобы предоставить дополнительные разрешения." },
   "bookmarkContext_notification_notPermitted_message_linux": { "message": "Не удалось получить разрешение на открытие контекстного меню закладок. Нажмите кнопку, чтобы предоставить дополнительные разрешения." },
 
   "dropLinksOnTabBehavior_message": { "message": "Как это открыть?" },
@@ -102,24 +111,31 @@
   "dropLinksOnTabBehavior_load":    { "message": "Загрузить в этой вкладке" },
   "dropLinksOnTabBehavior_newtab":  { "message": "Открыть новую дочернюю вкладку" },
 
-  "tabDragBehaviorNotification_message_duration_single":  { "message": "8s" },
-  "tabDragBehaviorNotification_message_duration_both":  { "message": "16s" },
+  "tabDragBehaviorNotification_message_duration_single":  { "message": "8с" },
+  "tabDragBehaviorNotification_message_duration_both":  { "message": "16с" },
   "tabDragBehaviorNotification_message_base":  { "message": "Перетягивание за пределы боковой панели $RESULT$.",
     "placeholders": {
       "result": { "content": "$1", "example": "something happen" }
     }},
-  "tabDragBehaviorNotification_message_inverted_base_with_shift":  { "message": "C зажатым Shift $RESULT$.",
+  "tabDragBehaviorNotification_message_inverted_base_with_shift":  { "message": "C зажатым Shift будет $RESULT$.",
     "placeholders": {
       "result": { "content": "$1", "example": "something happen" }
     }},
-  "tabDragBehaviorNotification_message_inverted_base_without_shift":  { "message": "Без Shift'a $RESULT$.",
+  "tabDragBehaviorNotification_message_inverted_base_without_shift":  { "message": "Без Shift'a будет $RESULT$.",
     "placeholders": {
       "result": { "content": "$1", "example": "something happen" }
     }},
-  "tabDragBehaviorNotification_message_tree_tearoff":  { "message": "отсоеденит вкладки от окна" },
-  "tabDragBehaviorNotification_message_tab_tearoff":   { "message": "отсоеденит вкладку от окна" },
+  "tabDragBehaviorNotification_message_tree_tearoff":  { "message": "отсоединит вкладки от окна" },
+  "tabDragBehaviorNotification_message_tab_tearoff":   { "message": "отсоединит вкладку от окна" },
   "tabDragBehaviorNotification_message_tree_bookmark": { "message": "создаст ссылку или закладку там где вы отпустите вкладки" },
   "tabDragBehaviorNotification_message_tab_bookmark":  { "message": "создаст ссылку или закладку там где вы отпустите вкладку" },
+
+  "tabsHighlightingNotification_message": { "message": "Подсвечивание вкладок... $PROGRESS$ %",
+    "placeholders": {
+      "progress": { "content": "$1", "example": "50" }
+    }},
+
+  "blank_allUrlsPermissionRequiredMessage": { "message": "Это сообщение показывается, потому что Firefox попытался восстановить окно, которое создается расширением Tree Style Tab. Пожалуйста, разрешите \"Доступ к данным всех вебсайтов\" через вкладку \"Разрешения\" у расширения Tree Style Tab в Менеджере Расширений, если не хотите повторного появления этого сообщения." },
 
   "warnOnCloseTabs_title":     { "message": "Закрыть вкладки?" },
   "warnOnCloseTabs_message":   { "message": "Вы пытаетесь закрыть $NUMBER$ вкладок. Хотите продолжить?",
@@ -156,16 +172,16 @@
 
   "bookmarkDialog_dialogTitle_single":   { "message": "Новая закладка" },
   "bookmarkDialog_dialogTitle_multiple": { "message": "Новые закладки" },
-  "bookmarkDialog_title":    { "message": "Заголовок . :" },
+  "bookmarkDialog_title":    { "message": "Заголовок:" },
   "bookmarkDialog_title_accessKey": { "message": "n" },
   "bookmarkDialog_url":      { "message": "Адрес:" },
   "bookmarkDialog_url_accessKey": { "message": "l" },
-  "bookmarkDialog_parentId": { "message": "Папка . . . . . :" },
+  "bookmarkDialog_parentId": { "message": "Папка:" },
   "bookmarkDialog_saveContainerRedirectKey": { "message": "Сохранить информацию о контейнере для закладок из контейнера" },
   "bookmarkDialog_accept":   { "message": "Сохранить" },
   "bookmarkDialog_cancel":   { "message": "Отмена" },
 
-  "bookmarkFolderChooser_unspecified":   { "message": "(не определено)" },
+  "bookmarkFolderChooser_unspecified":   { "message": "(не задано)" },
   "bookmarkFolderChooser_blank":         { "message": "(без имени)" },
   "bookmarkFolderChooser_useThisFolder": { "message": "Использовать эту папку" },
 
@@ -226,7 +242,7 @@
   "startup_notification_message_updated":   { "message": "Изменения могут повлиять на ваши предпочтения. Щелкните здесь, чтобы увидеть описания." },
   "startup_notification_message_updated_linux":   { "message": "Некоторые изменения могут повлиять на ваши предпочтения. Нажмите кнопку, чтобы посмотреть список изменений." },
 
-  "message_startup_description_1": { "message": "Tree Style Tab возрожден на основе технологий WebExtensions для Firefox 57 и более поздних версий. Вертикальная панель вкладок доступна в качестве одной из боковых панелей. Если вы ещё не видите её, нажмите " },
+  "message_startup_description_1": { "message": "Вертикальную панель вкладок Tree Style Tab можно выбрать в качестве одной из боковых панелей. Если вы ещё не видите её, нажмите " },
   "message_startup_description_key": { "message": "кнопку \"F1\" " },
   "message_startup_description_2": { "message": " либо " },
   "message_startup_description_3": { "message": " кнопку на панели инструментов, чтобы активировать боковую панель." },
@@ -234,30 +250,31 @@
   "message_startup_description_sync_link":   { "message": "Имя устройства нужно настраивать вручную" },
   "message_startup_description_sync_after":  { "message": "." },
 
-  "message_startup_history_before":     { "message": "Измененное поведение может быть (или нет) восстановлено с помощью вариантов обхода. См. детали в " },
+  "message_startup_history_before":     { "message": "Измененное поведение может быть (или нет) восстановлено с помощью обходного решения. См. детали в " },
   "message_startup_history_uri":        { "message": "https://addons.mozilla.org/firefox/addon/tree-style-tab/versions/" },
   "message_startup_history_link_label": { "message": "истории изменений" },
   "message_startup_history_after":      { "message": "." },
 
-  "message_startup_requestPermissions_description": { "message": "⚠Есть некоторые функции, требующие дополнительных разрешений. Если вы хотите активировать их, получите разрешения вручную." },
+  "message_startup_requestPermissions_description": { "message": "⚠Есть некоторые функции, требующие дополнительных разрешений. Если вы хотите их активировать, дайте разрешения вручную." },
   "message_startup_requestPermissions_bookmarks": { "message": "\"Это дерево в закладки…\" в контекстном меню на вкладках (нужен доступ к закладкам.)" },
   "message_startup_requestPermissions_allUrls":   { "message": "Не разворачивать свернутое дерево и пропускать свернутые дочерние вкладки при переключении фокуса вкладок горячими клавишами. / Don't restore blank window which was for a closed dialog, by actions to restore closed tabs." },
+  "message_startup_requestPermissions_clipboardRead": { "message": "Разрешить открывать новую вкладку по ссылке из буфера обмена, при нажатии колесиком мышки на кнопке \"Новая вкладка\" (*может понадобится активация \"dom.events.asyncClipboard.clipboardItem\")" },
 
-  "message_startup_userChromeCss_notify": { "message": "Как скрыть верхнюю панель вкладок и заголовок боковой панели?" },
+  "message_startup_userChromeCss_notify": { "message": "Как скрывать верхнюю панель вкладок и заголовок боковой панели?" },
   "message_startup_userChromeCss_description_1": { "message": "Из-за ограничений WebExtensions, TST не может контролировать верхнюю панель вкладок и заголовок боковой панели. Если вам нужно настроить их, см. " },
   "message_startup_userChromeCss_description_link_label": { "message": "примеры настройки с помощью userChrome.css" },
   "message_startup_userChromeCss_description_link_uri": { "message": "https://github.com/piroor/treestyletab/wiki/Code-snippets-for-custom-style-rules#for-userchromecss" },
   "message_startup_userChromeCss_description_2": { "message": ". Но " },
-  "message_startup_userChromeCss_description_note": { "message": "учтите, что это низкоуровневые настройки, и они могут вызвать проблемы в будущих версиях Firefox. Используйте их на свой страх и риск, если уверены, что сможете потом решить проблемы самостоятельно" },
+  "message_startup_userChromeCss_description_note": { "message": "учтите, что это очень низкоуровневые настройки, и они могут вызвать проблемы в будущих версиях Firefox. Используйте их на свой страх и риск, если уверены, что сможете потом решить проблемы самостоятельно" },
   "message_startup_userChromeCss_description_3": { "message": "." },
 
   "api_requestedPermissions_title": { "message": "Запрос дополнительных разрешений" },
-  "api_requestedPermissions_message": { "message": "⚠Аддон \"$NAME$\" запрашивает выполнение операции:\n\n$PERMISSIONS$\n\nЧерез API Tree Style Tab. Нажмите здесь, чтобы предоставить разрешение.",
+  "api_requestedPermissions_message": { "message": "⚠Аддон \"$NAME$\" запрашивает выполнение операции:\n\n$PERMISSIONS$\n\nЧерез API Tree Style Tab. Нажмите здесь, если вы разрешаете.",
     "placeholders": {
       "NAME":        { "content": "$1", "example": "foobar" },
       "PERMISSIONS": { "content": "$2", "example": "tabs" }
     }},
-  "api_requestedPermissions_message_linux": { "message": "⚠Аддон \"$NAME$\" запрашивает выполнение операции:\n\n$PERMISSIONS$\n\nЧерез API Tree Style Tab. Нажмите кнопку, чтобы предоставить разрешение.",
+  "api_requestedPermissions_message_linux": { "message": "⚠Аддон \"$NAME$\" запрашивает выполнение операции:\n\n$PERMISSIONS$\n\nЧерез API Tree Style Tab. Нажмите кнопку, если вы разрешаете.",
     "placeholders": {
       "NAME":        { "content": "$1", "example": "foobar" },
       "PERMISSIONS": { "content": "$2", "example": "tabs" }
@@ -265,6 +282,9 @@
   "api_requestedPermissions_type_activeTab": { "message": "Доступ к активной вкладке браузера" },
   "api_requestedPermissions_type_tabs":      { "message": "Доступ к вкладкам браузера" },
   "api_requestedPermissions_type_cookies":   { "message": "Обнаружение контейнера вкладок браузера" },
+
+
+  "guessNewOrphanTabAsOpenedByNewTabCommandTitle": { "message": "Новая вкладка|Новая приватная вкладка" },
 
 
   "context_menu_label": { "message": "Дерево вкладок" },
@@ -275,6 +295,22 @@
   "context_reloadDescendants_label": { "message": "Обновить дочерние" },
   "context_reloadDescendants_label_multiselected": { "message": "Обновить дочерние этих вкладок" },
   "context_reloadDescendants_command": { "message": "Обновить дочерние" },
+  "context_toggleMuteTree_label_mute":                        { "message": "Убрать зв&ук этого дерева" },
+  "context_toggleMuteTree_label_multiselected_mute":          { "message": "Убрать зв&ук выбранных деревьев" },
+  "context_toggleMuteTree_label_unmute":                      { "message": "Вкл. зв&ук этому дереву" },
+  "context_toggleMuteTree_label_multiselected_unmute":        { "message": "Вкл. зв&ук выбранным деревьям" },
+  "context_toggleMuteTree_command":                           { "message": "Убрать/дать звук этому дереву" },
+  "context_toggleMuteDescendants_label_mute":                 { "message": "Убра&ть звук у дочерних" },
+  "context_toggleMuteDescendants_label_multiselected_mute":   { "message": "Убра&ть звук у дочерних выбранных вкладок" },
+  "context_toggleMuteDescendants_label_unmute":               { "message": "Да&ть звук дочерним" },
+  "context_toggleMuteDescendants_label_multiselected_unmute": { "message": "Да&ть звук дочерним выбранных вкладок" },
+  "context_toggleMuteDescendants_command":                    { "message": "Убрать/дать звук дочерним" },
+  "context_unblockAutoplayTree_label":                        { "message": "П&роигрывать это дерево" },
+  "context_unblockAutoplayTree_label_multiselected":          { "message": "П&роигрывать выбранные деревья" },
+  "context_unblockAutoplayTree_command":                      { "message": "Проигрывать это дерево" },
+  "context_unblockAutoplayDescendants_label":                 { "message": "Пр&оигрывать дочерние" },
+  "context_unblockAutoplayDescendants_label_multiselected":   { "message": "Пр&оигрывать дочерние у выбранных вкладок" },
+  "context_unblockAutoplayDescendants_command":               { "message": "Проигрывать дочерние" },
   "context_closeTree_label": { "message": "Закрыть это дерево" },
   "context_closeTree_label_multiselected": { "message": "Закрыть эти деревья" },
   "context_closeTree_command": { "message": "Закрыть это дерево" },
@@ -284,6 +320,11 @@
   "context_closeOthers_label": { "message": "Закрыть все, кроме этого дерева" },
   "context_closeOthers_label_multiselected": { "message": "Закрыть другие, кроме этих деревьев" },
   "context_closeOthers_command": { "message": "Закрыть все, кроме этого дерева" },
+  "context_toggleSticky_label_stick":                 { "message": "Закрепит&ь вкладку сбоку" },
+  "context_toggleSticky_label_multiselected_stick":   { "message": "Закрепит&ь выбранные вкладки сбоку" },
+  "context_toggleSticky_label_unstick":               { "message": "Открепит&ь вкладку с бока" },
+  "context_toggleSticky_label_multiselected_unstick": { "message": "Открепит&ь выбранные вкладки с бока" },
+  "context_toggleSticky_command":                   { "message": "За-/Открепить вкладки по бокам" },
   "context_collapseTree_label": { "message": "Свернуть это дерево" },
   "context_collapseTree_label_multiselected": { "message": "Свернуть эти деревья" },
   "context_collapseTree_command": { "message": "Свернуть это дерево" },
@@ -300,23 +341,25 @@
   "context_expandTreeRecursively_command": { "message": "Развернуть это дерево рекурсивно" },
   "context_expandAll_label": { "message": "Развернуть все" },
   "context_expandAll_command": { "message": "Развернуть все" },
-  "context_bookmarkTree_label": { "message": "В закладки это дерево…" },
-  "context_bookmarkTree_label_multiselected": { "message": "В закладки эти деревья…" },
-  "context_bookmarkTree_command": { "message": "В закладки это дерево…" },
+  "context_bookmarkTree_label": { "message": "Всё дерево в закладки…" },
+  "context_bookmarkTree_label_multiselected": { "message": "Выбранные деревья в закладки…" },
+  "context_bookmarkTree_command": { "message": "Всё дерево в закладки…" },
   "context_sendTreeToDevice_label": { "message": "Отправить это дерево на устройство" },
   "context_sendTreeToDevice_label_multiselected": { "message": "Отправить выбранные деревья на устройство" },
   "context_sendTreeToDevice_command": { "message": "Отправить это дерево на устройство" },
   "context_topLevel_prefix": { "message": "Верхний элемент: " },
 
-  "context_collapsed_label": { "message": "Свернут (проверка меню типа флажок)" },
-  "context_pinnedTab_label": { "message": "Прикреплен (проверка меню типа переключатель)" },
-  "context_unpinnedTab_label": { "message": "Откреплен (проверка меню типа переключатель)" },
+  "context_collapsed_label": { "message": "Свернут (для проверки меню типа флажок)" },
+  "context_pinnedTab_label": { "message": "Прикреплен (для проверки меню типа переключатель)" },
+  "context_unpinnedTab_label": { "message": "Откреплен (для проверки меню типа переключатель)" },
 
   "context_openAllBookmarksWithStructure_label": { "message": "Открыть все как дерево" },
-  "context_openAllBookmarksWithStructureRecursively_label": { "message": "Открыть все с подпапками" },
+  "context_openAllBookmarksWithStructureRecursively_label": { "message": "Открыть все включая подпапки" },
+
+  "config_showTreeCommandsInTabsContextMenuGlobally_label": { "message": "Показывать управление над древовидными вкладками в глобальном контекстном меню, например в браузерной панели вкладок " },
 
 
-  "config_title": { "message": "Настройки Tree Style Tab в новой вкладке" },
+  "config_title": { "message": "Настройки Tree Style Tab" },
 
   "config_recommended_choice": { "message": "(Рекомендуется)" },
   "config_firefoxCompatible_choice": { "message": "(имитация поведения Firefox)" },
@@ -329,19 +372,19 @@
   "config_sidebarPosition_caption": { "message": "Позиция содержимого боковой панели:" },
   "config_sidebarPosition_left": { "message": "Слева" },
   "config_sidebarPosition_right": { "message": "Справа" },
-  "config_sidebarPosition_auto": { "message": "Автоопределение" },
+  "config_sidebarPosition_auto": { "message": "Автоопределять когда показывать боковую панель" },
   "config_sidebarPosition_description": { "message": "* Эта настройка не меняет положение боковой панели. Если нужно переместить саму панель, то в меню заголовка боковой панели выберите \"Переместить боковую панель...\"." },
 
   "config_style_caption": { "message": "Тема" },
-  "config_style_proton": { "message": "Протон" },
-  "config_style_photon": { "message": "Фотон" },
-  "config_style_sidebar": { "message": "Сайдбар" },
-  "config_style_highcontrast": { "message": "Контраст" },
+  "config_style_proton": { "message": "Proton" },
+  "config_style_photon": { "message": "Photon" },
+  "config_style_sidebar": { "message": "Боковая панель" },
+  "config_style_highcontrast": { "message": "Высококонтрастный" },
   "config_style_none": { "message": "Без стиля" },
-  "config_style_none_info": { "message": " ( * Украсьте все самостоятельно используя \"Расширенные настройки\" => \"Дополнительные стили боковой панели\")" },
+  "config_style_none_info": { "message": " ( * Можете перекрасить всё самостоятельно через \"Расширенные настройки\" => \"Пользовательские стили\")" },
 
   "config_colorScheme_caption": { "message": "Цветовая схема:" },
-  "config_colorScheme_photon": { "message": "Фотон" },
+  "config_colorScheme_photon": { "message": "Photon" },
   "config_colorScheme_systemColor": { "message": "Системные цвета" },
 
   "config_maxTreeLevel_before": { "message": "Отступ вкладок до" },
@@ -358,12 +401,15 @@
   "config_shiftTabsForScrollbarDistance_label_before": { "message": "Сдвигать вкладки в сторону на " },
   "config_shiftTabsForScrollbarDistance_label_after": { "message": " чтобы кнопки на вкладках не перекрывались скролбаром" },
   "config_shiftTabsForScrollbarDistance_placeholder": { "message": "(CSS length)" },
-  "config_shiftTabsForScrollbarOnlyOnHover_label": { "message": "Сдвигать вкладки только если курсор рядом со скролбаром" },
-  "config_suppressGapFromShownOrHiddenToolbar_caption": { "message": "Исправлять глюки сайдбара при отображении/скрытии других панелей, для:" },
+  "config_shiftTabsForScrollbarOnlyOnHover_label": { "message": "Сдвигать вкладки только если курсор рядом с полосой прокрутки" },
+  "config_suppressGapFromShownOrHiddenToolbar_caption": { "message": "Исправлять глюки боковой панели при отображении/скрытии других панелей, для:" },
   "config_suppressGapFromShownOrHiddenToolbarOnFullScreen_label": { "message": "Полноэкранных окон" },
   "config_suppressGapFromShownOrHiddenToolbarOnNewTab_label": { "message": "Пустых новых вкладок (Firefox 85 и новее)" },
   "config_suppressGapFromShownOrHiddenToolbarOnlyOnMouseOperation_label": { "message": "Только при щелчках на боковой панели." },
   "config_showDialogInSidebar_label": { "message": "Показать диалоги на боковой панели, если возможно" },
+  "config_outOfScreenTabsRenderingPages_label": { "message": "Сколько страниц отрисовывать заранее:" },
+  "config_outOfScreenTabsRenderingPages_description": { "message": "* \"-1\" будет отрисовывать все вкладки для ускорения прокрутки, но из-за этого первоначальная загрузка может дольше длиться." },
+  "config_renderHiddenTabs_label": { "message": "Показывать скрытые вкладки, скрытые другими расширениями" },
 
 
   "config_context_caption": { "message": "Контекстное меню" },
@@ -371,12 +417,12 @@
   "config_extraItems_tabs_caption": { "message": "Дополнительные пункты контекстного меню" },
   "config_extraItems_tabs_topLevel": { "message": "Основное меню" },
   "config_extraItems_tabs_subMenu": { "message": "Вложенное меню" },
-  "config_extraItems_tabs_middleClick": { "message": "Действие щелчка СКМ" },
+  "config_extraItems_tabs_middleClick": { "message": "Действие щелчка колесика" },
   "config_extraItems_bookmarks_caption": { "message": "Пункты контекстного меню закладок" },
   "config_openAllBookmarksWithStructureDiscarded_label": { "message": "Открывать незагруженными" },
   "config_suppressGroupTabForStructuredTabsFromBookmarks_label": { "message": "Отмена групповой вкладки верхнего уровня, если вкладки уже организованы в дерево" },
 
-  "config_sendTabsToDevice_caption": { "message": "Отправляйте вкладки на другие устройства через контекстное меню используя Firefox Sync" },
+  "config_sendTabsToDevice_caption": { "message": "Отправляйте вкладки на другие устройства из контекстного меню через Firefox Sync" },
   "config_syncRequirements_description": { "message": "Эта функция зависит от Firefox Sync. Вкладки можно отправлять только на устройства с установленным TST. Сначала активируйте Firefox Sync в настройках Firefox и установите TST на другие устройства." },
   "config_syncDeviceInfo_name_label": { "message": "Название и значок этого устройства:" },
   "config_syncDeviceInfo_name_description_before": { "message": "TST не может определить имя устройства, из-за ограничений API WebExtensions. Установите имя(id) для этого устройства вручную. (Рекомендуется копировать " },
@@ -390,17 +436,37 @@
   "config_removeDeviceButton_label": { "message": "Удалить" },
   "config_removeDeviceButton_tooltip": { "message": "Удалить это устройство из списка" },
 
+  "config_autoAttachOnContextNewTabCommand_before": { "message": "Для кнопки \"Новая вкладка\" в контекстном меню, открывать пустую вкладку как" },
+  "config_autoAttachOnContextNewTabCommand_noControl": { "message": "(не контролируется)" },
+  "config_autoAttachOnContextNewTabCommand_independent": { "message": "Независимая вкладка" },
+  "config_autoAttachOnContextNewTabCommand_childTop": { "message": "Первая дочерняя от текущей вкладки" },
+  "config_autoAttachOnContextNewTabCommand_childEnd": { "message": "Последняя дочерняя от текущей вкладки" },
+  "config_autoAttachOnContextNewTabCommand_sibling": { "message": "Соседняя от текущей вкладки" },
+  "config_autoAttachOnContextNewTabCommand_nextSibling": { "message": "След. соседняя от текущей вкладки" },
+  "config_autoAttachOnContextNewTabCommand_nextSiblingWithInheritedContainer": { "message": "След. соседняя, тот же контейнер" },
+  "config_autoAttachOnContextNewTabCommand_after": { "message": "\u200b" },
+
 
   "config_newTabWithOwner_caption": { "message": "Вкладки, открытые из существующих вкладок" },
 
   "config_autoAttachOnOpenedWithOwner_before": { "message": "Если вкладка открывается из существующей вкладки, открыть ее как - " },
   "config_autoAttachOnOpenedWithOwner_noControl": { "message": "(не контролируется)" },
   "config_autoAttachOnOpenedWithOwner_independent": { "message": "независимая вкладка" },
-  "config_autoAttachOnOpenedWithOwner_child": { "message": "дочернюю вкладку" },
   "config_autoAttachOnOpenedWithOwner_childNextToLastRelatedTab": { "message": "дочерняя вкладка, рядом с недавно открытой дочерней" },
-  "config_autoAttachOnOpenedWithOwner_sibling": { "message": "одноуровневую вкладку" },
-  "config_autoAttachOnOpenedWithOwner_nextSibling": { "message": "следующую одноуровневую" },
+  "config_autoAttachOnOpenedWithOwner_childTop": { "message": "Первая дочерняя от родительской вкладки" },
+  "config_autoAttachOnOpenedWithOwner_childEnd": { "message": "Последняя дочерняя от родительской вкладки" },
+  "config_autoAttachOnOpenedWithOwner_sibling": { "message": "Соседняя от родительской вкладки" },
+  "config_autoAttachOnOpenedWithOwner_nextSibling": { "message": "След. соседняя от родительской вкладки" },
   "config_autoAttachOnOpenedWithOwner_after": { "message": "\u200b" },
+
+  "config_insertNewTabFromFirefoxViewAt_caption": { "message": "Куда вставлять новые вкладки от Firefox View (будут появляться как корневые вкладки)" },
+  "config_insertNewTabFromFirefoxViewAt_noControl": { "message": "Без изменений (оставлять решение за браузером или другими расширениями вкладок)" },
+  "config_insertNewTabFromFirefoxViewAt_nextToLastRelatedTab": { "message": "Next to the recently opened child, or near the opener" },
+  "config_insertNewTabFromFirefoxViewAt_top": { "message": "В верху дерева (рядом с открывающей)" },
+  "config_insertNewTabFromFirefoxViewAt_end": { "message": "В конце дерева" },
+
+  "config_autoGroupNewTabsFromFirefoxView_label": { "message": "Автогруппирование вкладок открытых из Firefox View (новая вкладка группы будет открыта с заголовком типа \"Вкладки из ...\")" },
+  "config_groupTabTemporaryStateForChildrenOfFirefoxView_label": { "message": "Стандартное состояние группы вкладок открытых из Firefox View: " },
 
   "config_insertNewTabFromPinnedTabAt_caption": { "message": "Позиция новых дочерних вкладок открытых из закрепленных (будут отображаться как корневые)" },
   "config_insertNewTabFromPinnedTabAt_noControl": { "message": "Не контролируется (решает Firefox или другие аддоны)" },
@@ -427,26 +493,32 @@
   "config_autoAttachOnNewTabCommand_before": { "message": "Открыть новую пустую вкладку как" },
   "config_autoAttachOnNewTabCommand_noControl": { "message": "(не контролируется)" },
   "config_autoAttachOnNewTabCommand_independent": { "message": "независимую вкладку" },
-  "config_autoAttachOnNewTabCommand_child": { "message": "дочернюю текущей" },
+  "config_autoAttachOnNewTabCommand_childTop": { "message": "Первая дочерняя текущей вкладки" },
+  "config_autoAttachOnNewTabCommand_childEnd": { "message": "Последняя дочерняя текущей вкладки" },
   "config_autoAttachOnNewTabCommand_sibling": { "message": "одноуровневую вкладку" },
   "config_autoAttachOnNewTabCommand_nextSibling": { "message": "следующую одноуровневую" },
   "config_autoAttachOnNewTabCommand_after": { "message": "\u200b" },
-  "config_guessNewOrphanTabAsOpenedByNewTabCommandUrl_before": { "message": "Считать недавно открытой вкладку, открытую действием \"Новая вкладка\", если она открывается с URL: " },
-  "config_guessNewOrphanTabAsOpenedByNewTabCommandUrl_after": { "message": "( * Вы можете перечислить несколько URL разделяя их \"|\")" },
+  "config_guessNewOrphanTabAsOpenedByNewTabCommandTitle_before": { "message": "Считать свежеоткрытую вкладку как открытую действием \"Новая вкладка\", если она открывается с заголовком(-ами) " },
+  "config_guessNewOrphanTabAsOpenedByNewTabCommandUrl_before": { "message": " или адресом(-ами)" },
+  "config_guessNewOrphanTabAsOpenedByNewTabCommandUrl_after": { "message": "(* Можно задать несколько значений списком, разделяя их \"|\")" },
 
-  "config_autoAttachOnNewTabButtonMiddleClick_before": { "message": "Щелчком СКМ, открыть новую пустую вкладку как" },
+  "config_autoAttachOnNewTabButtonMiddleClick_before": { "message": "По щелчку колесиком, открыть новую пустую вкладку как" },
   "config_autoAttachOnNewTabButtonMiddleClick_noControl": { "message": "(не контролируется)" },
   "config_autoAttachOnNewTabButtonMiddleClick_independent": { "message": "независимую вкладку" },
-  "config_autoAttachOnNewTabButtonMiddleClick_child": { "message": "дочернюю текущей" },
+  "config_autoAttachOnNewTabButtonMiddleClick_childTop": { "message": "Первая дочерняя текущей вкладки" },
+  "config_autoAttachOnNewTabButtonMiddleClick_childEnd": { "message": "Последняя дочерняя текущей вкладки" },
   "config_autoAttachOnNewTabButtonMiddleClick_sibling": { "message": "одноуровневую вкладку" },
   "config_autoAttachOnNewTabButtonMiddleClick_nextSibling": { "message": "следующую одноуровневую" },
   "config_autoAttachOnNewTabButtonMiddleClick_nextSiblingWithInheritedContainer": { "message": "тоже что и с Ctrl (следующую одноуровневую, тот же контейнер)" },
   "config_autoAttachOnNewTabButtonMiddleClick_after": { "message": "\u200b" },
 
-  "config_autoAttachOnNewTabButtonAccelClick_before": { "message": "Щелчком ЛКМ+Ctrl, открыть новую пустую вкладку как" },
+  "config_middleClickPasteURLOnNewTabButton_label": { "message": "Открыть новую вкладку по адресу из буфера обмена (*симуляция браузерного поведения с \"browser.tabs.searchclipboardfor.middleclick\"=\"true\", еще может надо будет включить \"dom.events.asyncClipboard.clipboardItem\")" },
+
+  "config_autoAttachOnNewTabButtonAccelClick_before": { "message": "Щелчком ЛКМ+Ctrl/⌘, открыть новую пустую вкладку как" },
   "config_autoAttachOnNewTabButtonAccelClick_noControl": { "message": "(не контролируется)" },
   "config_autoAttachOnNewTabButtonAccelClick_independent": { "message": "независимую вкладку" },
-  "config_autoAttachOnNewTabButtonAccelClick_child": { "message": "дочернюю текущей" },
+  "config_autoAttachOnNewTabButtonAccelClick_childTop": { "message": "Первая дочерняя текущей вкладки" },
+  "config_autoAttachOnNewTabButtonAccelClick_childEnd": { "message": "Последняя дочерняя текущей вкладки" },
   "config_autoAttachOnNewTabButtonAccelClick_sibling": { "message": "одноуровневую вкладку" },
   "config_autoAttachOnNewTabButtonAccelClick_nextSibling": { "message": "следующую одноуровневую" },
   "config_autoAttachOnNewTabButtonAccelClick_nextSiblingWithInheritedContainer": { "message": "следующую одноуровневую, тот же контейнер" },
@@ -454,12 +526,13 @@
 
   "config_autoAttachWithURL_caption": { "message": "Непустые новые вкладки" },
 
-  "config_duplicateTabAction_caption": { "message": "Дублировать вкладки (щелчком СКМ на кнопке \"Перезагрузить\" и т.п.)" },
+  "config_duplicateTabAction_caption": { "message": "Дублировать вкладки (щелчком СКМ на кнопке \"Перезагрузить\" и т. п.)" },
 
   "config_autoAttachOnDuplicated_before": { "message": "Дублировать вкладку как" },
   "config_autoAttachOnDuplicated_noControl": { "message": "(не контролируется)" },
   "config_autoAttachOnDuplicated_independent": { "message": "независимую вкладку" },
-  "config_autoAttachOnDuplicated_child": { "message": "дочернюю текущей" },
+  "config_autoAttachOnDuplicated_childTop": { "message": "Первая дочерняя текущей вкладки" },
+  "config_autoAttachOnDuplicated_childEnd": { "message": "Последняя дочерняя текущей вкладки" },
   "config_autoAttachOnDuplicated_sibling": { "message": "одноуровневую вкладку" },
   "config_autoAttachOnDuplicated_nextSibling": { "message": "следующую одноуровневую" },
   "config_autoAttachOnDuplicated_after": { "message": "\u200b" },
@@ -468,7 +541,8 @@
   "config_autoAttachOnOpenedFromExternal_before": { "message": "Открыть как" },
   "config_autoAttachOnOpenedFromExternal_noControl": { "message": "(не контролируется)" },
   "config_autoAttachOnOpenedFromExternal_independent": { "message": "независимую вкладку" },
-  "config_autoAttachOnOpenedFromExternal_child": { "message": "дочернюю текущей" },
+  "config_autoAttachOnOpenedFromExternal_childTop": { "message": "Первая дочерняя текущей вкладки" },
+  "config_autoAttachOnOpenedFromExternal_childEnd": { "message": "Последняя дочерняя текущей вкладки" },
   "config_autoAttachOnOpenedFromExternal_sibling": { "message": "одноуровневую вкладку" },
   "config_autoAttachOnOpenedFromExternal_nextSibling": { "message": "следующую одноуровневую" },
   "config_autoAttachOnOpenedFromExternal_after": { "message": "\u200b" },
@@ -481,7 +555,8 @@
   "config_autoAttachSameSiteOrphan_before": { "message": "Открыть ее как " },
   "config_autoAttachSameSiteOrphan_noControl": { "message": "(не контролируется)" },
   "config_autoAttachSameSiteOrphan_independent": { "message": "независимую вкладку" },
-  "config_autoAttachSameSiteOrphan_child": { "message": "дочернюю текущей" },
+  "config_autoAttachSameSiteOrphan_childTop": { "message": "Первая дочерняя текущей вкладки" },
+  "config_autoAttachSameSiteOrphan_childEnd": { "message": "Последняя дочерняя текущей вкладки" },
   "config_autoAttachSameSiteOrphan_sibling": { "message": "одноуровневую вкладку" },
   "config_autoAttachSameSiteOrphan_nextSibling": { "message": "следующую одноуровневую" },
   "config_autoAttachSameSiteOrphan_after": { "message": "\u200b" },
@@ -494,7 +569,8 @@
   "config_autoAttachOnAnyOtherTrigger_before": { "message": "Открыть как" },
   "config_autoAttachOnAnyOtherTrigger_noControl": { "message": "(не контролируется)" },
   "config_autoAttachOnAnyOtherTrigger_independent": { "message": "независимую вкладку" },
-  "config_autoAttachOnAnyOtherTrigger_child": { "message": "дочернюю текущей" },
+  "config_autoAttachOnAnyOtherTrigger_childTop": { "message": "Первая дочерняя текущей вкладки" },
+  "config_autoAttachOnAnyOtherTrigger_childEnd": { "message": "Последняя дочерняя текущей вкладки" },
   "config_autoAttachOnAnyOtherTrigger_sibling": { "message": "одноуровневую вкладку" },
   "config_autoAttachOnAnyOtherTrigger_nextSibling": { "message": "следующую одноуровневую" },
   "config_autoAttachOnAnyOtherTrigger_after": { "message": "\u200b" },
@@ -504,17 +580,19 @@
   "config_inheritContextualIdentityToTabsFromAnyOtherTriggerMode_parent": { "message": "Наследовать от родительской вкладки в дереве" },
   "config_inheritContextualIdentityToTabsFromAnyOtherTriggerMode_lastActive": { "message": "Наследовать от текущей вкладки" },
 
+  "config_inheritContextualIdentityToUnopenableURLTabs_label": { "message": "Переоткрыть вкладку в унаследованном контейнере, даже если там неоткрывающийся, из-за доступа расширения, адрес" },
+
   "config_groupTab_caption": { "message": "Автогруппировка вкладок" },
 
   "config_tabBunchesDetectionTimeout_before": { "message": "Обнаружение вкладок, открытых из закладок в течение" },
   "config_tabBunchesDetectionTimeout_after": { "message": "мс, и:" },
-  "config_autoGroupNewTabsFromBookmarks_label": { "message": "Группировать вкладки с заголовком типа \"... и больше\"" },
+  "config_autoGroupNewTabsFromBookmarks_label": { "message": "Группировать вкладки с заголовком типа \"... и т. п.\"" },
   "config_restoreTreeForTabsFromBookmarks_label": { "message": "Восстановить структуру дерева" },
   "config_requireBookmarksPermission_tooltiptext": { "message": "Эта функция требует права доступа к закладкам. Нажмите здесь, чтобы запросить необходимое разрешение." },
   "config_requestPermissions_bookmarks_autoGroupNewTabs_before": { "message": "(" },
   "config_requestPermissions_bookmarks_autoGroupNewTabs_after": { "message": "Разрешить обнаруживать закладки, соответствующие вкладкам)" },
   "config_tabsFromSameFolderMinThresholdPercentage_before": { "message": "Рассматривать все новые вкладки как открытые из одной папки закладок, если более " },
-  "config_tabsFromSameFolderMinThresholdPercentage_after": { "message": "% вкладок имеют соответствующую закладку в общей папке закладок" },
+  "config_tabsFromSameFolderMinThresholdPercentage_after": { "message":  "% вкладок имеют соответствующую закладку в общей папке закладок" },
   "config_autoGroupNewTabsFromOthers_label": { "message": "Автогруппировать вкладки, открытые одновременно не из закладок" },
   "config_tabBunchesDetectionDelayOnNewWindow_before": { "message": "Автогруппировать вкладки открытые в течении" },
   "config_tabBunchesDetectionDelayOnNewWindow_after": { "message": "мс, при открытии нового окна, в составе вкладок открытых как \"домашняя страница\"." },
@@ -543,7 +621,7 @@
   "config_successorTabControlLevel_inTree": { "message": "Перейти на предыдущую вкладку дерева" },
   "config_successorTabControlLevel_simulateDefault": { "message": "Перейти на следующую вкладку (как в Firefox)" },
   "config_successorTabControlLevel_never": { "message": "Не контролировать фокус (решает Firefox или другие аддоны)" },
-  "config_successorTabControlLevel_legacyDescription": { "message": "* Поведение Firefox \"browser.tabs.selectOwnerOnClose\"=\"true\" сработает раньше этой конфигурации." },
+  "config_successorTabControlLevel_legacyDescription": { "message": "* Поведение Firefox с \"browser.tabs.selectOwnerOnClose\"=\"true\" сработает раньше этой настройки." },
   "config_simulateSelectOwnerOnClose_label": { "message": "Переместить фокус на вкладку, из которой открыта закрываемая ( * имитация \"browser.tabs.selectOwnerOnClose\"=\"true\", приорететно для настроек выше)" },
 
   "config_fixupTreeOnTabVisibilityChanged_caption": { "message": "Если видимость вкладок изменяется другими аддонами" },
@@ -559,7 +637,9 @@
 
   "config_treeDoubleClickBehavior_caption":             { "message": "Двойной щелчок" },
   "config_treeDoubleClickBehavior_toggleCollapsed":     { "message": "Свернуть/развернуть дерево" },
-  "config_treeDoubleClickBehavior_close":               { "message": "Закрыть вкладку ( * имитация \"browser.tabs.closeTabByDblclick\"=\"true\")" },
+  "config_treeDoubleClickBehavior_toggleSticky":        { "message": "Не/Прикрепляться к краям панели вкладок" },
+  "config_treeDoubleClickBehavior_close":               { "message": "Закрыть вкладку" },
+  "config_treeDoubleClickBehavior_close_note":          { "message": " (* имитация поведения браузера с \"browser.tabs.closeTabByDblclick\"=\"true\")" },
   "config_treeDoubleClickBehavior_none":                { "message": "Ничего не делать" },
 
   "config_parentTabOperationBehaviorMode_caption":           { "message": "Если родительская вкладка закрыта или перемещена" },
@@ -570,9 +650,9 @@
   "config_closeParentBehavior_outsideSidebar":      { "message": "Если родительская вкладка (независимо от состояния ее дерева) закрывается в нативной панели вкладок Firefox, сочетанием клавиш или другим аддоном," },
   "config_moveParentBehavior_outsideSidebar":       { "message": "Если родительская вкладка (независимо от состояния ее дерева) перемещается в нативной панели вкладок Firefox, сочетанием клавиш или другим аддоном," },
 
-  "config_parentTabOperationBehaviorMode_consistent":             { "message": "Рекомендуется для тех, кто не используют нативную панель вкладок Firefox" },
-  "config_parentTabOperationBehaviorMode_consistent_caption":    { "message": "Независимо от видимости боковой панели, для любой операции:" },
-  "config_parentTabOperationBehaviorMode_consistent_notes":       { "message": "Вкладки ведут себя так, как указано выше, даже при действиях в нативной панели вкладок Firefox, по сочетанию клавиш или из других аддонов." },
+  "config_parentTabOperationBehaviorMode_consistent":         { "message": "Рекомендуется для тех, кто не используют нативную панель вкладок Firefox" },
+  "config_parentTabOperationBehaviorMode_consistent_caption": { "message": "Независимо от видимости боковой панели, для любой операции:" },
+  "config_parentTabOperationBehaviorMode_consistent_notes":   { "message": "Вкладки ведут себя так, как указано выше, даже при действиях в нативной панели вкладок Firefox, по сочетанию клавиш или из других аддонов." },
 
   "config_parentTabOperationBehaviorMode_custom":                { "message": "Свое" },
   "config_closeParentBehavior_insideSidebar_expanded_caption":   { "message": "Закрыть: Если родительская вкладка с развернутым деревом закрывается через боковую панель," },
@@ -585,7 +665,7 @@
   "config_moveParentBehavior_noSidebar_collapsed_caption":       { "message": "если боковая панель закрыта," },
   "config_moveParentBehavior_noSidebar_expanded_caption":        { "message": "если боковая панель закрыта," },
 
-  "config_parentTabOperationBehavior_entireTree":                { "message": "Закрыть / переместить все дерево" },
+  "config_parentTabOperationBehavior_entireTree":           { "message": "Закрыть / переместить все дерево" },
   "config_closeParentBehavior_entireTree":                  { "message": "Закрыть все дерево" },
   "config_moveParentBehavior_entireTree":                   { "message": "Переместить все дерево" },
   "config_parentTabOperationBehavior_replaceWithGroupTab":  { "message": "Заменить закрытую/перемещенную родительскую вкладку вкладкой группы" },
@@ -664,12 +744,12 @@
   "config_accelKey_control": { "message": "Ctrl/Control" },
   "config_accelKey_meta":    { "message": "Meta/⌘" },
 
-  "config_shortcuts_resetAll": { "message": "Сбросить ВСЁ" },
+  "config_shortcuts_resetAll": { "message": "Сбросить ВСЕ горячие клавиши" },
 
 
   "config_advanced_caption": { "message": "Расширенные настройки" },
 
-  "config_bookmarkTreeFolderName_before": { "message": "Имя папки для \"Это дерево в закладки…\":" },
+  "config_bookmarkTreeFolderName_before": { "message": "Имя папки для \"Это дерево в закладки\":" },
   "config_bookmarkTreeFolderName_after": { "message": "\u200b" },
   "config_bookmarkTreeFolderName_description": { "message": "Доступные шаблоны: %TITLE% (заголовок первой вкладки), %URL% (адрес первой вкладки), %YEAR% (год, 4 символа), %SHORT_YEAR% (год, 2 символа), %MONTH% (месяц, 2 символа), %DATE% (число, два символа), %HOURS% (часов, два символа), %MINUTES% (минут, два символа), %SECONDS% (секунд, два символа), %MILLISECONDS% (мс, три символа), %GROUP% (заголовок первой вкладки, если это вкладка группы - иначе пусто), %ANY(значение1, значение2, ...)% (первое эффективное значение из заданного списка)" },
 
@@ -683,13 +763,13 @@
   "config_scrollLines_label_before": { "message": "Прокручивать вверх или вниз на " },
   "config_scrollLines_label_after":  { "message": "строк командами \"Листать вкладки вверх/вниз построчно\" " },
 
-  "config_userStyleRules_label": { "message": "Дополнительные стили боковой панели" },
+  "config_userStyleRules_label": { "message": "Пользовательские стили (дополнительные правила стилизации для элементов Tree Style Tab, например боковой панели)" },
   "config_userStyleRules_description_before": { "message": "Смотрите " },
   "config_userStyleRules_description_link_label": { "message": "примеры кода и описания на TST-вики" },
   "config_userStyleRules_description_after": { "message": " ." },
   "config_userStyleRules_description_link_uri": { "message": "https://github.com/piroor/treestyletab/wiki/Code-snippets-for-custom-style-rules#for-version-2x" },
   "config_userStyleRules_themeRules_description": { "message": "Следующие свойства также доступны через \"var()\", в зависимости от текущей темы браузера" },
-  "config_userStyleRules_themeRules_description_alphaVariations": { "message": "Вы можете изменить непрозрачность цвета с помощью цифрового суффикса, например, \"--theme-colors-tab_background_text-30\", означает непрозрачность 30%." },
+  "config_userStyleRules_themeRules_description_alphaVariations": { "message": "Вы можете изменить непрозрачность цвета с помощью цифрового суффикса, например, \"--theme-colors-tab_background_text-30\" (каждые 10%), тут это непрозрачность в 30%." },
   "config_userStyleRules_import": { "message": "Загрузить из файла" },
   "config_userStyleRules_export": { "message": "Сохранить в файл" },
   "config_userStyleRules_overwrite_title":     { "message": "Заменить текущие правила стиля?" },
@@ -705,19 +785,19 @@
 
   "config_addons_caption": { "message": "Дополнительные функции через другие аддоны" },
 
-  "config_addons_description_before": { "message": "Имеются " },
-  "config_addons_description_link_label": { "message": "аддоны, расширяющие возможности TST" },
-  "config_addons_description_after": { "message": ". Посмотрите их, если вам нужно больше функций для панели TST." },
+  "config_addons_description_before": { "message": "Есть " },
+  "config_addons_description_link_label": { "message": "расширения, дополняющие возможности TST" },
+  "config_addons_description_after": { "message": ". Взгляните на них, если понадобится большего от боковой панели TST." },
   "helper_addons_list_link_uri": { "message": "https://github.com/piroor/treestyletab/wiki/Helper-addons-extending-functionality-of-TST" },
 
-  "config_theme_description_before": { "message": "В настоящее время доступны только три встроенные темы \"Простая\", \"Сайдбар\" и \"Контраст\". Если вы хотите использовать не встроенную тему, см. " },
-  "config_theme_description_link_label": { "message": "'Восстановление старых встроенных тем'" },
-  "config_theme_description_after": { "message": " как пример." },
+  "config_theme_description_before": { "message": "Сейчас доступны только три встроенные темы: \"Простая\", \"Боковая панель\" и \"Высококонтрастная\". Если захотите использовать стороннюю тему, см. " },
+  "config_theme_description_link_label": { "message": "отрывки с кодом" },
+  "config_theme_description_after": { "message": " ради примеров." },
   "helper_theme_list_link_uri": { "message": "https://github.com/piroor/treestyletab/wiki/Code-snippets-for-custom-style-rules#restore-old-built-in-themes" },
 
-  "config_externaladdonpermissions_label": { "message": "Разрешения для вызова API из других аддонов" },
-  "config_externaladdonpermissions_description": { "message": "Аддоны, разрешенные здесь, смогут получить доступ к данным вкладок или вкладкам в приватных окнах, <em>через разрешения TreeStyleTab<em>, даже если сам аддон не имеет таких разрешений.. <em>Пожалуйста, не давйте разрешений недоверенным аддонам.</em>" },
-  "config_externalAddonPermissions_header_name": { "message": "Название аддона" },
+  "config_externaladdonpermissions_label": { "message": "Разрешения для вызова API из других расширений" },
+  "config_externaladdonpermissions_description": { "message": "Расширения, разрешенные здесь, смогут получить доступ к данным вкладок или вкладкам в приватных окнах, <em>через разрешения TreeStyleTab<em>, даже если само расширение не имеет таких разрешений.. <em>Осторожней, не давайте разрешений недоверенным расширениям.</em>" },
+  "config_externalAddonPermissions_header_name": { "message": "Название расширения" },
   "config_externalAddonPermissions_header_permissions": { "message": "Разрешенные специальные операции" },
   "config_externalAddonPermissions_header_incognito": { "message": "Уведомлять из приватных окон" },
 
@@ -733,26 +813,29 @@
   "config_link_tabbarPage_label":   { "message": "Панель Tree Style Tab во вкладке" },
 
   "config_runTests_label": { "message": "Запустить автоматические тесты" },
+  "config_runTestsParameters_label": { "message": " / Какие тесты запускать (список наименований тестов или рег. выражений, как \"testInheritMutedState,/^testHidden/,...\")" },
   "config_runBenchmark_label": { "message": "Запустить бенчмарк" },
   "config_enableLinuxBehaviors_label": { "message": "Активация специфического поведения Linux" },
   "config_enableMacOSBehaviors_label": { "message": "Активация специфического поведения macOS" },
   "config_enableWindowsBehaviors_label": { "message": "Активация специфического поведения Windows" },
   "config_debug_label": { "message": "Режим отладки" },
   "config_log_caption":               { "message": "Детальное логирование" },
-  "config_logTimestamp_label": { "message": "Лог с отметками времени" },
+  "config_logTimestamp_label": { "message": "Логировать с отметками времени" },
   "config_logFor_common":     { "message": "Запись логов из общих модулей" },
   "config_logFor_background": { "message": "Запись логов из фоновых модулей" },
   "config_logFor_sidebar":    { "message": "Запись логов из модулей боковой панели" },
   "config_loggingQueries_label": { "message": "Лог запросов вкладок" },
   "config_loggingConnectionMessages_label": { "message": "Лог внутренних сообщений" },
   "config_showLogsButton_label": { "message": "Показать журналы" },
-  "config_simulateSVGContextFill_label": { "message": "Активировать обходной путь для бага 1388193 и бага 1421329 для симуляции SVG иконок ( * Это может увеличить нагрузку на процессор. Для деактивации переключите \"svg.context-properties.content.enabled\" в \"about:config\", пока эти баги не будут исправлены.)" },
+  "config_simulateSVGContextFill_label": { "message": "Активировать обходной путь для бага 1388193 и бага 1421329 для симуляции SVG иконок (* Может увеличить нагрузку на процессор. Для деактивации переключите \"svg.context-properties.content.enabled\" в \"about:config\", пока эти баги не будут исправлены.)" },
   "config_staticARIALabel_label": { "message": "Использовать статическую метку ARIA для вкладок" },
-  "config_staticARIALabel_description": { "message": " * Попробуйте отметить это, если ваша система распознавания речи пропускает вкладки после некоторых операций с ними." },
-  "config_useCachedTree_label": { "message": "Оптимизация восстановления дерева с помощью кэша" },
-  "config_useCachedTree_description": { "message": "* Попробуйте снять флажок и установить повторно, чтобы обновить кэш, если поведение дерева нестабильно." },
-  "config_acceleratedTabCreation_label": { "message": "Ускорение операций с повторно открытыми вкладками ( * ПРИМЕЧАНИЕ: Возможно вы увидите нестабильную работу вкладок.)" },
-  "config_maximumAcceptableDelayForTabDuplication_before": { "message": "Отменить дублирование вкладок, когда это продолжается" },
+  "config_staticARIALabel_description": { "message": "* Попробуйте включить это, если ваша система распознавания речи пропускает вкладки после некоторых операций с ними." },
+  "config_useCachedTree_label": { "message": "Оптимизовать восстановление дерева с помощью кэша" },
+  "config_useCachedTree_description": { "message": "* Попробуйте снять флажок и установить повторно, чтобы обновить кэш, если дерево ведет себя нестабильно." },
+  "config_persistCachedTree_label": { "message": "Запоминать кэш дерева" },
+  "config_persistCachedTree_description": { "message": "*Процесс загрузки на старте браузера может ускорится, но из-за этого раздуется размер файла браузерной сессии и повысится I/O нагрузка на диск." },
+  "config_acceleratedTabCreation_label": { "message": "Ускорение операций с повторно открытыми вкладками (*ПРИМЕЧАНИЕ: Возможна нестабильная работа вкладок.)" },
+  "config_maximumAcceptableDelayForTabDuplication_before": { "message": "Отменить дублирование вкладок, если оно длится" },
   "config_maximumAcceptableDelayForTabDuplication_after": { "message": "миллисекунд или больше." },
   "config_delayForDuplicatedTabDetection_label_before": { "message": "Задержка обнаружения дублей вкладок:" },
   "config_delayForDuplicatedTabDetection_label_after": { "message": "мс (увеличьте значение, если дубли вкладок не обнаруживаются правильно)" },
@@ -763,12 +846,12 @@
       "percentage": { "content": "$1", "example": "50" }
     }},
   "config_labelOverflowStyle_caption": { "message": "Слишком длинный заголовок вкладок:" },
-  "config_labelOverflowStyle_fade":    { "message": "Увядание (лучшая видимость)" },
-  "config_labelOverflowStyle_crop":    { "message": "Подставлять \"..\" (лучше производительность)" },
+  "config_labelOverflowStyle_fade":    { "message": "Затухание (лучше видимость)" },
+  "config_labelOverflowStyle_crop":    { "message": "Обрезать с \"..\" (лучше производительность)" },
 
-  "config_requestPermissions_bookmarks": { "message": "Разрешить читать и писать закладки" },
-  "config_requestPermissions_bookmarks_context": { "message": "Включить контекстное меню закладок" },
-  "config_requestPermissions_tabHide":   { "message": "Разрешить показывать / скрывать отдельные вкладки ( * Вы должны снять/поставить этот флажок перед запуском тестов, чтобы убедиться, что разрешение получено)" },
+  "config_requestPermissions_bookmarks": { "message": "Разрешить читать и создавать закладки" },
+  "config_requestPermissions_bookmarks_context": { "message": "Разрешить открывать контекстное меню в закладках" },
+  "config_requestPermissions_tabHide":   { "message": "Разрешить показывать / скрывать отдельные вкладки (* Надо снять/поставить этот флажок перед запуском тестов, чтобы убедиться, что разрешение получено)" },
 
   "config_requestPermissions_fallbackToToolbarButton_title": { "message": "Нажмите \"Tree Style Tab\" кнопку панели инструментов" },
   "config_requestPermissions_fallbackToToolbarButton_message": { "message": "Из-за бага Firefox, вы не сможете запросить разрешение на этой странице. Нажмите \"Tree Style Tab\" кнопку на панели инструментов, чтобы получить разрешение." },
@@ -781,6 +864,7 @@
   "tabContextMenu_newTab_label":      { "message": "Нов&ая вкладка" },
 
   "tabContextMenu_reload_label":      { "message": "&Обновить вкладку" },
+  "tabContextMenu_unblockAutoplay_label": { "message": "П&роигрывать вкладку" },
   "tabContextMenu_mute_label":        { "message": "Выключить зв&ук" },
   "tabContextMenu_unmute_label":      { "message": "Включить зв&ук" },
 
@@ -799,6 +883,7 @@
   "tabContextMenu_sendTabsToAllDevices_label": { "message": "Отправить на все устройства" },
   "tabContextMenu_manageSyncDevices_label": { "message": "Управление устройствами…" },
   "tabContextMenu_shareTabURL_label":   { "message": "Поделиться" },
+  "tabContextMenu_shareTabURL_more_label":   { "message": "Далее…" },
 
 
   "tabContextMenu_closeMultipleTabs_label":  { "message": "&Закрыть несколько вкладок" },
@@ -811,6 +896,7 @@
   "tabContextMenu_close_label":       { "message": "Закр&ыть вкладку" },
 
   "tabContextMenu_reload_label_multiselected":      { "message": "&Обновить выбранные вкладки" },
+  "tabContextMenu_unblockAutoplay_label_multiselected": { "message": "П&роигрывать вкладку" },
   "tabContextMenu_mute_label_multiselected":        { "message": "Выключить зв&ук на выбранных" },
   "tabContextMenu_unmute_label_multiselected":      { "message": "Включить зв&ук на выбранных" },
 
@@ -822,8 +908,20 @@
   "tabContextMenu_moveTab_label_multiselected": { "message": "П&ереместить вкладки" },
   "tabContextMenu_sendTabsToDevice_label_multiselected": { "message": "Отправить %S вкладок на устройство" },
 
-  "tabContextMenu_bookmark_label_multiselected": { "message": "Добавить вкладки в зак&ладки…" },
-  "tabContextMenu_bookmarkSelected_label":       { "message": "Добавить выб&ранные в закладки…" },
+  "tabContextMenu_reloadSelected_label":               { "message": "Пере&загрузить выбранную вкладку" },
+  "tabContextMenu_reloadSelected_label_multiselected": { "message": "Пере&загрузить выбранные вкладки" },
 
-  "tabContextMenu_close_label_multiselected":       { "message": "Закрыть в&ыбранные вкладки" }
+  "tabContextMenu_bookmark_label_multiselected":         { "message": "Добавить вкладки в зак&ладки…" },
+  "tabContextMenu_bookmarkSelected_label":               { "message": "Добавить выб&ранную в закладки…" },
+  "tabContextMenu_bookmarkSelected_label_multiselected": { "message": "Добавить выб&ранные в закладки…" },
+
+  "tabContextMenu_close_label_multiselected":       { "message": "Close &Selected Tabs" },
+"config_autoAttachOnOpenedWithOwner_child": { "message": "дочернюю вкладку" },
+"config_autoAttachOnNewTabCommand_child": { "message": "дочернюю текущей" },
+"config_autoAttachOnNewTabButtonMiddleClick_child": { "message": "дочернюю текущей" },
+"config_autoAttachOnNewTabButtonAccelClick_child": { "message": "дочернюю текущей" },
+"config_autoAttachOnDuplicated_child": { "message": "дочернюю текущей" },
+"config_autoAttachOnOpenedFromExternal_child": { "message": "дочернюю текущей" },
+"config_autoAttachSameSiteOrphan_child": { "message": "дочернюю текущей" },
+"config_autoAttachOnAnyOtherTrigger_child": { "message": "дочернюю текущей" }
 }

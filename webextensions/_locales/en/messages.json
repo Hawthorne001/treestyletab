@@ -135,7 +135,7 @@
       "progress": { "content": "$1", "example": "50" }
     }},
 
-  "blank_allUrlsPermissionRequiredMessage": { "message": "This message is here due to Firefox tried to restore a dialog which is provided by Tree Style Tab addon. Please grant the \"Access your data for all websites\" permission via the \"Permissions\" tab of Tree Style Tab's details page in the Add-on Manager, if this message is not wanted to appear anymore." },
+  "blank_allUrlsPermissionRequiredMessage": { "message": "This message is here due to Firefox tried to restore a dialog which is provided by Tree Style Tab addon. Please grant the \"Access your data for all websites\" permission via the \"Permissions\" tab of Tree Style Tab's details page in the Add-on Manager, if you don't want this message to appear anymore." },
 
   "warnOnCloseTabs_title":     { "message": "Close tabs?" },
   "warnOnCloseTabs_message":   { "message": "You are about to close $NUMBER$ tabs. Are you sure you want to continue?",
@@ -637,7 +637,7 @@
 
   "config_treeDoubleClickBehavior_caption":             { "message": "Double-click on a tab" },
   "config_treeDoubleClickBehavior_toggleCollapsed":     { "message": "Collapse/expand tree" },
-  "config_treeDoubleClickBehavior_toggleSticky":        { "message": "Stick to tab bar adges / Unstick from tab bar edges" },
+  "config_treeDoubleClickBehavior_toggleSticky":        { "message": "Stick to tab bar edges / Unstick from tab bar edges" },
   "config_treeDoubleClickBehavior_close":               { "message": "Close tab" },
   "config_treeDoubleClickBehavior_close_note":          { "message": " (*simulation of the browser's built-in behavior for \"browser.tabs.closeTabByDblclick\"=\"true\")" },
   "config_treeDoubleClickBehavior_none":                { "message": "Do nothing" },
@@ -751,7 +751,7 @@
 
   "config_bookmarkTreeFolderName_before": { "message": "Folder name for \"Bookmark this Tree\":" },
   "config_bookmarkTreeFolderName_after": { "message": "\u200b" },
-  "config_bookmarkTreeFolderName_description": { "message": "Available placeholders: %TITLE% (title of the first tab), %URL% (URL of the first tab), %YEAR% (year, four digits), %SHORT_YEAR% (year, two digits), %MONTH% (month, two digits), %DATE% (date, two digits), %HOURS% (hours, two digits), %MINUTES% (minutes, two digits), %SECONDS% (seconds, two digits), %MILLISECONDS% (milliseconds, trhee digits), %GROUP% (title of the first tab if it is group tab - otherwise blank), %ANY(value1, value2, ...)% (the first effective value from the given list)" },
+  "config_bookmarkTreeFolderName_description": { "message": "Available placeholders: %TITLE% (title of the first tab), %URL% (URL of the first tab), %YEAR% (year, four digits), %SHORT_YEAR% (year, two digits), %MONTH% (month, two digits), %DATE% (date, two digits), %HOURS% (hours, two digits), %MINUTES% (minutes, two digits), %SECONDS% (seconds, two digits), %MILLISECONDS% (milliseconds, three digits), %GROUP% (title of the first tab if it is group tab - otherwise blank), %ANY(value1, value2, ...)% (the first effective value from the given list)" },
 
   "config_defaultBookmarkParentId_label_before":  { "message": "Create new bookmarks under" },
   "config_defaultBookmarkParentId_label_after":   { "message": "\u200b" },
