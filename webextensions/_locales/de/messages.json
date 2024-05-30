@@ -918,7 +918,7 @@
   "tabContextMenu_close_label_multiselected":       { "message": "Close &Selected Tabs" },
 "config_autoAttachOnOpenedWithOwner_child": { "message": "untergeordneten Tab des übergeordneten Tab" },
 "config_autoAttachOnNewTabCommand_child": { "message": "untergeordneten Tab des aktiven Tab" },
-"_config_guessNewOrphanTabAsOpenedByNewTabCommandUrl_after": { "message": "​" },
+"_config_guessNewOrphanTabAsOpenedByNewTabCommandUrl_after": { "message": "\u200b" },
 "config_autoAttachOnNewTabButtonMiddleClick_child": { "message": "untergeordneten Tab des aktiven Tabs" },
 "config_autoAttachOnNewTabButtonAccelClick_child": { "message": "untergeordneten Tab des aktiven Tab" },
 "config_autoAttachOnDuplicated_child": { "message": "untergeordneten Tab des aktiven Tabs" },
