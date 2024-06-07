@@ -91,6 +91,11 @@ export const kCOMMAND_NOTIFY_CONTEXT_OVERRIDDEN      = 'treestyletab:notify-cont
 export const kCOMMAND_AUTODETECT_DUPLICATED_TAB_DETECTION_DELAY = 'treestyletab:autodetect-duplicated-tab-detection-delay';
 export const kCOMMAND_TEST_DUPLICATED_TAB_DETECTION             = 'treestyletab:test-duplicated-tab-detection';
 export const kCOMMAND_WAIT_UNTIL_SUCCESSORS_UPDATED = 'treestyletab:wait-until-successors-updated';
+export const kCOMMAND_GET_SIDEBAR_POSITION          = 'treestyletab:get-sidebar-position';
+export const kCOMMAND_GET_ABOVE_TAB                 = 'treestyletab:get-above-tab';
+export const kCOMMAND_GET_BELOW_TAB                 = 'treestyletab:get-below-tab';
+export const kCOMMAND_GET_LEFT_TAB                  = 'treestyletab:get-left-tab';
+export const kCOMMAND_GET_RIGHT_TAB                 = 'treestyletab:get-right-tab';
 export const kCOMMAND_GET_BOUNDING_CLIENT_RECT      = 'treestyletab:get-bounding-client-rect';
 
 export const kCOMMAND_ACTIVATE_TAB            = 'treestyletab:activate-tab';

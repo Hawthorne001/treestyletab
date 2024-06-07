@@ -158,8 +158,14 @@
     "focusParent": {
       "description": "__MSG_command_focusParent__"
     },
+    "focusParentOrCollapse": {
+      "description": "__MSG_command_focusParentOrCollapse__"
+    },
     "focusFirstChild": {
       "description": "__MSG_command_focusFirstChild__"
+    },
+    "focusFirstChildOrExpand": {
+      "description": "__MSG_command_focusFirstChildOrExpand__"
     },
     "focusLastChild": {
       "description": "__MSG_command_focusLastChild__"
@@ -169,6 +175,34 @@
     },
     "focusNextSibling": {
       "description": "__MSG_command_focusNextSibling__"
+    },
+    "simulateUpOnTree": {
+      "description": "__MSG_command_simulateUpOnTree__",
+      "suggested_key": {
+        "default": "Ctrl+Shift+Up",
+        "mac":     "Command+Shift+Up"
+      }
+    },
+    "simulateDownOnTree": {
+      "description": "__MSG_command_simulateDownOnTree__",
+      "suggested_key": {
+        "default": "Ctrl+Shift+Down",
+        "mac":     "Command+Shift+Down"
+      }
+    },
+    "simulateLeftOnTree": {
+      "description": "__MSG_command_simulateLeftOnTree__",
+      "suggested_key": {
+        "default": "Ctrl+Shift+Left",
+        "mac":     "Command+Shift+Left"
+      }
+    },
+    "simulateRightOnTree": {
+      "description": "__MSG_command_simulateRightOnTree__",
+      "suggested_key": {
+        "default": "Ctrl+Shift+Right",
+        "mac":     "Command+Shift+Right"
+      }
     },
     "tabbarUp": {
       "description": "__MSG_command_tabbarUp__",
