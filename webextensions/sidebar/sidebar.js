@@ -1076,7 +1076,7 @@ function onMessage(message, _sender, _respond) {
       });
 
     case Constants.kCOMMAND_GET_SIDEBAR_POSITION:
-      return Promise.resolve(isSidebarRightSide() ?
+      return Promise.resolve(document.documentElement.classList.contains('right') ?
         Constants.kTABBAR_POSITION_RIGHT :
         Constants.kTABBAR_POSITION_LEFT);
 
