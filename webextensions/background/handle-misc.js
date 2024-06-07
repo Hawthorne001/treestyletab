@@ -265,8 +265,9 @@ async function onShortcutCommand(command) {
 
     case 'simulateUpOnTree':
       if (SidebarConnection.isSidebarOpen(activeTab.windowId)) {
-        if (activeTab.pinned ||
-            activeTab == Tab.getFirstNormalTab(activeTab.windowId)) {
+        if (configs.faviconizePinnedTabs &&
+            (activeTab.pinned ||
+             activeTab == Tab.getFirstNormalTab(activeTab.windowId))) {
           const nextActiveId = await browser.runtime.sendMessage({
             type:     Constants.kCOMMAND_GET_ABOVE_TAB,
             windowId: activeTab.windowId,
@@ -291,7 +292,8 @@ async function onShortcutCommand(command) {
       return;
     case 'simulateDownOnTree':
       if (SidebarConnection.isSidebarOpen(activeTab.windowId)) {
-        if (activeTab.pinned) {
+        if (configs.faviconizePinnedTabs &&
+            activeTab.pinned) {
           const nextActiveId = await browser.runtime.sendMessage({
             type:     Constants.kCOMMAND_GET_BELOW_TAB,
             windowId: activeTab.windowId,
@@ -316,7 +318,8 @@ async function onShortcutCommand(command) {
       return;
     case 'simulateLeftOnTree':
       if (SidebarConnection.isSidebarOpen(activeTab.windowId)) {
-        if (activeTab.pinned) {
+        if (configs.faviconizePinnedTabs &&
+            activeTab.pinned) {
           const nextActiveId = await browser.runtime.sendMessage({
             type:     Constants.kCOMMAND_GET_LEFT_TAB,
             windowId: activeTab.windowId,
@@ -340,7 +343,8 @@ async function onShortcutCommand(command) {
       return;
     case 'simulateRightOnTree':
       if (SidebarConnection.isSidebarOpen(activeTab.windowId)) {
-        if (activeTab.pinned) {
+        if (configs.faviconizePinnedTabs &&
+            activeTab.pinned) {
           const nextActiveId = await browser.runtime.sendMessage({
             type:     Constants.kCOMMAND_GET_RIGHT_TAB,
             windowId: activeTab.windowId,
