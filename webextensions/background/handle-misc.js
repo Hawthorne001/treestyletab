@@ -484,14 +484,14 @@ async function isSidebarRightSide(windowId) {
 }
 
 function collapseOrFocusToParent(activeTab) {
-  if (!activeTab.$TST.subtreeCollapsed)
+  if (!activeTab.$TST.subtreeCollapsed && activeTab.$TST.hasChild)
     Commands.collapseTree(activeTab);
   else
     TabsInternalOperation.activateTab(activeTab.$TST.parent);
 }
 
 function expandOrFocusToFirstChild(activeTab) {
-  if (activeTab.$TST.subtreeCollapsed)
+  if (activeTab.$TST.subtreeCollapsed && activeTab.$TST.hasChild)
     Commands.expandTree(activeTab);
   else
     TabsInternalOperation.activateTab(activeTab.$TST.firstChild, {
