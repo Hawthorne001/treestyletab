@@ -1012,23 +1012,24 @@ async function onWheel(event) {
     return;
   }
 
-  if (EventUtils.getElementTarget(event).closest('.sticky-tabs-container')) {
-    event.stopImmediatePropagation();
-    event.preventDefault();
-    scrollTo({ delta: event.deltaY });
-    return;
-  }
+  const tab = EventUtils.getTabFromEvent(event);
+  const scrollBox = getScrollBoxFor(tab, { allowFallback: true });
 
   if (!TSTAPI.isScrollLocked()) {
     cancelRunningScroll();
+    if (EventUtils.getElementTarget(event).closest('.sticky-tabs-container') ||
+        (tab.pinned &&
+         scrollBox != mPinnedScrollBox)) {
+      event.stopImmediatePropagation();
+      event.preventDefault();
+      scrollTo({ delta: event.deltaY, scrollBox });
+    }
     return;
   }
 
   event.stopImmediatePropagation();
   event.preventDefault();
 
-  const tab = EventUtils.getTabFromEvent(event);
-  const scrollBox = getScrollBoxFor(tab, { allowFallback: true });
   TSTAPI.notifyScrolled({
     tab,
     scrollContainer: scrollBox,
