@@ -1465,6 +1465,7 @@ export async function moveTabs(tabs, options = {}) {
       }
 
       let movedTabIds = tabs.map(tab => tab.id);
+      let movedTabIdsSet = new Set(movedTabIds);
       await Promise.all([
         newWindow,
         (async () => {
@@ -1502,11 +1503,12 @@ export async function moveTabs(tabs, options = {}) {
               UserOperationBlocker.setProgress(50, windowId);
             movedTabs = movedTabs.map(tab => Tab.get(tab.id));
             movedTabIds = movedTabs.map(tab => tab.id);
+            movedTabIdsSet = new Set(movedTabIds);
           }
           else {
             for (const tab of movedTabs) {
-              if (tab.$TST.parent &&
-                  !movedTabs.includes(tab.$TST.parent))
+              if (tab.$TST.parentId &&
+                  !movedTabIdsSet.has(tab.$TST.parentId))
                 detachTab(tab, {
                   broadcast:    true,
                   toBeDetached: true
@@ -1547,7 +1549,6 @@ export async function moveTabs(tabs, options = {}) {
         if (movedTabs.some(tab => tab.active)) {
           // Blur to-be-moved tab, otherwise tabs.move() will activate them for each
           // while the moving process and all dicarded tabs are unexpectedly restored.
-          const movedTabIdsSet = new Set(movedTabIds);
           let movedTabsFound = false;
           let nextActiveTab  = null;
           for (const tab of Tab.getVisibleTabs(windowId)) {
