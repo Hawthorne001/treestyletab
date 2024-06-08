@@ -1434,6 +1434,15 @@ export async function moveTabs(tabs, options = {}) {
   const structure = TreeBehavior.getTreeStructureFromTabs(tabs);
   log('original tree structure: ', structure);
 
+  let hasActive = false;
+  for (const tab of movedTabs) {
+    if (tab.active)
+      hasActive = true;
+    if (isAcrossWindows &&
+        !options.duplicate)
+      tab.$TST.temporaryMetadata.set('movingAcrossWindows', true);
+  }
+
   if (!options.duplicate)
     await detachTabsFromTree(tabs, options);
 
@@ -1507,6 +1516,7 @@ export async function moveTabs(tabs, options = {}) {
           }
           else {
             for (const tab of movedTabs) {
+              tab.$TST.temporaryMetadata.set('movingAcrossWindows', true);
               if (tab.$TST.parentId &&
                   !movedTabIdsSet.has(tab.$TST.parentId))
                 detachTab(tab, {
@@ -1546,7 +1556,7 @@ export async function moveTabs(tabs, options = {}) {
       log(' => ', toIndex);
       if (isAcrossWindows) {
         let temporaryFocusHolderTab = null;
-        if (movedTabs.some(tab => tab.active)) {
+        if (hasActive) {
           // Blur to-be-moved tab, otherwise tabs.move() will activate them for each
           // while the moving process and all dicarded tabs are unexpectedly restored.
           let movedTabsFound = false;
@@ -1589,7 +1599,9 @@ export async function moveTabs(tabs, options = {}) {
         }
         movedTabs   = movedTabs.map(tab => Tab.get(tab.id));
         movedTabIds = movedTabs.map(tab => tab.id);
+        movedTabIdsSet = new Set(movedTabIds);
         for (const tab of movedTabs) {
+          tab.$TST.temporaryMetadata.delete('movingAcrossWindows');
           tab.windowId = destinationWindowId;
         }
         log('moved across windows: ', movedTabIds);
