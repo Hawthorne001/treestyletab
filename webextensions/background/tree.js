@@ -2171,8 +2171,6 @@ SidebarConnection.onMessage.addListener(async (windowId, message) => {
       log('new window requested: ', message);
       await Tab.waitUntilTracked(message.tabIds);
       const tabs = message.tabIds.map(id => TabsStore.tabs.get(id));
-      if (!message.duplicate)
-        await detachTabsFromTree(tabs);
       openNewWindowFromTabs(tabs, message);
     }; break;
   }
