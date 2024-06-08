@@ -695,7 +695,15 @@ async function smoothScrollTo(params = {}) {
 
   smoothScrollTo.stopped = false;
 
-  const scrollBox = getScrollBoxFor(params.tab);
+  let scrollBox = params.scrollBox;
+  if (!scrollBox) {
+    scrollBox = getScrollBoxFor(params.tab);
+    if (scrollBox == mPinnedScrollBox &&
+        scrollBox.$scrollTopMax == 0) {
+      log('smoothScrollTo: pinned tabs are not scrollable, fallback to normal tabs');
+      scrollBox = mNormalScrollBox;
+    }
+  }
 
   let delta, startPosition, endPosition;
   if (params.tab) {
@@ -758,8 +766,15 @@ async function smoothScrollTo(params = {}) {
 smoothScrollTo.currentOffset= 0;
 
 async function smoothScrollBy(delta) {
+  let scrollBox = getScrollBoxFor(Tab.getActiveTab(TabsStore.getCurrentWindowId()));
+  if (scrollBox == mPinnedScrollBox &&
+      scrollBox.$scrollTopMax == 0) {
+    log('smoothScrollBy: pinned tabs are not scrollable, fallback to normal tabs');
+    scrollBox = mNormalScrollBox;
+  }
   return smoothScrollTo({
-    position: getScrollBoxFor(Tab.getActiveTab(TabsStore.getCurrentWindowId())).$scrollTop + delta,
+    position: scrollBox.$scrollTop + delta,
+    scrollBox,
   });
 }
 
