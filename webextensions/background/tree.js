@@ -1543,10 +1543,49 @@ export async function moveTabs(tabs, options = {}) {
         toIndex--;
       log(' => ', toIndex);
       if (isAcrossWindows) {
+        let temporaryFocusHolderTab = null;
+        if (movedTabs.some(tab => tab.active)) {
+          // Blur to-be-moved tab, otherwise tabs.move() will activate them for each
+          // while the moving process and all dicarded tabs are unexpectedly restored.
+          const movedTabIdsSet = new Set(movedTabIds);
+          let movedTabsFound = false;
+          let nextActiveTab  = null;
+          for (const tab of Tab.getVisibleTabs(windowId)) {
+            const moved = movedTabIdsSet.has(tab.id);
+            if (moved)
+              movedTabsFound = true;
+            if (!movedTabsFound)
+              nextActiveTab = tab;
+            if (movedTabsFound &&
+                !moved) {
+              nextActiveTab = tab;
+              break;
+            }
+          }
+          if (nextActiveTab) {
+            await TabsInternalOperation.activateTab(nextActiveTab, { silently: true });
+          }
+          else {
+            // There is no focusible left tab, so we move focus to a tmeporary tab.
+            // It will be removed automatically after tabs are moved.
+            temporaryFocusHolderTab = await browser.tabs.create({
+              url:    'about:blank',
+              active: true,
+              windowId
+            });
+          }
+        }
         movedTabs = await browser.tabs.move(movedTabIds, {
           windowId: destinationWindowId,
           index:    toIndex
         });
+        if (temporaryFocusHolderTab) {
+          const leftTabsInSourceWindow = await browser.tabs.query({ windowId });
+          if (leftTabsInSourceWindow.length == 1)
+            browser.windows.remove(windowId);
+          else
+            browser.tabs.remove(temporaryFocusHolderTab.id);
+        }
         movedTabs   = movedTabs.map(tab => Tab.get(tab.id));
         movedTabIds = movedTabs.map(tab => tab.id);
         for (const tab of movedTabs) {
