@@ -1018,7 +1018,7 @@ async function onWheel(event) {
   if (!TSTAPI.isScrollLocked()) {
     cancelRunningScroll();
     if (EventUtils.getElementTarget(event).closest('.sticky-tabs-container') ||
-        (tab.pinned &&
+        (tab?.pinned &&
          scrollBox != mPinnedScrollBox)) {
       event.stopImmediatePropagation();
       event.preventDefault();
