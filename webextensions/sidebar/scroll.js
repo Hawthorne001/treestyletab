@@ -528,9 +528,14 @@ function updateStickyTabs(renderableTabs, { staticRendering, skipRefreshTabs } =
   return stickyTabs;
 }
 
-function getScrollBoxFor(tab) {
+function getScrollBoxFor(tab, { allowFallback } = {}) {
   if (!tab || !tab.pinned)
     return mNormalScrollBox; // the default
+  if (allowFallback &&
+      mPinnedScrollBox.$scrollTopMax == 0) {
+    log('pinned tabs are not scrollable, fallback to normal tabs');
+    return mNormalScrollBox;
+  }
   return mPinnedScrollBox;
 }
 
@@ -597,7 +602,7 @@ function scrollTo(params = {}) {
     return smoothScrollTo(params);
 
   //cancelPerformingAutoScroll();
-  const scrollBox = getScrollBoxFor(params.tab);
+  const scrollBox = getScrollBoxFor(params.tab, { allowFallback: true });
   const scrollTop = params.tab ?
     scrollBox.$scrollTop + calculateScrollDeltaForTab(params.tab) :
     typeof params.position == 'number' ?
@@ -635,7 +640,7 @@ function calculateScrollDeltaForTab(tab, { over } = {}) {
   tab = tab.$TST.collapsed && tab.$TST.nearestVisibleAncestorOrSelf || tab;
 
   const tabRect       = getTabRect(tab);
-  const scrollBoxRect = Size.getScrollBoxRect(getScrollBoxFor(tab));
+  const scrollBoxRect = Size.getScrollBoxRect(getScrollBoxFor(tab, { allowFallback: true }));
   const overScrollOffset = over === false ?
     0 :
     Math.ceil(tabRect.height / 2);
@@ -695,15 +700,7 @@ async function smoothScrollTo(params = {}) {
 
   smoothScrollTo.stopped = false;
 
-  let scrollBox = params.scrollBox;
-  if (!scrollBox) {
-    scrollBox = getScrollBoxFor(params.tab);
-    if (scrollBox == mPinnedScrollBox &&
-        scrollBox.$scrollTopMax == 0) {
-      log('smoothScrollTo: pinned tabs are not scrollable, fallback to normal tabs');
-      scrollBox = mNormalScrollBox;
-    }
-  }
+  const scrollBox = params.scrollBox || getScrollBoxFor(params.tab, { allowFallback: true });
 
   let delta, startPosition, endPosition;
   if (params.tab) {
@@ -766,12 +763,10 @@ async function smoothScrollTo(params = {}) {
 smoothScrollTo.currentOffset= 0;
 
 async function smoothScrollBy(delta) {
-  let scrollBox = getScrollBoxFor(Tab.getActiveTab(TabsStore.getCurrentWindowId()));
-  if (scrollBox == mPinnedScrollBox &&
-      scrollBox.$scrollTopMax == 0) {
-    log('smoothScrollBy: pinned tabs are not scrollable, fallback to normal tabs');
-    scrollBox = mNormalScrollBox;
-  }
+  const scrollBox = getScrollBoxFor(
+    Tab.getActiveTab(TabsStore.getCurrentWindowId()),
+    { allowFallback: true }
+  );
   return smoothScrollTo({
     position: scrollBox.$scrollTop + delta,
     scrollBox,
@@ -1033,7 +1028,7 @@ async function onWheel(event) {
   event.preventDefault();
 
   const tab = EventUtils.getTabFromEvent(event);
-  const scrollBox = getScrollBoxFor(tab);
+  const scrollBox = getScrollBoxFor(tab, { allowFallback: true });
   TSTAPI.notifyScrolled({
     tab,
     scrollContainer: scrollBox,
@@ -1184,7 +1179,7 @@ async function onBackgroundMessage(message) {
 
     case Constants.kCOMMAND_SCROLL_TABBAR: {
       const activeTab = Tab.getActiveTab(TabsStore.getCurrentWindowId());
-      const scrollBox = getScrollBoxFor(activeTab);
+      const scrollBox = getScrollBoxFor(activeTab, { allowFallback: true });
       switch (String(message.by).toLowerCase()) {
         case 'lineup':
           smoothScrollBy(-Size.getRenderedTabHeight() * configs.scrollLines);
