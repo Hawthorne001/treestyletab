@@ -108,8 +108,13 @@ export async function setCollapsed(tab, info = {}) {
       return; // force completion is required only for non-animation case
 
     //log('=> skip animation');
-    if (tab.$TST.collapsed)
+    if (tab.$TST.collapsed) {
+      tab.$TST.removeState(Constants.kTAB_STATE_COLLAPSING);
       tab.$TST.addState(Constants.kTAB_STATE_COLLAPSED_DONE);
+    }
+    else {
+      tab.$TST.removeState(Constants.kTAB_STATE_EXPANDING);
+    }
 
     TabsStore.updateVirtualScrollRenderabilityIndexForTab(tab);
     onUpdated.dispatch(tab, {
