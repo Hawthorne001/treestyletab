@@ -2328,6 +2328,7 @@ async function waitUntilTracked(tabId, options = {}) {
   const stack = configs.debug && new Error().stack;
   const tab = Tab.get(tabId);
   if (tab) {
+    onWaitingTabTracked(tab);
     if (options.element)
       return tab.$TST.promisedElement;
     return tab;
@@ -2350,7 +2351,7 @@ async function waitUntilTracked(tabId, options = {}) {
     }, configs.maximumDelayUntilTabIsTracked); // Tabs.moveTabs() between windows may take much time
     browser.tabs.get(tabId).catch(_error => null).then(tab => {
       if (tab)
-        return;
+        return onWaitingTabTracked(tab);
       const { resolve } = destroyWaitingTabTask(task);
       if (resolve) {
         log('waitUntilTracked was called for unexisting tab');
