@@ -1,6 +1,9 @@
 # History
 
  - master/HEAD
+ - 4.0.17 (2024.6.10)
+   * Fix misindentation of tabs immediately moved after opened. (regression on 4.0.16)
+   * Fix misindentation of deeply nested tree on the startup. (regression on 4.0.16)
  - 4.0.16 (2024.6.9)
    * Add new keyboard shortcut slots "Simulate Up/Down/Left/Right Key on Tree" and assign default shortcuts Alt-Shift-Up/Down/Left/Right. They provide both spatial focus move on faviconized tabs and collapse/expand tree like arrow keys on tree items.
    * Add new keyboard shortcut slots "Collapse Tree or Focus to Parent Tab" and "Expand Tree or Focus to First Child Tab" to simulate Left/Right Arrow keys on tree items.
