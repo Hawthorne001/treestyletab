@@ -2350,8 +2350,11 @@ async function waitUntilTracked(tabId, options = {}) {
       }
     }, configs.maximumDelayUntilTabIsTracked); // Tabs.moveTabs() between windows may take much time
     browser.tabs.get(tabId).catch(_error => null).then(tab => {
-      if (tab)
-        return onWaitingTabTracked(tab);
+      if (tab) {
+        if (Tab.get(tabId))
+          onWaitingTabTracked(tab);
+        return;
+      }
       const { resolve } = destroyWaitingTabTask(task);
       if (resolve) {
         log('waitUntilTracked was called for unexisting tab');
