@@ -2261,7 +2261,10 @@ function destroyWaitingTabTask(task) {
 }
 
 function onWaitingTabTracked(tab) {
-  const tasks = mWaitingTasks.get(tab?.id);
+  if (!tab)
+    return;
+
+  const tasks = mWaitingTasks.get(tab.id);
   if (!tasks)
     return;
 
@@ -2279,7 +2282,10 @@ Tab.onElementBound.addListener(onWaitingTabTracked);
 Tab.onTracked.addListener(onWaitingTabTracked);
 
 function onWaitingTabDestroyed(tab) {
-  const tasks = mWaitingTasks.get(tab?.id);
+  if (!tab)
+    return;
+
+  const tasks = mWaitingTasks.get(tab.id);
   if (!tasks)
     return;
 
