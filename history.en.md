@@ -1,6 +1,18 @@
 # History
 
  - master/HEAD
+ - 4.0.16 (2024.6.9)
+   * Add new keyboard shortcut slots "Simulate Up/Down/Left/Right Key on Tree" and assign default shortcuts Alt-Shift-Up/Down/Left/Right. They provide both spatial focus move on faviconized tabs and collapse/expand tree like arrow keys on tree items.
+   * Add new keyboard shortcut slots "Collapse Tree or Focus to Parent Tab" and "Expand Tree or Focus to First Child Tab" to simulate Left/Right Arrow keys on tree items.
+   * Wheel scrolling on pinned tabs and keyboard shortcuts to scroll the tab bar with focused pinned tab now scroll regular tabs if the container of pinned tabs is not scrollable.
+   * Optimize operations to track updated overflow/underflow state.
+   * Better drag and drop of tabs/trees across windows: the tree structure is kept better, temporary group tabs are kept, and moved tabs are kept discarded.
+   * Move focus to the parent tab as configured, when a last child tab is closed after it was reopened.
+   * Reduce needless animation effects unexpectedly re-applied to tabs rendered while virtual scrolling.
+   * Fix unexpected classes on tabs in the sidebar which are left by misordered operations.
+   * Fix unexpected infinit loop (caused increasing of CPU usage and blocking of GC) triggered by extra tab contents above/below individual tab.
+   * Update `zh_CN` locale by [NightSharp](https://github.com/NightSharp). Thanks!
+   * Update `ru`, `de` and `en` locales by [vadcx](https://github.com/vadcx). Thanks!
  - 4.0.15 (2024.5.21)
    * Treat drag and drop of a parent tab to its descendant as a dragging of an individual tab and attach it to the drop position, even if the default action is configured to drag the whole tree. You can deactivate this behavior and prevent dropping of a parent tab to its descendant to turn the hidden option `moveSoloTabOnDropParentToDescendant` to `false`.
    * Don't inherit container to an opened tab if it is opened by "Open in Container Tab" => "No Container" inin the native tab context menu.
