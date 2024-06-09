@@ -1474,7 +1474,6 @@ export async function moveTabs(tabs, options = {}) {
       }
 
       let movedTabIds = tabs.map(tab => tab.id);
-      let movedTabIdsSet = new Set(movedTabIds);
       await Promise.all([
         newWindow,
         (async () => {
@@ -1512,9 +1511,9 @@ export async function moveTabs(tabs, options = {}) {
               UserOperationBlocker.setProgress(50, windowId);
             movedTabs = movedTabs.map(tab => Tab.get(tab.id));
             movedTabIds = movedTabs.map(tab => tab.id);
-            movedTabIdsSet = new Set(movedTabIds);
           }
           else {
+            const movedTabIdsSet = new Set(movedTabIds);
             for (const tab of movedTabs) {
               tab.$TST.temporaryMetadata.set('movingAcrossWindows', true);
               if (tab.$TST.parentId &&
@@ -1559,24 +1558,10 @@ export async function moveTabs(tabs, options = {}) {
         if (hasActive) {
           // Blur to-be-moved tab, otherwise tabs.move() will activate them for each
           // while the moving process and all dicarded tabs are unexpectedly restored.
-          let movedTabsFound = false;
-          let nextActiveTab  = null;
-          for (const tab of Tab.getVisibleTabs(windowId)) {
-            const moved = movedTabIdsSet.has(tab.id);
-            if (moved)
-              movedTabsFound = true;
-            if (!movedTabsFound)
-              nextActiveTab = tab;
-            if (movedTabsFound &&
-                !moved) {
-              nextActiveTab = tab;
-              break;
-            }
-          }
-          if (nextActiveTab) {
-            await TabsInternalOperation.activateTab(nextActiveTab, { silently: true });
-          }
-          else {
+          const nextActiveTab = await TabsInternalOperation.blurTab(movedTabs, {
+            silently: true,
+          });
+          if (!nextActiveTab) {
             // There is no focusible left tab, so we move focus to a tmeporary tab.
             // It will be removed automatically after tabs are moved.
             temporaryFocusHolderTab = await browser.tabs.create({
@@ -1599,7 +1584,6 @@ export async function moveTabs(tabs, options = {}) {
         }
         movedTabs   = movedTabs.map(tab => Tab.get(tab.id));
         movedTabIds = movedTabs.map(tab => tab.id);
-        movedTabIdsSet = new Set(movedTabIds);
         for (const tab of movedTabs) {
           tab.$TST.temporaryMetadata.delete('movingAcrossWindows');
           tab.windowId = destinationWindowId;
