@@ -1,6 +1,10 @@
 # History
 
  - master/HEAD
+ - 4.0.18 (2024.6.13)
+   * Add "Close Duplicated Tabs" context menu command to simulate the command of Firefox 127 and later.
+   * Change default shortcut to simulate arrow keys on tree for macOS: Alt-Shift-Uo/Down/Left/Right to MacCtrl-Shift-Uo/Down/Left/Right.
+   * Right/down arrow keys simulation now fallbacks to "focus to the next tab" correctly while the sidebar is closed.
  - 4.0.17 (2024.6.10)
    * Fix misindentation of tabs immediately moved after opened. (regression on 4.0.16)
    * Fix misindentation of deeply nested tree on the startup. (regression on 4.0.16)
