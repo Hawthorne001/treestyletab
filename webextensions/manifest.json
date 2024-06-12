@@ -179,25 +179,29 @@
     "simulateUpOnTree": {
       "description": "__MSG_command_simulateUpOnTree__",
       "suggested_key": {
-        "default": "Alt+Shift+Up"
+        "default": "Alt+Shift+Up",
+        "mac":     "MacCtrl+Shift+Up"
       }
     },
     "simulateDownOnTree": {
       "description": "__MSG_command_simulateDownOnTree__",
       "suggested_key": {
-        "default": "Alt+Shift+Down"
+        "default": "Alt+Shift+Down",
+        "mac":     "MacCtrl+Shift+Down"
       }
     },
     "simulateLeftOnTree": {
       "description": "__MSG_command_simulateLeftOnTree__",
       "suggested_key": {
-        "default": "Alt+Shift+Left"
+        "default": "Alt+Shift+Left",
+        "mac":     "MacCtrl+Shift+Left"
       }
     },
     "simulateRightOnTree": {
       "description": "__MSG_command_simulateRightOnTree__",
       "suggested_key": {
-        "default": "Alt+Shift+Right"
+        "default": "Alt+Shift+Right",
+        "mac":     "MacCtrl+Shift+Right"
       }
     },
     "tabbarUp": {
