@@ -886,6 +886,7 @@
   "tabContextMenu_shareTabURL_more_label":   { "message": "Mehr…" },
 
 
+  "tabContextMenu_closeDuplicatedTabs_label": { "message": "&Doppelte Tabs schließen" },
   "tabContextMenu_closeMultipleTabs_label":  { "message": "&Mehrere Tabs schließen" },
   "tabContextMenu_closeTabsToTop_label":  { "message": "Tabs nach &oben schließen" },
   "tabContextMenu_closeTabsToBottom_label":  { "message": "Tabs nach un&ten schließen" },

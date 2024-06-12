@@ -888,6 +888,7 @@
   "tabContextMenu_shareTabURL_label":   { "message": "共有(&H)" },
   "tabContextMenu_shareTabURL_more_label":   { "message": "その他..." },
 
+  "tabContextMenu_closeDuplicatedTabs_label": { "message": "重複タブを閉じる(&U)" },
   "tabContextMenu_closeMultipleTabs_label":  { "message": "複数のタブを閉じる(&M)" },
   "tabContextMenu_closeTabsToTop_label":  { "message": "上のタブをすべて閉じる(&T)" },
   "tabContextMenu_closeTabsToBottom_label":  { "message": "下のタブをすべて閉じる(&B)" },

@@ -2328,6 +2328,7 @@
         "message": "공유(&H)",
         "hash": "df8b33491eb3e9891938f9a912053e8b"
     },
+    "tabContextMenu_closeDuplicatedTabs_label": { "message": "중복 탭 닫기(&U)" },
     "tabContextMenu_closeMultipleTabs_label": {
         "message": "여러 탭 닫기(&M)",
         "hash": "b421f1bac322ed85eaef8ff036b5a3d2"

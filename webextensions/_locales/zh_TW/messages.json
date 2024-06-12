@@ -776,6 +776,7 @@
     "tabContextMenu_shareTabURL_label":   { "message": "分享 (&H)" },
 
 
+    "tabContextMenu_closeDuplicatedTabs_label": { "message": "關閉重複的分頁(&U)" },
     "tabContextMenu_closeMultipleTabs_label":  { "message": "關閉多個分頁 (&M)" },
     "tabContextMenu_closeTabsToTop_label":  { "message": "Close Tabs to the &Top" },
     "tabContextMenu_closeTabsToBottom_label":  { "message": "關閉下方分頁(&B)" },

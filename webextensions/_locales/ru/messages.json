@@ -886,6 +886,7 @@
   "tabContextMenu_shareTabURL_more_label":   { "message": "Далее…" },
 
 
+  "tabContextMenu_closeDuplicatedTabs_label": { "message": "дублирующиеся вкладки(&г)" },
   "tabContextMenu_closeMultipleTabs_label":  { "message": "&Закрыть несколько вкладок" },
   "tabContextMenu_closeTabsToTop_label":  { "message": "Закрыть вкладки с&верху" },
   "tabContextMenu_closeTabsToBottom_label":  { "message": "Закрыть вкладки с&низу" },

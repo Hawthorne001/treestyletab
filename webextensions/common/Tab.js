@@ -2893,6 +2893,24 @@ Tab.hasLoadingTab = windowId => {
   });
 };
 
+Tab.hasDuplicatedTabs = (windowId, options = {}) => {
+  const tabs = TabsStore.queryAll({
+    windowId,
+    tabs:   TabsStore.getTabsMap(TabsStore.livingTabsInWindow, windowId),
+    living: true,
+    ...options,
+    iterator: true
+  });
+  const tabKeys = new Set();
+  for (const tab of tabs) {
+    const key = `${tab.cookieStoreId}\n${tab.url}`;
+    if (tabKeys.has(key))
+      return true;
+    tabKeys.add(key);
+  }
+  return false;
+};
+
 Tab.hasMultipleTabs = (windowId, options = {}) => {
   const tabs = TabsStore.queryAll({
     windowId,

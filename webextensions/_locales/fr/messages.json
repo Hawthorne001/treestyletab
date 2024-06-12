@@ -1483,6 +1483,7 @@
     "message": "Déplacer dans une &nouvelle fenêtre",
     "hash": "e73bb254e78fb1b2a161d4c3961065a9"
   },
+  "tabContextMenu_closeDuplicatedTabs_label": { "message": "Fermer les onglets en do&uble" },
   "tabContextMenu_closeMultipleTabs_label": {
     "message": "Fer&mer plusieurs onglets",
     "hash": "b421f1bac322ed85eaef8ff036b5a3d2"
