@@ -453,12 +453,14 @@ async function onShortcutCommand(command) {
 
 function focusPrevious(activeTab) {
   const nextActive = activeTab.$TST.nearestVisiblePrecedingTab ||
+    (!SidebarConnection.isSidebarOpen(activeTab.windowId) && activeTab.$TST.previousTab) ||
     Tab.getLastVisibleTab(activeTab.windowId);
   TabsInternalOperation.activateTab(nextActive);
 }
 
 function focusPreviousSilently(activeTab) {
   const nextActive = activeTab.$TST.nearestVisiblePrecedingTab ||
+    (!SidebarConnection.isSidebarOpen(activeTab.windowId) && activeTab.$TST.previousTab) ||
     Tab.getLastVisibleTab(activeTab.windowId);
   TabsInternalOperation.activateTab(nextActive, {
     silently: true,
@@ -466,13 +468,15 @@ function focusPreviousSilently(activeTab) {
 }
 
 function focusNext(activeTab) {
-  const nextActive = activeTab.$TST.nextVisibleTab ||
+  const nextActive = activeTab.$TST.nearestVisibleFollowingTab ||
+    (!SidebarConnection.isSidebarOpen(activeTab.windowId) && activeTab.$TST.nextTab) ||
     Tab.getFirstVisibleTab(activeTab.windowId);
   TabsInternalOperation.activateTab(nextActive);
 }
 
 function focusNextSilently(activeTab) {
   const nextActive = activeTab.$TST.nearestVisibleFollowingTab ||
+    (!SidebarConnection.isSidebarOpen(activeTab.windowId) && activeTab.$TST.nextTab) ||
     Tab.getFirstVisibleTab(activeTab.windowId);
   TabsInternalOperation.activateTab(nextActive, {
     silently: true,
