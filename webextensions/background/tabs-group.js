@@ -53,13 +53,22 @@ export function makeGroupTabURI({ title, temporary, temporaryAggressive, openerT
 export function temporaryStateParams(state) {
   switch (state) {
     case Constants.kGROUP_TAB_TEMPORARY_STATE_PASSIVE:
-      return { temporary: true };
+      return {
+        temporary:           true,
+        temporaryAggressive: false,
+      };
     case Constants.kGROUP_TAB_TEMPORARY_STATE_AGGRESSIVE:
-      return { temporaryAggressive: true };
+      return {
+        temporary:           false,
+        temporaryAggressive: true,
+      };
     default:
       break;
   }
-  return {};
+  return {
+    temporary:           false,
+    temporaryAggressive: false,
+  };
 }
 
 export async function groupTabs(tabs, { broadcast, parent, withDescendants, ...groupTabOptions } = {}) {

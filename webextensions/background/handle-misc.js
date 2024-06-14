@@ -957,9 +957,27 @@ function onMessageExternal(message, sender) {
     case TSTAPI.kGROUP_TABS:
       return (async () => {
         const tabs = await TSTAPI.getTargetTabs(message, sender);
+        const temporaryStateParams = (message.temporary && !message.temporaryAggressive) ?
+          {
+            temporary:           true,
+            temporaryAggressive: false,
+          } :
+          (!message.temporary && message.temporaryAggressive) ?
+            {
+              temporary:           false,
+              temporaryAggressive: true,
+            } :
+            (message.temporaryAggressive === false && message.temporary === false) ?
+              {
+                temporary:           false,
+                temporaryAggressive: false,
+              } :
+              {};
         const tab = await TabsGroup.groupTabs(Array.from(tabs), {
           title:     message.title,
           broadcast: true,
+          ...TabsGroup.temporaryStateParams(configs.groupTabTemporaryStateForAPI),
+          ...temporaryStateParams,
         });
         if (!tab)
           return null;

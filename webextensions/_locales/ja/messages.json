@@ -611,6 +611,7 @@
   "config_groupTabTemporaryStateForNewTabsFromBookmarks_label": { "message": "ブックマークから開かれたタブをグループ化した場合:" },
   "config_groupTabTemporaryStateForNewTabsFromOthers_label": { "message": "ブックマーク以外から連続して開かれたタブをグループ化した場合:" },
   "config_groupTabTemporaryStateForOrphanedTabs_label": { "message": "閉じられた親タブを置き換える形で開かれた場合:" },
+  "config_groupTabTemporaryStateForAPI_label": { "message": "他の拡張機能からAPI経由でタブをグループ化した場合:" },
 
   "config_inheritContextualIdentityToChildTabMode_label": { "message": "コンテナー:" },
   "config_inheritContextualIdentityToChildTabMode_default": { "message": "（制御しない）" },

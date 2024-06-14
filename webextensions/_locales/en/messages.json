@@ -614,6 +614,7 @@
   "config_groupTabTemporaryStateForNewTabsFromBookmarks_label": { "message": "For tabs opened from bookmarks:" },
   "config_groupTabTemporaryStateForNewTabsFromOthers_label": { "message": "For tabs opened at a time from non-bookmark triggers:" },
   "config_groupTabTemporaryStateForOrphanedTabs_label": { "message": "Opened to replace a closed parent tab:" },
+  "config_groupTabTemporaryStateForAPI_label": { "message": "Opened to group tabs from other addons via API:" },
 
   "config_inheritContextualIdentityToChildTabMode_label": { "message": "Container:" },
   "config_inheritContextualIdentityToChildTabMode_default": { "message": "(no control)" },

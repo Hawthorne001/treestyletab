@@ -298,6 +298,7 @@ export const configs = new Configs({
   groupTabTemporaryStateForChildrenOfPinned: Constants.kGROUP_TAB_TEMPORARY_STATE_PASSIVE,
   groupTabTemporaryStateForChildrenOfFirefoxView: Constants.kGROUP_TAB_TEMPORARY_STATE_PASSIVE,
   groupTabTemporaryStateForOrphanedTabs: Constants.kGROUP_TAB_TEMPORARY_STATE_AGGRESSIVE,
+  groupTabTemporaryStateForAPI: Constants.kGROUP_TAB_TEMPORARY_STATE_NOTHING,
   renderTreeInGroupTabs: true,
   warnOnAutoGroupNewTabs: true,
   warnOnAutoGroupNewTabsWithListing: true,
