@@ -264,7 +264,7 @@ async function onShortcutCommand(command) {
       return;
 
     case 'simulateUpOnTree':
-      if (SidebarConnection.isSidebarOpen(activeTab.windowId)) {
+      if (SidebarConnection.isOpen(activeTab.windowId)) {
         if (configs.faviconizePinnedTabs &&
             (activeTab.pinned ||
              activeTab == Tab.getFirstNormalTab(activeTab.windowId))) {
@@ -291,7 +291,7 @@ async function onShortcutCommand(command) {
       }
       return;
     case 'simulateDownOnTree':
-      if (SidebarConnection.isSidebarOpen(activeTab.windowId)) {
+      if (SidebarConnection.isOpen(activeTab.windowId)) {
         if (configs.faviconizePinnedTabs &&
             activeTab.pinned) {
           const nextActiveId = await browser.runtime.sendMessage({
@@ -317,7 +317,7 @@ async function onShortcutCommand(command) {
       }
       return;
     case 'simulateLeftOnTree':
-      if (SidebarConnection.isSidebarOpen(activeTab.windowId)) {
+      if (SidebarConnection.isOpen(activeTab.windowId)) {
         if (configs.faviconizePinnedTabs &&
             activeTab.pinned) {
           const nextActiveId = await browser.runtime.sendMessage({
@@ -342,7 +342,7 @@ async function onShortcutCommand(command) {
       }
       return;
     case 'simulateRightOnTree':
-      if (SidebarConnection.isSidebarOpen(activeTab.windowId)) {
+      if (SidebarConnection.isOpen(activeTab.windowId)) {
         if (configs.faviconizePinnedTabs &&
             activeTab.pinned) {
           const nextActiveId = await browser.runtime.sendMessage({
@@ -453,14 +453,14 @@ async function onShortcutCommand(command) {
 
 function focusPrevious(activeTab) {
   const nextActive = activeTab.$TST.nearestVisiblePrecedingTab ||
-    (!SidebarConnection.isSidebarOpen(activeTab.windowId) && activeTab.$TST.previousTab) ||
+    (!SidebarConnection.isOpen(activeTab.windowId) && activeTab.$TST.previousTab) ||
     Tab.getLastVisibleTab(activeTab.windowId);
   TabsInternalOperation.activateTab(nextActive);
 }
 
 function focusPreviousSilently(activeTab) {
   const nextActive = activeTab.$TST.nearestVisiblePrecedingTab ||
-    (!SidebarConnection.isSidebarOpen(activeTab.windowId) && activeTab.$TST.previousTab) ||
+    (!SidebarConnection.isOpen(activeTab.windowId) && activeTab.$TST.previousTab) ||
     Tab.getLastVisibleTab(activeTab.windowId);
   TabsInternalOperation.activateTab(nextActive, {
     silently: true,
@@ -469,14 +469,14 @@ function focusPreviousSilently(activeTab) {
 
 function focusNext(activeTab) {
   const nextActive = activeTab.$TST.nearestVisibleFollowingTab ||
-    (!SidebarConnection.isSidebarOpen(activeTab.windowId) && activeTab.$TST.nextTab) ||
+    (!SidebarConnection.isOpen(activeTab.windowId) && activeTab.$TST.nextTab) ||
     Tab.getFirstVisibleTab(activeTab.windowId);
   TabsInternalOperation.activateTab(nextActive);
 }
 
 function focusNextSilently(activeTab) {
   const nextActive = activeTab.$TST.nearestVisibleFollowingTab ||
-    (!SidebarConnection.isSidebarOpen(activeTab.windowId) && activeTab.$TST.nextTab) ||
+    (!SidebarConnection.isOpen(activeTab.windowId) && activeTab.$TST.nextTab) ||
     Tab.getFirstVisibleTab(activeTab.windowId);
   TabsInternalOperation.activateTab(nextActive, {
     silently: true,
