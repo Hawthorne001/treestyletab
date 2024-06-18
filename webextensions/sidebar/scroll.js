@@ -1434,42 +1434,42 @@ export async function tryLockPosition(tabIds, reason) {
   }
 
   while (configs.simulateLockTabSizing) { // We use "while" as "breakable if" here
-  // Don't lock scroll position when the last tab is closed.
-  const lastTab = Tab.getLastVisibleTab();
-  if (reason == LOCK_REASON_REMOVE &&
-      tabIds.includes(lastTab.id)) {
-    if (tryLockPosition.tabIds.size > 0) {
-      // but we need to add tabs to the list of "close with locked scroll position"
-      // tabs to prevent unexpected unlocking.
-      for (const id of tabIds) {
-        tryLockPosition.tabIds.add(id);
+    // Don't lock scroll position when the last tab is closed.
+    const lastTab = Tab.getLastVisibleTab();
+    if (reason == LOCK_REASON_REMOVE &&
+        tabIds.includes(lastTab.id)) {
+      if (tryLockPosition.tabIds.size > 0) {
+        // but we need to add tabs to the list of "close with locked scroll position"
+        // tabs to prevent unexpected unlocking.
+        for (const id of tabIds) {
+          tryLockPosition.tabIds.add(id);
+        }
       }
+      log('tryLockPosition/simulateLockTabSizing: ignore last tab remove ', tabIds);
+      break;
     }
-    log('tryLockPosition/simulateLockTabSizing: ignore last tab remove ', tabIds);
-    break;
-  }
 
-  // Lock scroll position only when the closing affects to the max scroll position.
-  if (mNormalScrollBox.$scrollTop < mNormalScrollBox.$scrollTopMax - Size.getRenderedTabHeight() - mTabbarSpacerSize) {
-    log('tryLockPosition/simulateLockTabSizing: scroll position is not affected ', tabIds, {
-      scrollTop: mNormalScrollBox.$scrollTop,
-      scrollTopMax: mNormalScrollBox.$scrollTopMax,
-      height: Size.getRenderedTabHeight(),
-    });
-    break;
-  }
+    // Lock scroll position only when the closing affects to the max scroll position.
+    if (mNormalScrollBox.$scrollTop < mNormalScrollBox.$scrollTopMax - Size.getRenderedTabHeight() - mTabbarSpacerSize) {
+      log('tryLockPosition/simulateLockTabSizing: scroll position is not affected ', tabIds, {
+        scrollTop: mNormalScrollBox.$scrollTop,
+        scrollTopMax: mNormalScrollBox.$scrollTopMax,
+        height: Size.getRenderedTabHeight(),
+      });
+      break;
+    }
 
-  for (const id of tabIds) {
-    tryLockPosition.tabIds.add(id);
-  }
+    for (const id of tabIds) {
+      tryLockPosition.tabIds.add(id);
+    }
 
-  log('tryLockPosition/simulateLockTabSizing ', tabIds);
-  const spacer = mNormalScrollBox.querySelector(`.${Constants.kTABBAR_SPACER}`);
-  const count = tryLockPosition.tabIds.size;
-  const height = Size.getRenderedTabHeight() * count;
-  spacer.style.minHeight = `${height}px`;
-  spacer.dataset.removedOrCollapsedTabsCount = count;
-  mTabbarSpacerSize = height;
+    log('tryLockPosition/simulateLockTabSizing ', tabIds);
+    const spacer = mNormalScrollBox.querySelector(`.${Constants.kTABBAR_SPACER}`);
+    const count = tryLockPosition.tabIds.size;
+    const height = Size.getRenderedTabHeight() * count;
+    spacer.style.minHeight = `${height}px`;
+    spacer.dataset.removedOrCollapsedTabsCount = count;
+    mTabbarSpacerSize = height;
 
     break;
   }
@@ -1554,18 +1554,18 @@ function tryFinishPositionLocking(event) {
           return;
         }
         if (!tryLockPosition.suppressedSuccessorToBeScrolled) {
-        // When you move mouse while the last tab is being removed, it can fire
-        // a mousemove event on the background area of the tab bar, and it
-        // produces sudden scrolling. So we need to keep scroll locked
-        // while the cursor is still on tabs area.
-        const spacer = mNormalScrollBox.querySelector(`.${Constants.kTABBAR_SPACER}`);
-        const pinnedTabsAreaSize = parseFloat(document.documentElement.style.getPropertyValue('--pinned-tabs-area-size'));
-        const spacerTop = Size.getRenderedTabHeight() * (Tab.getVirtualScrollRenderableTabs(TabsStore.getCurrentWindowId()).length + 1)
-        if ((!spacer || event.clientY < spacerTop) &&
-            (!pinnedTabsAreaSize || isNaN(pinnedTabsAreaSize) || event.clientY > pinnedTabsAreaSize)) {
-          log(' => ignore mousemove on any tab (removing, simulateLockTabSizing)');
-          return;
-        }
+          // When you move mouse while the last tab is being removed, it can fire
+          // a mousemove event on the background area of the tab bar, and it
+          // produces sudden scrolling. So we need to keep scroll locked
+          // while the cursor is still on tabs area.
+          const spacer = mNormalScrollBox.querySelector(`.${Constants.kTABBAR_SPACER}`);
+          const pinnedTabsAreaSize = parseFloat(document.documentElement.style.getPropertyValue('--pinned-tabs-area-size'));
+          const spacerTop = Size.getRenderedTabHeight() * (Tab.getVirtualScrollRenderableTabs(TabsStore.getCurrentWindowId()).length + 1)
+          if ((!spacer || event.clientY < spacerTop) &&
+              (!pinnedTabsAreaSize || isNaN(pinnedTabsAreaSize) || event.clientY > pinnedTabsAreaSize)) {
+            log(' => ignore mousemove on any tab (removing, simulateLockTabSizing)');
+            return;
+          }
         }
       }
       break;
