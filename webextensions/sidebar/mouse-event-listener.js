@@ -688,11 +688,11 @@ async function handleDefaultMouseUpOnTab({ lastMousedown, tab, event } = {}) {
       byInternalOperation: true
     });
     Sidebar.confirmToCloseTabs(tabs.map(tab => tab.$TST.sanitized))
-      .then(confirmed => {
+      .then(async confirmed => {
         if (!confirmed)
           return;
         const tabIds = tabs.map(tab => tab.id);
-        Scroll.tryLockPosition(tabIds, Scroll.LOCK_REASON_REMOVE);
+        await Scroll.tryLockPosition(tabIds, Scroll.LOCK_REASON_REMOVE);
         BackgroundConnection.sendMessage({
           type:   Constants.kCOMMAND_REMOVE_TABS_BY_MOUSE_OPERATION,
           tabIds
@@ -710,7 +710,7 @@ async function handleDefaultMouseUpOnTab({ lastMousedown, tab, event } = {}) {
     log('clicked on twisty');
     if (tab.$TST.hasChild) {
       if (!tab.$TST.subtreeCollapsed) // going to collapse
-        Scroll.tryLockPosition(
+        await Scroll.tryLockPosition(
           tab.$TST.descendants.filter(tab => !tab.$TST.collapsed).map(tab => tab.id),
           Scroll.LOCK_REASON_COLLAPSE
         );
@@ -762,11 +762,11 @@ async function handleDefaultMouseUpOnTab({ lastMousedown, tab, event } = {}) {
     Sidebar.confirmToCloseTabs(tabsToBeClosed.map(tab => tab.$TST.sanitized), {
       configKey: 'warnOnCloseTabsByClosebox'
     })
-      .then(confirmed => {
+      .then(async confirmed => {
         if (!confirmed)
           return;
         const tabIds = tabsToBeClosed.map(tab => tab.id);
-        Scroll.tryLockPosition(tabIds, Scroll.LOCK_REASON_REMOVE);
+        await Scroll.tryLockPosition(tabIds, Scroll.LOCK_REASON_REMOVE);
         BackgroundConnection.sendMessage({
           type:   Constants.kCOMMAND_REMOVE_TABS_BY_MOUSE_OPERATION,
           tabIds
@@ -1038,7 +1038,7 @@ async function onDblClick(event) {
           //event.stopPropagation();
           //event.preventDefault();
           const tabIds = [livingTab.id];
-          Scroll.tryLockPosition(tabIds, Scroll.LOCK_REASON_REMOVE);
+          await Scroll.tryLockPosition(tabIds, Scroll.LOCK_REASON_REMOVE);
           BackgroundConnection.sendMessage({
             type:   Constants.kCOMMAND_REMOVE_TABS_BY_MOUSE_OPERATION,
             tabIds

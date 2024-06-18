@@ -355,6 +355,7 @@ export const configs = new Configs({
   successorTabControlLevel: Constants.kSUCCESSOR_TAB_CONTROL_IN_TREE,
   simulateSelectOwnerOnClose: true,
   simulateLockTabSizing: true,
+  lockScrollPositionToSelectOwnerOnClose: true,
   simulateTabsLoadInBackgroundInverted: false,
   supportTabsMultiselect: typeof browser.menus.overrideContext == 'function',
   warnOnCloseTabs: true,
