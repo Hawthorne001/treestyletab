@@ -1510,22 +1510,22 @@ export function tryUnlockPosition(tabIds) {
   unlockScrollToSuccessor(true);
 
   if (configs.simulateLockTabSizing) {
-  for (const id of tabIds) {
-    tryLockPosition.tabIds.delete(id);
-  }
+    for (const id of tabIds) {
+      tryLockPosition.tabIds.delete(id);
+    }
 
-  log('tryUnlockPosition/simulateLockTabSizing');
-  const spacer = mNormalScrollBox.querySelector(`.${Constants.kTABBAR_SPACER}`);
-  const count = tryLockPosition.tabIds.size;
-  const timeout = shouldApplyAnimation() ?
-    Math.max(0, configs.collapseDuration) + 250 /* safety margin to wait finishing of the min-height animation of virtual-scroll-container */ :
-    0;
-  setTimeout(() => {
-    const height = Size.getRenderedTabHeight() * count;
-    spacer.style.minHeight = `${height}px`;
-    spacer.dataset.removedOrCollapsedTabsCount = count;
-    mTabbarSpacerSize = height;
-  }, timeout);
+    log('tryUnlockPosition/simulateLockTabSizing');
+    const spacer = mNormalScrollBox.querySelector(`.${Constants.kTABBAR_SPACER}`);
+    const count = tryLockPosition.tabIds.size;
+    const timeout = shouldApplyAnimation() ?
+      Math.max(0, configs.collapseDuration) + 250 /* safety margin to wait finishing of the min-height animation of virtual-scroll-container */ :
+      0;
+    setTimeout(() => {
+      const height = Size.getRenderedTabHeight() * count;
+      spacer.style.minHeight = `${height}px`;
+      spacer.dataset.removedOrCollapsedTabsCount = count;
+      mTabbarSpacerSize = height;
+    }, timeout);
   }
 }
 
