@@ -1547,26 +1547,10 @@ function tryFinishPositionLocking(event) {
         log(' => ignore events while the context menu is opened');
         return;
       }
-      if (event.type == 'mousemove') {
-        if (EventUtils.getTabFromEvent(event, { force: true }) ||
-            EventUtils.getTabFromTabbarEvent(event, { force: true })) {
-          log(' => ignore mousemove on any tab');
-          return;
-        }
-        if (!tryLockPosition.suppressedSuccessorToBeScrolled) {
-          // When you move mouse while the last tab is being removed, it can fire
-          // a mousemove event on the background area of the tab bar, and it
-          // produces sudden scrolling. So we need to keep scroll locked
-          // while the cursor is still on tabs area.
-          const spacer = mNormalScrollBox.querySelector(`.${Constants.kTABBAR_SPACER}`);
-          const pinnedTabsAreaSize = parseFloat(document.documentElement.style.getPropertyValue('--pinned-tabs-area-size'));
-          const spacerTop = Size.getRenderedTabHeight() * (Tab.getVirtualScrollRenderableTabs(TabsStore.getCurrentWindowId()).length + 1)
-          if ((!spacer || event.clientY < spacerTop) &&
-              (!pinnedTabsAreaSize || isNaN(pinnedTabsAreaSize) || event.clientY > pinnedTabsAreaSize)) {
-            log(' => ignore mousemove on any tab (removing, simulateLockTabSizing)');
-            return;
-          }
-        }
+      if (event.type == 'mousemove' &&
+          EventUtils.getElementTarget(event).closest('#tabbar, .after-tabs, #subpanel-container')) {
+        log(' => ignore mousemove on the tab bar');
+        return;
       }
       break;
 
