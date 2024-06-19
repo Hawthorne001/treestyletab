@@ -1250,16 +1250,16 @@ async function onBackgroundMessage(message) {
     }; break;
 
     case Constants.kCOMMAND_NOTIFY_TAB_ACTIVATED:
-      if (tryLockPosition.suppressedSuccessorToBeScrolled == message.tabId) {
-        log('lockScrollPositionToSelectOwnerOnClose: wait until unlocked for ', message.tabId);
+      if (tryLockScrollToSuccessor.tabId == message.tabId) {
+        log('tryLockScrollToSuccessor: wait until unlocked for ', message.tabId);
         mLastToBeActivatedTabId = message.tabId;
-        const canContinueToScroll = await tryLockPosition.promisedUnlocked;
+        const canContinueToScroll = await tryLockScrollToSuccessor.promisedUnlocked;
         if (!canContinueToScroll ||
             mLastToBeActivatedTabId != message.tabId) {
           mLastToBeActivatedTabId = null;
           break;
         }
-        log('lockScrollPositionToSelectOwnerOnClose: unlocked, scroll to ', message.tabId);
+        log('tryLockScrollToSuccessor: unlocked, scroll to ', message.tabId);
       }
       unlockScrollToSuccessor(false);
       mLastToBeActivatedTabId = null;
@@ -1407,72 +1407,11 @@ export async function tryLockPosition(tabIds, reason) {
     return;
   }
 
-  if (configs.lockScrollPositionToSelectOwnerOnClose) {
-    // We need to get tabs via WE API here to see its successorTabId certainly.
-    const tabs = await Promise.all(tabIds.map(id => browser.tabs.get(id)));
-    for (const tab of tabs) {
-      if (!tab.active ||
-          !tab.successorTabId ||
-          tab.successorTabId == tab.id)
-        continue;
+  if (configs.lockScrollPositionToSelectOwnerOnClose)
+    await tryLockScrollToSuccessor(tabIds, reason);
 
-      const successor = Tab.get(tab.successorTabId);
-      if (!successor ||
-          isTabInViewport(successor))
-        break;
-
-      log('tryLockPosition/lockScrollPositionToSelectOwnerOnClose successor = ', tab.successorTabId);
-      unlockScrollToSuccessor(false);
-      // The successor tab is out of screen, so the tab bar will be scrolled.
-      // We need to defer the scroll after unlocked.
-      tryLockPosition.suppressedSuccessorToBeScrolled = tab.successorTabId;
-      tryLockPosition.promisedUnlocked = new Promise((resolve, _reject) => {
-        tryLockPosition.onUnlocked.add(resolve);
-      });
-      break;
-    }
-  }
-
-  while (configs.simulateLockTabSizing) { // We use "while" as "breakable if" here
-    // Don't lock scroll position when the last tab is closed.
-    const lastTab = Tab.getLastVisibleTab();
-    if (reason == LOCK_REASON_REMOVE &&
-        tabIds.includes(lastTab.id)) {
-      if (tryLockPosition.tabIds.size > 0) {
-        // but we need to add tabs to the list of "close with locked scroll position"
-        // tabs to prevent unexpected unlocking.
-        for (const id of tabIds) {
-          tryLockPosition.tabIds.add(id);
-        }
-      }
-      log('tryLockPosition/simulateLockTabSizing: ignore last tab remove ', tabIds);
-      break;
-    }
-
-    // Lock scroll position only when the closing affects to the max scroll position.
-    if (mNormalScrollBox.$scrollTop < mNormalScrollBox.$scrollTopMax - Size.getRenderedTabHeight() - mTabbarSpacerSize) {
-      log('tryLockPosition/simulateLockTabSizing: scroll position is not affected ', tabIds, {
-        scrollTop: mNormalScrollBox.$scrollTop,
-        scrollTopMax: mNormalScrollBox.$scrollTopMax,
-        height: Size.getRenderedTabHeight(),
-      });
-      break;
-    }
-
-    for (const id of tabIds) {
-      tryLockPosition.tabIds.add(id);
-    }
-
-    log('tryLockPosition/simulateLockTabSizing ', tabIds);
-    const spacer = mNormalScrollBox.querySelector(`.${Constants.kTABBAR_SPACER}`);
-    const count = tryLockPosition.tabIds.size;
-    const height = Size.getRenderedTabHeight() * count;
-    spacer.style.minHeight = `${height}px`;
-    spacer.dataset.removedOrCollapsedTabsCount = count;
-    mTabbarSpacerSize = height;
-
-    break;
-  }
+  if (configs.simulateLockTabSizing)
+    trySimulateLockTabSizing(tabIds, reason);
 
   if (!tryFinishPositionLocking.listening) {
     tryFinishPositionLocking.listening = true;
@@ -1482,20 +1421,87 @@ export async function tryLockPosition(tabIds, reason) {
 }
 tryLockPosition.tabIds = new Set();
 
-tryLockPosition.suppressedSuccessorToBeScrolled = null;
-tryLockPosition.promisedUnlocked = Promise.resolve(true);
-tryLockPosition.onUnlocked = new Set();
+async function tryLockScrollToSuccessor(tabIds, reason) {
+  if (reason != LOCK_REASON_REMOVE)
+    return;
+
+  // We need to get tabs via WE API here to see its successorTabId certainly.
+  const tabs = await Promise.all(tabIds.map(id => browser.tabs.get(id)));
+  for (const tab of tabs) {
+    if (!tab.active ||
+        !tab.successorTabId ||
+        tab.successorTabId == tab.id)
+      continue;
+
+    const successor = Tab.get(tab.successorTabId);
+    if (!successor ||
+        isTabInViewport(successor))
+      return;
+
+    log('tryLockScrollToSuccessor successor = ', tab.successorTabId);
+    unlockScrollToSuccessor(false);
+    // The successor tab is out of screen, so the tab bar will be scrolled.
+    // We need to defer the scroll after unlocked.
+    tryLockScrollToSuccessor.tabId = tab.successorTabId;
+    tryLockScrollToSuccessor.promisedUnlocked = new Promise((resolve, _reject) => {
+      tryLockScrollToSuccessor.onUnlocked.add(resolve);
+    });
+    return;
+  }
+}
+tryLockScrollToSuccessor.tabId = null;
+tryLockScrollToSuccessor.promisedUnlocked = Promise.resolve(true);
+tryLockScrollToSuccessor.onUnlocked = new Set();
+
+function trySimulateLockTabSizing(tabIds, reason) {
+  // Don't lock scroll position when the last tab is closed.
+  const lastTab = Tab.getLastVisibleTab();
+  if (reason == LOCK_REASON_REMOVE &&
+      tabIds.includes(lastTab.id)) {
+    if (tryLockPosition.tabIds.size > 0) {
+      // but we need to add tabs to the list of "close with locked scroll position"
+      // tabs to prevent unexpected unlocking.
+      for (const id of tabIds) {
+        tryLockPosition.tabIds.add(id);
+      }
+    }
+    log('trySimulateLockTabSizing: ignore last tab remove ', tabIds);
+    return;
+  }
+
+  // Lock scroll position only when the closing affects to the max scroll position.
+  if (mNormalScrollBox.$scrollTop < mNormalScrollBox.$scrollTopMax - Size.getRenderedTabHeight() - mTabbarSpacerSize) {
+    log('trySimulateLockTabSizing: scroll position is not affected ', tabIds, {
+      scrollTop: mNormalScrollBox.$scrollTop,
+      scrollTopMax: mNormalScrollBox.$scrollTopMax,
+      height: Size.getRenderedTabHeight(),
+    });
+    return;
+  }
+
+  for (const id of tabIds) {
+    tryLockPosition.tabIds.add(id);
+  }
+
+  log('trySimulateLockTabSizing: ', tabIds);
+  const spacer = mNormalScrollBox.querySelector(`.${Constants.kTABBAR_SPACER}`);
+  const count = tryLockPosition.tabIds.size;
+  const height = Size.getRenderedTabHeight() * count;
+  spacer.style.minHeight = `${height}px`;
+  spacer.dataset.removedOrCollapsedTabsCount = count;
+  mTabbarSpacerSize = height;
+}
 
 function unlockScrollToSuccessor(canContinueToScroll) {
-  tryLockPosition.suppressedSuccessorToBeScrolled = null;
-  for (const callback of tryLockPosition.onUnlocked) {
+  tryLockScrollToSuccessor.tabId = null;
+  for (const callback of tryLockScrollToSuccessor.onUnlocked) {
     try {
       callback(canContinueToScroll);
     }
     catch (_error) {
     }
   }
-  tryLockPosition.onUnlocked.clear();
+  tryLockScrollToSuccessor.onUnlocked.clear();
 }
 
 export function tryUnlockPosition(tabIds) {
@@ -1589,8 +1595,8 @@ browser.tabs.onRemoved.addListener(tabId => {
   if (tryLockPosition.tabIds.has(tabId) ||
       Tab.get(tabId)?.$TST.collapsed)
     return;
-  if (tryLockPosition.suppressedSuccessorToBeScrolled) {
-    log(`tryLockPosition/lockScrollPositionToSelectOwnerOnClose ignore tab remove ${tabId}`);
+  if (tryLockScrollToSuccessor.tabId) {
+    log(`tryLockScrollToSuccessor ignore tab remove ${tabId}`);
     return;
   }
   tryFinishPositionLocking(`on tab removed ${tabId}`);
