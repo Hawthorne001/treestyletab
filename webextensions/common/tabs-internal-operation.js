@@ -77,23 +77,45 @@ export async function blurTab(bluredTabs, { windowId, silently } = {}) {
 
   const bluredTabIds = new Set(Array.from(bluredTabs || [], tab => tab.id || tab));
 
+  // First, try to find successor based on successorTabId from left tabs.
+  let successorTab = Tab.get(bluredTabs.find(tab => tab.active)?.successorTabId);
+  const scannedTabIds = new Set();
+  while (successorTab && bluredTabIds.has(successorTab.id)) {
+    if (scannedTabIds.has(successorTab.id))
+      break; // prevent infinite loop!
+    scannedTabIds.add(successorTab.id);
+    const nextSuccessorTab = (successorTab.successorTabId > 0 && successorTab.successorTabId != successorTab.id) ?
+      Tab.get(successorTab.successorTabId) :
+      null;
+    if (!nextSuccessorTab)
+      break;
+    successorTab = nextSuccessorTab;
+  }
+  log('blurTab/step 1: found successor = ', successorTab?.id);
+
+  // Second, try to detect successor based on their order.
+  if (!successorTab || bluredTabIds.has(successorTab.id)) {
+    if (successorTab)
+      log(' => it cannot become the successor, find again');
   let bluredTabsFound = false;
-  let nextActiveTab  = null;
   for (const tab of Tab.getVisibleTabs(windowId || bluredTabs[0].windowId)) {
     const blured = bluredTabIds.has(tab.id);
     if (blured)
       bluredTabsFound = true;
     if (!bluredTabsFound)
-      nextActiveTab = tab;
+      successorTab = tab;
     if (bluredTabsFound &&
         !blured) {
-      nextActiveTab = tab;
+      successorTab = tab;
       break;
     }
   }
-  if (nextActiveTab)
-    await activateTab(nextActiveTab, { silently });
-  return nextActiveTab;
+    log('blurTab/step 2: found successor = ', successorTab?.id);
+  }
+
+  if (successorTab)
+    await activateTab(successorTab, { silently });
+  return successorTab;
 }
 
 export function removeTab(tab) {
