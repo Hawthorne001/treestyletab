@@ -97,19 +97,19 @@ export async function blurTab(bluredTabs, { windowId, silently } = {}) {
   if (!successorTab || bluredTabIds.has(successorTab.id)) {
     if (successorTab)
       log(' => it cannot become the successor, find again');
-  let bluredTabsFound = false;
-  for (const tab of Tab.getVisibleTabs(windowId || bluredTabs[0].windowId)) {
-    const blured = bluredTabIds.has(tab.id);
-    if (blured)
-      bluredTabsFound = true;
-    if (!bluredTabsFound)
-      successorTab = tab;
-    if (bluredTabsFound &&
-        !blured) {
-      successorTab = tab;
-      break;
+    let bluredTabsFound = false;
+    for (const tab of Tab.getVisibleTabs(windowId || bluredTabs[0].windowId)) {
+      const blured = bluredTabIds.has(tab.id);
+      if (blured)
+        bluredTabsFound = true;
+      if (!bluredTabsFound)
+        successorTab = tab;
+      if (bluredTabsFound &&
+          !blured) {
+        successorTab = tab;
+        break;
+      }
     }
-  }
     log('blurTab/step 2: found successor = ', successorTab?.id);
   }
 
