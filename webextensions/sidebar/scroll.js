@@ -1398,7 +1398,7 @@ CollapseExpand.onUpdated.addListener((tab, options) => {
 // https://searchfox.org/mozilla-central/rev/27932d4e6ebd2f4b8519865dad864c72176e4e3b/browser/base/content/tabbrowser-tabs.js#1207
 export async function tryLockPosition(tabIds, reason) {
   if ((!configs.simulateLockTabSizing &&
-       !configs.lockScrollPositionToSelectOwnerOnClose) ||
+       !configs.deferScrollingToOutOfViewportSuccessor) ||
       tabIds.every(id => {
         const tab = Tab.get(id);
         return !tab || tab.pinned || tab.hidden;
@@ -1407,7 +1407,7 @@ export async function tryLockPosition(tabIds, reason) {
     return;
   }
 
-  if (configs.lockScrollPositionToSelectOwnerOnClose)
+  if (configs.deferScrollingToOutOfViewportSuccessor)
     await tryLockScrollToSuccessor(tabIds, reason);
 
   if (configs.simulateLockTabSizing)
@@ -1506,7 +1506,7 @@ function unlockScrollToSuccessor(canContinueToScroll) {
 
 export function tryUnlockPosition(tabIds) {
   if ((!configs.simulateLockTabSizing &&
-       !configs.lockScrollPositionToSelectOwnerOnClose) ||
+       !configs.deferScrollingToOutOfViewportSuccessor) ||
       tabIds.every(id => {
         const tab = Tab.get(id);
         return !tab || tab.pinned || tab.hidden;
