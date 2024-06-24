@@ -1,6 +1,12 @@
 # History
 
  - master/HEAD
+ - 4.0.19 (2024.6.24)
+   * Defer scrolling to the successor active tab until the mouse pointer leaves from the sidebar area, if the successor is chosen by something feature like `browser.tabs.selectOwnerOnClose` out of the visible area. You can disable this behavior by setting `deferScrollingToOutOfViewportSuccessor` to `false`.
+   * Activate explicitly specified successor tab if possible, after multiple tabs are moved across windows by drag-and-drop.
+   * React to "Simulate Up/Down/Left/Right Key on Tree" keybaord shortcuts as tree available, even if the sidebar panel is opened in a separate window by [Tree Style Tab in Separate Window](https://addons.mozilla.org/firefox/addon/tst-in-separate-window/) or someone.
+   * Add ability to control temporary state of group tabs opened by API.
+   * Never insert extra contents to non-tab elements in non-target windows via API, if the target window is explicitly specified.
  - 4.0.18 (2024.6.13)
    * Add "Close Duplicated Tabs" context menu command to simulate the command of Firefox 127 and later.
    * Change default shortcut to simulate arrow keys on tree for macOS: Alt-Shift-Uo/Down/Left/Right to MacCtrl-Shift-Uo/Down/Left/Right.
