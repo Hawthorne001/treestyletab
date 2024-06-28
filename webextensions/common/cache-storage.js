@@ -80,8 +80,7 @@ export async function setValue({ windowId, key, value } = {}) {
       try {
         const transaction = db.transaction([store], 'readwrite');
         const cacheStore = transaction.objectStore(store);
-
-        cacheStore.put({
+        const cacheRequest = cacheStore.put({
           key:      cacheKey,
           windowId: windowUniqueId,
           value,
@@ -94,6 +93,11 @@ export async function setValue({ windowId, key, value } = {}) {
           key      = undefined;
           value    = undefined;
           resolve();
+        };
+
+        cacheRequest.onerror = event => {
+          console.error(`Failed to store cache ${cacheKey} in the store ${store}`, event);
+          reject(event);
         };
       }
       catch(error) {
@@ -126,12 +130,18 @@ export async function deleteValue({ windowId, key } = {}) {
       try {
         const transaction = db.transaction([store], 'readwrite');
         const cacheStore = transaction.objectStore(store);
-        cacheStore.delete(cacheKey);
+        const cacheRequest = cacheStore.delete(cacheKey);
+
         transaction.oncomplete = () => {
           //db.close();
           windowId = undefined;
           key      = undefined;
           resolve();
+        };
+
+        cacheRequest.onerror = event => {
+          console.error(`Failed to delete cache ${cacheKey} in the store ${store}`, event);
+          reject(event);
         };
       }
       catch(error) {
@@ -194,6 +204,11 @@ async function getValueInternal({ windowId, key } = {}) {
         cache.key      = undefined;
         cache.windowId = undefined;
         cache.value    = undefined;
+      };
+
+      cacheRequest.onerror = event => {
+        console.error('Failed to get from cache:', event);
+        resolve(null);
       };
 
       transaction.oncomplete = () => {
