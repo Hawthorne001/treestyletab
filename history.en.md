@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 4.0.20 (2024.6.28)
+   * Fix initialization failure from unhandled IndexedDB errors.
  - 4.0.19 (2024.6.24)
    * Defer scrolling to the successor active tab until the mouse pointer leaves from the sidebar area, if the successor is chosen by something feature like `browser.tabs.selectOwnerOnClose` out of the visible area. You can disable this behavior by setting `deferScrollingToOutOfViewportSuccessor` to `false`.
    * Activate explicitly specified successor tab if possible, after multiple tabs are moved across windows by drag-and-drop.
