@@ -76,30 +76,30 @@ export async function setValue({ windowId, key, value } = {}) {
   const cacheKey = `${windowUniqueId}-${key}`;
   asyncRunWithTimeout({
     task: () => new Promise((resolve, reject) => {
-  const timestamp = Date.now();
-  try {
-    const transaction = db.transaction([store], 'readwrite');
-    const cacheStore = transaction.objectStore(store);
+      const timestamp = Date.now();
+      try {
+        const transaction = db.transaction([store], 'readwrite');
+        const cacheStore = transaction.objectStore(store);
 
-    cacheStore.put({
-      key:      cacheKey,
-      windowId: windowUniqueId,
-      value,
-      timestamp,
-    });
+        cacheStore.put({
+          key:      cacheKey,
+          windowId: windowUniqueId,
+          value,
+          timestamp,
+        });
 
-    transaction.oncomplete = () => {
-      //db.close();
-      windowId = undefined;
-      key      = undefined;
-      value    = undefined;
-      resolve();
-    };
-  }
-  catch(error) {
-    console.error(`Failed to store cache ${cacheKey} in the store ${store}`, error);
-    reject(error);
-  }
+        transaction.oncomplete = () => {
+          //db.close();
+          windowId = undefined;
+          key      = undefined;
+          value    = undefined;
+          resolve();
+        };
+      }
+      catch(error) {
+        console.error(`Failed to store cache ${cacheKey} in the store ${store}`, error);
+        reject(error);
+      }
     }),
     timeout: TIMEOUT_IN_MSEC,
     onTimedOut() {
@@ -123,21 +123,21 @@ export async function deleteValue({ windowId, key } = {}) {
   const cacheKey = `${windowUniqueId}-${key}`;
   asyncRunWithTimeout({
     task: () => new Promise((resolve, reject) => {
-  try {
-    const transaction = db.transaction([store], 'readwrite');
-    const cacheStore = transaction.objectStore(store);
-    cacheStore.delete(cacheKey);
-    transaction.oncomplete = () => {
-      //db.close();
-      windowId = undefined;
-      key      = undefined;
-      resolve();
-    };
-  }
-  catch(error) {
-    console.error(`Failed to delete cache ${cacheKey} in the store ${store}`, error);
-    reject(error);
-  }
+      try {
+        const transaction = db.transaction([store], 'readwrite');
+        const cacheStore = transaction.objectStore(store);
+        cacheStore.delete(cacheKey);
+        transaction.oncomplete = () => {
+          //db.close();
+          windowId = undefined;
+          key      = undefined;
+          resolve();
+        };
+      }
+      catch(error) {
+        console.error(`Failed to delete cache ${cacheKey} in the store ${store}`, error);
+        reject(error);
+      }
     }),
     timeout: TIMEOUT_IN_MSEC,
     onTimedOut() {
