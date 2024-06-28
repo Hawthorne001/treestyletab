@@ -804,6 +804,20 @@ export function nextFrame() {
   });
 }
 
+export async function asyncRunWithTimeout({ task, timeout, onTimedOut }) {
+  let succeeded = false;
+  return Promise.race([
+    task().then(result => {
+      succeeded = true;
+      return result;
+    }),
+    wait(timeout).then(() => {
+      if (!succeeded)
+        return onTimedOut();
+    }),
+  ]);
+}
+
 
 const mNotificationTasks = new Map();
 

@@ -6,10 +6,14 @@
 'use strict';
 
 import * as UniqueId from '/common/unique-id.js';
+import {
+  asyncRunWithTimeout,
+} from '/common/common.js';
 
 const DB_NAME = 'PermanentStorage';
 const DB_VERSION = 3;
 const EXPIRATION_TIME_IN_MSEC = 7 * 24 * 60 * 60 * 1000; // 7 days
+const TIMEOUT_IN_MSEC = 1000 * 5; // 5 sec
 
 export const BACKGROUND = 'backgroundCaches';
 const SIDEBAR = 'sidebarCaches'; // obsolete, but left here to delete old storage
@@ -58,6 +62,15 @@ async function openDB() {
 }
 
 export async function setValue({ windowId, key, value } = {}) {
+  return asyncRunWithTimeout({
+    task: () => setValueInternal({ windowId, key, value }),
+    timeout: TIMEOUT_IN_MSEC,
+    onTimedOut() {
+      throw new Error(`CacheStorage.setValue for {windowId}/${key} timed out`);
+    },
+  });
+}
+async function setValueInternal({ windowId, key, value } = {}) {
   const [db, windowUniqueId] = await Promise.all([
     openDB(),
     UniqueId.ensureWindowId(windowId),
@@ -95,6 +108,15 @@ export async function setValue({ windowId, key, value } = {}) {
 }
 
 export async function deleteValue({ windowId, key } = {}) {
+  return asyncRunWithTimeout({
+    task: () => deleteValueInternal({ windowId, key }),
+    timeout: TIMEOUT_IN_MSEC,
+    onTimedOut() {
+      throw new Error(`CacheStorage.deleteValue for {windowId}/${key} timed out`);
+    },
+  });
+}
+async function deleteValueInternal({ windowId, key } = {}) {
   const [db, windowUniqueId] = await Promise.all([
     openDB(),
     UniqueId.ensureWindowId(windowId),
@@ -123,6 +145,15 @@ export async function deleteValue({ windowId, key } = {}) {
 }
 
 export async function getValue({ windowId, key } = {}) {
+  return asyncRunWithTimeout({
+    task: () => getValueInternal({ windowId, key }),
+    timeout: TIMEOUT_IN_MSEC,
+    onTimedOut() {
+      throw new Error(`CacheStorage.getValue for {windowId}/${key} timed out`);
+    },
+  });
+}
+async function getValueInternal({ windowId, key } = {}) {
   return new Promise(async (resolve, _reject) => {
     const [db, windowUniqueId] = await Promise.all([
       openDB(),
