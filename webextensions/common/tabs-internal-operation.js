@@ -7,6 +7,8 @@
 
 // internal operations means operations bypassing WebExtensions' tabs APIs.
 
+import EventListenerManager from '/extlib/EventListenerManager.js';
+
 import {
   log as internalLogger,
   dumpTab,
@@ -25,6 +27,8 @@ import Tab from '/common/Tab.js';
 function log(...args) {
   internalLogger('common/tabs-internal-operation', ...args);
 }
+
+export const onBeforeTabsRemove = new EventListenerManager();
 
 export async function activateTab(tab, { byMouseOperation, keepMultiselection, silently } = {}) {
   if (!Constants.IS_BACKGROUND)
@@ -122,13 +126,15 @@ export function removeTab(tab) {
   return removeTabs([tab]);
 }
 
-export function removeTabs(tabs, { keepDescendants, byMouseOperation, originalStructure, triggerTab } = {}) {
+export async function removeTabs(tabs, { keepDescendants, byMouseOperation, originalStructure, triggerTab } = {}) {
   if (!Constants.IS_BACKGROUND)
     throw new Error('TabsInternalOperation.removeTabs is available only on the background page, use a `kCOMMAND_REMOVE_TABS_INTERNALLY` message instead.');
 
   log('TabsInternalOperation.removeTabs: ', () => tabs.map(dumpTab));
   if (tabs.length == 0)
     return;
+
+  await onBeforeTabsRemove.dispatch(tabs);
 
   const win = TabsStore.windows.get(tabs[0].windowId);
   const tabIds = [];
