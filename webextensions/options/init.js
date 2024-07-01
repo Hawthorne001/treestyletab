@@ -798,6 +798,9 @@ function initPermissionOptions() {
     Permissions.CLIPBOARD_READ,
     document.querySelector('#clipboardReadPermissionGranted_middleClickPasteURLOnNewTabButton'),
     {
+      onInitialized: (granted) => {
+        return granted && configs.middleClickPasteURLOnNewTabButton;
+      },
       onChanged: (granted) => {
         configs.middleClickPasteURLOnNewTabButton = granted;
       }
