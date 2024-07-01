@@ -304,6 +304,7 @@ export const configs = new Configs({
   warnOnAutoGroupNewTabsWithListing: true,
   warnOnAutoGroupNewTabsWithListingMaxRows: 5,
   showAutoGroupOptionHint: true,
+  showAutoGroupOptionHintWithOpener: true,
 
 
   // behavior around newly opened tabs

@@ -272,7 +272,8 @@
         type: 'treestyletab:get-config-value',
         keys: [
           'renderTreeInGroupTabs',
-          'showAutoGroupOptionHint'
+          'showAutoGroupOptionHint',
+          'showAutoGroupOptionHintWithOpener',
         ]
       }),
       browser.runtime.sendMessage({
@@ -294,7 +295,9 @@
     updateTree.enabled = configs.renderTreeInGroupTabs;
     updateTree();
 
-    let show = configs.showAutoGroupOptionHint;
+    const optionPageSection = getOpenerTabId() ? 'autoGroupNewTabsFromPinned' : 'autoGroupNewTabsSection';
+    const optionKey = getOpenerTabId() ? 'showAutoGroupOptionHintWithOpener' : 'showAutoGroupOptionHint';
+    let show = configs[optionKey];
     if (!isTemporary() && !isTemporaryAggressive())
       show = false;
 
@@ -302,12 +305,13 @@
     hint.style.display = show ? 'block' : 'none';
 
     if (show) {
+      const uri = `moz-extension://${location.host}/options/options.html#${optionPageSection}`;
       hint.firstChild.addEventListener('click', event => {
         if (event.button != 0)
           return;
         browser.runtime.sendMessage({
           type: 'treestyletab:open-tab',
-          uri:  `moz-extension://${location.host}/options/options.html#autoGroupNewTabsSection`
+          uri,
         });
       });
       hint.firstChild.addEventListener('keydown', event => {
@@ -316,7 +320,7 @@
           return;
         browser.runtime.sendMessage({
           type: 'treestyletab:open-tab',
-          uri:  `moz-extension://${location.host}/options/options.html#autoGroupNewTabsSection`
+          uri,
         });
       });
 
@@ -327,7 +331,7 @@
         hint.style.display = 'none';
         browser.runtime.sendMessage({
           type: 'treestyletab:set-config-value',
-          key:  'showAutoGroupOptionHint',
+          key:  optionKey,
           value: false
         });
       });
@@ -338,7 +342,7 @@
         hint.style.display = 'none';
         browser.runtime.sendMessage({
           type: 'treestyletab:set-config-value',
-          key:  'showAutoGroupOptionHint',
+          key:  optionKey,
           value: false
         });
       });
