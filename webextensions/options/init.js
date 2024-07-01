@@ -136,6 +136,8 @@ let mUserStyleRulesFieldEditor;
 
 const mDarkModeMedia = window.matchMedia('(prefers-color-scheme: dark)');
 
+let mShowExpertOptionsTemporarily = false;
+
 function onConfigChanged(key) {
   const value = configs[key];
   switch (key) {
@@ -178,19 +180,24 @@ function onConfigChanged(key) {
       }
     }; break;
 
-    case 'showExpertOptions':
-      document.documentElement.classList.toggle('show-expert-options', configs.showExpertOptions);
+    case 'showExpertOptions': {
+      if (mShowExpertOptionsTemporarily && !configs.showExpertOptions)
+        document.querySelector('#showExpertOptions').checked = true;
+      const show = mShowExpertOptionsTemporarily || configs.showExpertOptions;
+      document.documentElement.classList.toggle('show-expert-options', show);
       for (const item of document.querySelectorAll('#parentTabOperationBehaviorModeGroup li li')) {
         const radio = item.querySelector('input[type="radio"]');
-        if (configs.showExpertOptions || radio.checked) {
+        if (show || radio.checked) {
           item.style.display =  '';
-          radio.style.display = configs.showExpertOptions ? '' : 'none';
+          radio.style.display = show || radio.checked ? '' : 'none';
         }
         else {
-          item.style.display =  radio.style.display = 'none';
+          item.style.display = radio.style.display = 'none';
         }
       }
-      break;
+      if (mShowExpertOptionsTemporarily && !configs.showExpertOptions)
+        mShowExpertOptionsTemporarily = false;
+    }; break;
 
     case 'syncDeviceInfo': {
       const name = (configs.syncDeviceInfo || {}).name || '';
@@ -610,6 +617,12 @@ window.addEventListener('DOMContentLoaded', async () => {
   catch(error) {
     console.error(error);
   }
+
+  mShowExpertOptionsTemporarily = !!(
+    location.hash &&
+    location.hash != '#' &&
+    document.querySelector(`.expert #${location.hash.replace(/^#/, '')}, .expert#${location.hash.replace(/^#/, '')}`)
+  );
 
   try {
     options.buildUIForAllConfigs(document.querySelector('#group-allConfigs'));
