@@ -73,6 +73,12 @@
     return url.searchParams.get('aliasTabId');
   }
 
+  function getReplacedParentCount() {
+    const url = new URL(location.href);
+    const count = parseInt(url.searchParams.get('replacedParentCount'));
+    return isNaN(count) ? 0 : count;
+  }
+
   function enterTitleEdit() {
     if (!gTitle)
       init();
@@ -125,6 +131,12 @@
       url.searchParams.set('aliasTabId', aliasTabId);
     else
       url.searchParams.delete('aliasTabId');
+
+    const replacedParentCount = getReplacedParentCount();
+    if (replacedParentCount > 0)
+      url.searchParams.set('replacedParentCount', replacedParentCount);
+    else
+      url.searchParams.delete('replacedParentCount');
 
     history.replaceState({}, document.title, url.href);
   }

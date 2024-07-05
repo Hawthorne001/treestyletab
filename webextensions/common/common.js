@@ -351,6 +351,7 @@ export const configs = new Configs({
   moveParentBehavior_outsideSidebar_expanded:   Constants.kPARENT_TAB_OPERATION_BEHAVIOR_PROMOTE_FIRST_CHILD,
   moveParentBehavior_noSidebar_collapsed:       Constants.kPARENT_TAB_OPERATION_BEHAVIOR_PROMOTE_FIRST_CHILD,
   moveParentBehavior_noSidebar_expanded:        Constants.kPARENT_TAB_OPERATION_BEHAVIOR_PROMOTE_FIRST_CHILD,
+  closeParentBehavior_replaceWithGroup_thresholdToPrevent: 1,
   moveTabsToBottomWhenDetachedFromClosedParent: false,
   promoteAllChildrenWhenClosedParentIsLastChild: true,
   successorTabControlLevel: Constants.kSUCCESSOR_TAB_CONTROL_IN_TREE,

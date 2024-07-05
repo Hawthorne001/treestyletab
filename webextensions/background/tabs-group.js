@@ -30,7 +30,7 @@ function log(...args) {
   internalLogger('background/tabs-group', ...args);
 }
 
-export function makeGroupTabURI({ title, temporary, temporaryAggressive, openerTabId, aliasTabId } = {}) {
+export function makeGroupTabURI({ title, temporary, temporaryAggressive, openerTabId, aliasTabId, replacedParentCount } = {}) {
   const url = new URL(Constants.kGROUP_TAB_URI);
 
   if (title)
@@ -46,6 +46,9 @@ export function makeGroupTabURI({ title, temporary, temporaryAggressive, openerT
 
   if (aliasTabId)
     url.searchParams.set('aliasTabId', aliasTabId);
+
+  if (replacedParentCount)
+    url.searchParams.set('replacedParentCount', replacedParentCount);
 
   return url.href;
 }
@@ -170,9 +173,11 @@ export async function tryReplaceTabWithGroup(tab, { windowId, parent, children, 
   log('trying to replace the closing tab with a new group tab');
 
   const firstChild = children[0];
+  const replacedParentCount = tab?.$TST?.replacedParentGroupTabCount || 0;
   const uri = makeGroupTabURI({
     title:     browser.i18n.getMessage('groupTab_label', firstChild.title),
-    ...temporaryStateParams(configs.groupTabTemporaryStateForOrphanedTabs)
+    ...temporaryStateParams(configs.groupTabTemporaryStateForOrphanedTabs),
+    replacedParentCount: replacedParentCount >= 0 ? replacedParentCount + 1 : replacedParentCount, // keep negative value
   });
   const win = TabsStore.windows.get(windowId);
   win.toBeOpenedTabsWithPositions++;

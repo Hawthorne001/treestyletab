@@ -444,6 +444,13 @@ export default class Tab {
     return (new URL(this.tab.url)).searchParams.get('temporaryAggressive') == 'true';
   }
 
+  get replacedParentGroupTabCount() {
+    if (!this.tab || !this.isGroupTab)
+      return 0;
+    const count = parseInt((new URL(this.tab.url)).searchParams.get('replacedParentCount'));
+    return isNaN(count) ? 0 : count;
+  }
+
   // Firefox Multi-Account Containers
   // https://addons.mozilla.org/firefox/addon/multi-account-containers/
   // Temporary Containers
