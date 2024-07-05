@@ -1356,7 +1356,7 @@ function sanitizeDraggedTabs({ draggedTabs, structure, insertBefore, insertAfter
 }
 
 async function onDragEnd(event) {
-  log('onDragEnd, ', { event, mDraggingOnSelfWindow, mDraggingOnDraggedTabs, dropEffect: event.dataTransfer.dropEffect });
+  log('onDragEnd, ', { event, mDraggingOnSelfWindow, mDraggingOnDraggedTabs, dropEffect: event.dataTransfer?.dropEffect });
   if (!mLastDragEventCoordinates) {
     console.error(new Error('dragend is handled after finishDrag'));
     return;
@@ -1366,7 +1366,7 @@ async function onDragEnd(event) {
   const lastDragEventCoordinatesTimestamp = mLastDragEventCoordinates.timestamp;
   const droppedOnSidebarArea = !!configs.lastDragOverSidebarOwnerWindowId;
 
-  let dragData = event.dataTransfer.getData(kTREE_DROP_TYPE);
+  let dragData = event.dataTransfer?.getData(kTREE_DROP_TYPE);
   dragData = (dragData && JSON.parse(dragData)) || mCurrentDragData;
   if (dragData) {
     dragData.tab  = dragData.tab && Tab.get(dragData.tab.id) || dragData.tab;
@@ -1386,9 +1386,9 @@ async function onDragEnd(event) {
       !(dragData.behavior & Constants.kDRAG_BEHAVIOR_TEAR_OFF))
     return;
 
-  let handledBySomeone = event.dataTransfer.dropEffect != 'none';
+  let handledBySomeone = event.dataTransfer?.dropEffect != 'none';
 
-  if (event.dataTransfer.getData(RetrieveURL.kTYPE_URI_LIST)) {
+  if (event.dataTransfer?.getData(RetrieveURL.kTYPE_URI_LIST)) {
     log('do nothing by TST for dropping just for bookmarking or linking');
     return;
   }
@@ -1413,9 +1413,9 @@ async function onDragEnd(event) {
     configs.workaroundForBug1548949DroppedTabs = null;
   }
 
-  if (event.dataTransfer.mozUserCancelled ||
+  if (event.dataTransfer?.mozUserCancelled ||
       handledBySomeone) {
-    log('dragged items are processed by someone: ', event.dataTransfer.dropEffect);
+    log('dragged items are processed by someone: ', event.dataTransfer?.dropEffect);
     return;
   }
 
