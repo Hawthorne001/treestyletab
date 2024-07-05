@@ -173,11 +173,10 @@ export async function tryReplaceTabWithGroup(tab, { windowId, parent, children, 
   log('trying to replace the closing tab with a new group tab');
 
   const firstChild = children[0];
-  const replacedParentCount = tab?.$TST?.replacedParentGroupTabCount || 0;
   const uri = makeGroupTabURI({
     title:     browser.i18n.getMessage('groupTab_label', firstChild.title),
     ...temporaryStateParams(configs.groupTabTemporaryStateForOrphanedTabs),
-    replacedParentCount: replacedParentCount >= 0 ? replacedParentCount + 1 : replacedParentCount, // keep negative value
+    replacedParentCount: (tab?.$TST?.replacedParentGroupTabCount || 0) + 1,
   });
   const win = TabsStore.windows.get(windowId);
   win.toBeOpenedTabsWithPositions++;

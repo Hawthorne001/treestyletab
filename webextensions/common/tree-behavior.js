@@ -84,6 +84,7 @@ export function getParentTabOperationBehavior(tab, { context, byInternalOperatio
 
   const replacedParentCount = tab?.$TST?.replacedParentGroupTabCount;
   if (behavior == Constants.kPARENT_TAB_OPERATION_BEHAVIOR_REPLACE_WITH_GROUP_TAB &&
+      configs.closeParentBehavior_replaceWithGroup_thresholdToPrevent >= 0 &&
       replacedParentCount &&
       replacedParentCount >= configs.closeParentBehavior_replaceWithGroup_thresholdToPrevent) {
     behavior = Constants.kPARENT_TAB_OPERATION_BEHAVIOR_PROMOTE_INTELLIGENTLY;
