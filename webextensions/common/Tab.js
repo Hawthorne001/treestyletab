@@ -1183,13 +1183,16 @@ export default class Tab {
   get needToBeGroupedSiblings() {
     if (!this.tab)
       return [];
+    const openerTabUniqueId = this.getAttribute(Constants.kPERSISTENT_ORIGINAL_OPENER_TAB_ID);
+    if (!openerTabUniqueId)
+      return [];
     return TabsStore.queryAll({
       windowId:   this.tab.windowId,
       tabs:       TabsStore.toBeGroupedTabsInWindow.get(this.tab.windowId),
       normal:     true,
       '!id':      this.id,
       attributes: [
-        Constants.kPERSISTENT_ORIGINAL_OPENER_TAB_ID, this.getAttribute(Constants.kPERSISTENT_ORIGINAL_OPENER_TAB_ID),
+        Constants.kPERSISTENT_ORIGINAL_OPENER_TAB_ID, openerTabUniqueId,
         Constants.kPERSISTENT_ALREADY_GROUPED_FOR_PINNED_OPENER, ''
       ],
       ordered:    true
