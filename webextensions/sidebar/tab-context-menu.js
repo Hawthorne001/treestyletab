@@ -637,6 +637,7 @@ window.addEventListener('mouseup', _event => {
 
 async function onContextMenu(event) {
   reserveToActivateSubpanel();
+  log('onContextMenu: start');
 
   const context = mReservedOverrideContext;
   mReservedOverrideContext = null;
@@ -647,21 +648,29 @@ async function onContextMenu(event) {
     target.closest('input, textarea') ||
     originalTarget.closest('input, textarea')
   );
+  log('onContextMenu: ', { target, originalTarget, onInputField, context });
 
   if (!onInputField && context && context.context) {
+    log('onContextMenu: override context ', context);
     try {
       browser.menus.overrideContext(context);
     }
     catch(error) {
-      if (context.context == 'bookmark' &&
-          !(await Permissions.isGranted(Permissions.BOOKMARKS)))
-        notify({
-          title:   browser.i18n.getMessage('bookmarkContext_notification_notPermitted_title'),
-          message: browser.i18n.getMessage(`bookmarkContext_notification_notPermitted_message${isLinux() ? '_linux' : ''}`),
-          url:     `moz-extension://${location.host}/options/options.html#bookmarksPermissionGranted_context`
-        });
-      else
+      console.log('failed to override context: ', error);
+      try {
+        if (context.context == 'bookmark' &&
+            !(await Permissions.isGranted(Permissions.BOOKMARKS)))
+          notify({
+            title:   browser.i18n.getMessage('bookmarkContext_notification_notPermitted_title'),
+            message: browser.i18n.getMessage(`bookmarkContext_notification_notPermitted_message${isLinux() ? '_linux' : ''}`),
+            url:     `moz-extension://${location.host}/options/options.html#bookmarksPermissionGranted_context`
+          });
+        else
+          console.error(error);
+      }
+      catch(error) {
         console.error(error);
+      }
     }
     return;
   }
@@ -671,8 +680,10 @@ async function onContextMenu(event) {
     context: null
   });
 
-  if (onInputField)
+  if (onInputField) {
+    console.log('ignroe request on a input field');
     return;
+  }
 
   const modifierKeyPressed = isMacOS() ? event.metaKey : event.ctrlKey;
 
@@ -695,6 +706,7 @@ async function onContextMenu(event) {
   if (tab &&
       !modifierKeyPressed &&
       typeof browser.menus.overrideContext == 'function') {
+    log('onContextMenu: override context ', context);
     browser.menus.overrideContext({
       context: 'tab',
       tabId: tab.id
@@ -703,6 +715,7 @@ async function onContextMenu(event) {
   }
 
   if (EventUtils.isEventFiredOnNewTabButton(event)) {
+    log('onContextMenu: on new tab button');
     event.stopPropagation();
     event.preventDefault();
     mNewTabButtonUI.open({
@@ -713,6 +726,7 @@ async function onContextMenu(event) {
   }
 
   if (event.target == document.body) { // when the application key is pressed
+    log('onContextMenu: override context for blank area');
     browser.menus.overrideContext({
       context: 'tab',
       tabId:   Tab.getActiveTab(TabsStore.getCurrentWindowId()).id,
@@ -720,9 +734,12 @@ async function onContextMenu(event) {
     return;
   }
 
-  if (!configs.emulateDefaultContextMenu)
+  if (!configs.emulateDefaultContextMenu) {
+    log('onContextMenu: no emulation');
     return;
+  }
 
+  log('onContextMenu: show emulated context menu');
   event.stopPropagation();
   event.preventDefault();
   await onShown(tab);
