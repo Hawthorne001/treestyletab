@@ -585,41 +585,41 @@
   function columnizeTree(aTree, options) {
     options = options || {};
     options.columnWidth = options.columnWidth || 'var(--column-width, 20em)';
+    const containerRect = options.containerRect || aTree.parentNode.getBoundingClientRect();
+
+    const uncolumnizedTree = aTree.cloneNode(true);
+    const uncolumnizedTreeStyle = uncolumnizedTree.style;
+    uncolumnizedTreeStyle.visibility = 'hidden';
+    uncolumnizedTreeStyle.position = 'absolute';
+    uncolumnizedTreeStyle.maxWidth = `${containerRect.width}px`;
+    uncolumnizedTreeStyle.height = uncolumnizedTreeStyle.maxHeight = '';
+    uncolumnizedTreeStyle.columnWidth = '';
+    aTree.parentNode.appendChild(uncolumnizedTree);
+    const totalContentsHeight = uncolumnizedTree.offsetHeight;
+    aTree.parentNode.removeChild(uncolumnizedTree);
 
     const style = aTree.style;
-    style.columnWidth = style.MozColumnWidth = `calc(${options.columnWidth})`;
-    const computedStyle = window.getComputedStyle(aTree, null);
-    aTree.columnWidth = Number((computedStyle.MozColumnWidth || computedStyle.columnWidth).replace(/px/, ''));
-    style.columnGap   = style.MozColumnGap = '1em';
-    style.columnFill  = style.MozColumnFill = 'auto';
-    style.columnCount = style.MozColumnCount = 'auto';
-
-    const containerRect = options.containerRect || aTree.parentNode.getBoundingClientRect();
-    const maxWidth = containerRect.width;
-    if (aTree.columnWidth * 2 <= maxWidth ||
-        options.calculateCount) {
+    if (totalContentsHeight > containerRect.height) {
+      style.columnWidth = style.MozColumnWidth = `calc(${options.columnWidth})`;
+      const computedStyle = window.getComputedStyle(aTree, null);
+      aTree.columnWidth = Number((computedStyle.MozColumnWidth || computedStyle.columnWidth).replace(/px/, ''));
+      style.columnGap   = style.MozColumnGap = '1em';
+      style.columnFill  = style.MozColumnFill = 'auto';
+      style.columnCount = style.MozColumnCount = 'auto';
       const treeContentsRange = document.createRange();
       treeContentsRange.selectNodeContents(aTree);
       const overflow = treeContentsRange.getBoundingClientRect().width > window.innerWidth;
       treeContentsRange.detach();
+      style.maxWidth = '';
       const blankSpace = overflow ? 2 : 1;
       style.height = style.maxHeight =
         `calc(${containerRect.height}px - ${blankSpace}em)`;
-
-      if (getActualColumnCount(aTree) <= 1)
-        style.columnWidth = style.MozColumnWidth = '';
     }
     else {
+      style.columnWidth = style.MozColumnWidth = '';
+      style.maxWidth = `calc(${containerRect.width}px - 1em /* right-padding of #tabs */ - 20px /* left-margin of the tree */)`;
       style.height = style.maxHeight = '';
     }
-  }
-
-  function getActualColumnCount(aTree) {
-    const range = document.createRange();
-    range.selectNodeContents(aTree);
-    const rect = range.getBoundingClientRect();
-    range.detach();
-    return Math.floor(rect.width / aTree.columnWidth);
   }
 
   init();
