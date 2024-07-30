@@ -650,8 +650,8 @@ async function onContextMenu(event) {
   );
   log('onContextMenu: ', { target, originalTarget, onInputField, context });
 
-  if (!onInputField && context && context.context) {
-    log('onContextMenu: override context ', context);
+  if (!onInputField && context?.context) {
+    log('onContextMenu: override context aso something given: ', context);
     try {
       browser.menus.overrideContext(context);
     }
@@ -675,6 +675,7 @@ async function onContextMenu(event) {
     return;
   }
 
+  console.log('notify context menu is overridden');
   browser.runtime.sendMessage({
     type:    Constants.kCOMMAND_NOTIFY_CONTEXT_OVERRIDDEN,
     context: null
@@ -692,6 +693,7 @@ async function onContextMenu(event) {
   if (bookmarkId &&
       !modifierKeyPressed &&
       typeof browser.menus.overrideContext == 'function') {
+    log('onContextMenu: override context as bookmark context menu');
     browser.menus.overrideContext({
       context:    'bookmark',
       bookmarkId: bookmarkId
@@ -706,7 +708,7 @@ async function onContextMenu(event) {
   if (tab &&
       !modifierKeyPressed &&
       typeof browser.menus.overrideContext == 'function') {
-    log('onContextMenu: override context ', context);
+    log('onContextMenu: override context as tab context menu');
     browser.menus.overrideContext({
       context: 'tab',
       tabId: tab.id
@@ -726,7 +728,7 @@ async function onContextMenu(event) {
   }
 
   if (event.target == document.body) { // when the application key is pressed
-    log('onContextMenu: override context for blank area');
+    log('onContextMenu: override context as tab context menu for blank area');
     browser.menus.overrideContext({
       context: 'tab',
       tabId:   Tab.getActiveTab(TabsStore.getCurrentWindowId()).id,
