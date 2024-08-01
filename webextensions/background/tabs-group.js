@@ -97,12 +97,12 @@ export async function groupTabs(tabs, { broadcast, parent, withDescendants, ...g
     const structure = TreeBehavior.getTreeStructureFromTabs(tabs);
 
     await Tree.detachTabsFromTree(tabs, {
-      broadcast: !!broadcast
+      broadcast: !!broadcast,
     });
 
     log('structure: ', structure);
     await Tree.applyTreeStructureToTabs(tabs, structure, {
-      broadcast: true
+      broadcast: !!broadcast,
     });
   }
 
@@ -113,7 +113,7 @@ export async function groupTabs(tabs, { broadcast, parent, withDescendants, ...g
     await Tree.attachTabTo(tab, groupTab, {
       forceExpand: true, // this is required to avoid the group tab itself is active from active tab in collapsed tree
       dontMove:  true,
-      broadcast: !!broadcast
+      broadcast: !!broadcast,
     });
   }
   return groupTab;
