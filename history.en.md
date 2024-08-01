@@ -1,6 +1,17 @@
 # History
 
  - master/HEAD
+   * Activate tree parent based on the user configuration more certainly if possible, when multiple tabs containing active are closed by one action.
+   * Allow to close a group tab opened to replace a closed parent, when it is closed repeatedly. This behavior can be deactivated and you can keep such tabs unclosable like as old versions, with setting a secret option `closeParentBehavior_replaceWithGroup_thresholdToPrevent` to `-1`.
+   * Reduce flashing of the vertical scroll bar on edge cases of overflowing.
+   * Don't place new child tabs opened from a pinned tab at odd location, even when there is any waiting-to-be-grouped tabs and the system is slow.
+   * Keep structure of grouped tabs as possible as we can, when partial tabs in existing trees are grouped via the [`group-tabs` API](https://github.com/piroor/treestyletab/wiki/API-for-other-addons#create-new-group-from-given-tabs).
+   * Ignore mouse clicks only on animated closing tabs more certainly, to prevent detection of those clicks as ones on the blank area of the tab bar.
+   * Determine to apply multi-column layout (or don't) to the tree in a group tab more robustly, even if its appearance is modified by the user style sheet.
+   * Expose expert options temporarily when the options page is opened from internal links and the referred option is hidden as an expert option.
+   * Link to the suitable option to deactivate the behavior, from a group tab opened to group children of pinned tabs.
+   * Don't check the checkbox to control middle-click-paste on the new tab button, when the permission is granted but internal option is still deactivated.
+   * Suppress error from missing dataTransfer of drag-and-drop events.
  - 4.0.20 (2024.6.28)
    * Fix initialization failure from unhandled IndexedDB errors.
  - 4.0.19 (2024.6.24)
