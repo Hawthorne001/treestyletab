@@ -79,7 +79,7 @@ export async function groupTabs(tabs, { broadcast, parent, withDescendants, ...g
   if (rootTabs.length <= 0)
     return null;
 
-  log('groupTabs: ', () => tabs.map(dumpTab));
+  log('groupTabs: ', () => tabs.map(dumpTab), { broadcast, parent, withDescendants });
 
   const uri = makeGroupTabURI({
     title:     browser.i18n.getMessage('groupTab_label', rootTabs[0].title),
@@ -93,10 +93,19 @@ export async function groupTabs(tabs, { broadcast, parent, withDescendants, ...g
     inBackground: true
   });
 
-  if (!withDescendants)
+  if (!withDescendants) {
+    const structure = TreeBehavior.getTreeStructureFromTabs(tabs);
+
     await Tree.detachTabsFromTree(tabs, {
       broadcast: !!broadcast
     });
+
+    log('structure: ', structure);
+    await Tree.applyTreeStructureToTabs(tabs, structure, {
+      broadcast: true
+    });
+  }
+
   await TabsMove.moveTabsAfter(tabs.slice(1), tabs[0], {
     broadcast: !!broadcast
   });
