@@ -506,6 +506,7 @@ async function onMouseUp(event) {
 }
 onMouseUp = EventUtils.wrapWithErrorHandler(onMouseUp);
 
+let mLastMouseupOnClosebox = false;
 async function handleDefaultMouseUp({ lastMousedown, tab, event }) {
   log('handleDefaultMouseUp ', lastMousedown.detail);
 
@@ -578,14 +579,21 @@ async function handleDefaultMouseUp({ lastMousedown, tab, event }) {
     return;
   }
 
+  const wasMouseupOnClosebox = mLastMouseupOnClosebox;
+  mLastMouseupOnClosebox = !!lastMousedown.detail.closebox;
+
   // Multiple middle clicks to close tabs can be detected as a middle click on the tab bar.
   // We should ignore if the cursor is not moved and the closing tab is still in animation.
   // See also: https://github.com/piroor/treestyletab/issues/1968
   if (shouldApplyAnimation() &&
+      (lastMousedown.detail.isMiddleClick ||
+       (lastMousedown.detail.button == 0 &&
+        !lastMousedown.detail.isAccelClick &&
+        wasMouseupOnClosebox)) &&
       Date.now() - mLastMouseUpOnTab <= configs.collapseDuration &&
       Math.abs(mLastMouseUpX - event.clientX) < configs.acceptableFlickerToIgnoreClickOnTabAndTabbar / 2 &&
       Math.abs(mLastMouseUpY - event.clientY) < configs.acceptableFlickerToIgnoreClickOnTabAndTabbar / 2) {
-    log('onMouseUp: ignore clicking while animation');
+    log('onMouseUp: ignore multi-clicking while closing tab animation');
     return;
   }
 
