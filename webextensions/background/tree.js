@@ -634,6 +634,7 @@ export async function detachTabsFromTree(tabs, options = {}) {
     promisedAttach.push(detachAllChildren(tab, {
       ...options,
       behavior:  Constants.kPARENT_TAB_OPERATION_BEHAVIOR_PROMOTE_FIRST_CHILD,
+      ignoreTabs: tabs,
     }));
   }
   if (promisedAttach.length > 0)
@@ -642,7 +643,7 @@ export async function detachTabsFromTree(tabs, options = {}) {
 
 export async function detachAllChildren(
   tab = null,
-  { windowId, children, descendants, parent, nearestFollowingRootTab, newParent, behavior, dontExpand, dontSyncParentToOpenerTab,
+  { windowId, children, descendants, parent, nearestFollowingRootTab, newParent, ignoreTabs, behavior, dontExpand, dontSyncParentToOpenerTab,
     ...options } = {}
 ) {
   if (tab) {
@@ -657,6 +658,8 @@ export async function detachAllChildren(
       options);
   // the "children" option is used for removing tab.
   children = children ? children.map(TabsStore.ensureLivingTab) : tab.$TST.children;
+
+  const ignoreTabsSet = new Set(ignoreTabs || []);
 
   if (behavior == Constants.kPARENT_TAB_OPERATION_BEHAVIOR_PROMOTE_FIRST_CHILD &&
       newParent &&
@@ -676,6 +679,9 @@ export async function detachAllChildren(
 
   // the "parent" option is used for removing tab.
   parent = TabsStore.ensureLivingTab(parent) || (tab && tab.$TST.parent);
+  while (ignoreTabsSet.has(parent)) {
+    parent = parent.$TST.parent;
+  }
   if (tab &&
       tab.$TST.isGroupTab &&
       Tab.getRemovingTabs(tab.windowId).length == children.length) {
