@@ -456,6 +456,16 @@ async function onMouseUp(event) {
   }
 
   if (tab) {
+    browser.runtime.sendMessage({
+      type:     TSTAPI.kNOTIFY_TAB_MOUSEUP,
+      button:   lastMousedown.button,
+      altKey:   lastMousedown.altKey,
+      ctrlKey:  lastMousedown.ctrlKey,
+      metaKey:  lastMousedown.metaKey,
+      shiftKey: lastMousedown.shiftKey,
+      tab:      tab && tab.$TST.export(true),
+    }).catch(ApiTabs.createErrorHandler());
+
     const mouseupInfo = {
       ...lastMousedown,
       detail:   EventUtils.getMouseEventDetail(event, tab),

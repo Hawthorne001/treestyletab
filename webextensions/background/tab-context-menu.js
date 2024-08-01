@@ -680,8 +680,10 @@ function hasVisiblePrecedingItem(separator) {
 
 let mOverriddenContext = null;
 let mLastContextTabId = null;
+let mMenuInitializationCanceled = false;
 
 async function onShown(info, contextTab) {
+  mMenuInitializationCanceled = false;
   if (!mInitialized)
     return;
 
@@ -709,6 +711,9 @@ async function onShown(info, contextTab) {
     const hasChild              = contextTab && contextTabs.some(tab => tab.$TST.hasChild);
     const { hasUnmutedTab, hasUnmutedDescendant } = Commands.getUnmutedState(contextTabs);
     const { hasAutoplayBlockedTab, hasAutoplayBlockedDescendant } = Commands.getAutoplayBlockedState(contextTabs);
+
+    if (mMenuInitializationCanceled)
+      return;
 
     if (mOverriddenContext)
       return onOverriddenMenuShown(info, contextTab, windowId);
@@ -1002,6 +1007,9 @@ async function onShown(info, contextTab) {
       return; // Skip further operations if the menu was already reopened on a different context tab.
 
     /* eslint-enable no-unused-expressions */
+
+    if (mMenuInitializationCanceled)
+      return;
 
     if (modifiedItemsCount > 0)
       browser.menus.refresh().catch(ApiTabs.createErrorSuppressor());
@@ -1563,6 +1571,12 @@ function onMessage(message, _sender) {
         );
         onTSTTabContextMenuShown.dispatch(message, message.tab);
       }
+      break;
+
+    // ...but if the mouse button is released before pre-initialization is finished, we should give up it.
+    case TSTAPI.kNOTIFY_TAB_MOUSEUP:
+      if (message.button == 2)
+        mMenuInitializationCanceled = true;
       break;
   }
 }
