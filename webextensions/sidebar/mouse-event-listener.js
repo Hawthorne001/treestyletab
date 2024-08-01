@@ -511,8 +511,10 @@ async function handleDefaultMouseUp({ lastMousedown, tab, event }) {
 
   if (tab &&
       lastMousedown.detail.button != 2 &&
-      await handleDefaultMouseUpOnTab({ lastMousedown, tab, event }))
+      await handleDefaultMouseUpOnTab({ lastMousedown, tab, event })) {
+    log('onMouseUp: click on a tab');
     return;
+  }
 
   if (tab) {
     mLastMouseUpX = event.clientX;
@@ -527,8 +529,9 @@ async function handleDefaultMouseUp({ lastMousedown, tab, event }) {
       configs.autoAttachOnNewTabButtonAccelClick :
       configs.autoAttachOnNewTabCommand;
   if (EventUtils.isEventFiredOnNewTabButton(event)) {
+    log('onMouseUp: click on the new tab button');
     if (lastMousedown.detail.button != 2) {
-      log('onMouseUp: click on the new tab button');
+      log('onMouseUp: not a context menu request');
       const mouseupInfo = {
         ...lastMousedown,
         detail: EventUtils.getMouseEventDetail(event),
@@ -581,14 +584,17 @@ async function handleDefaultMouseUp({ lastMousedown, tab, event }) {
   if (shouldApplyAnimation() &&
       Date.now() - mLastMouseUpOnTab <= configs.collapseDuration &&
       Math.abs(mLastMouseUpX - event.clientX) < configs.acceptableFlickerToIgnoreClickOnTabAndTabbar / 2 &&
-      Math.abs(mLastMouseUpY - event.clientY) < configs.acceptableFlickerToIgnoreClickOnTabAndTabbar / 2)
+      Math.abs(mLastMouseUpY - event.clientY) < configs.acceptableFlickerToIgnoreClickOnTabAndTabbar / 2) {
+    log('onMouseUp: ignore clicking while animation');
     return;
+  }
 
   const onTabbarTop = EventUtils.isEventFiredOnTabbarTop(event);
   const onTabbarBottom = EventUtils.isEventFiredOnTabbarBottom(event);
 
   log('onMouseUp: notify as a blank area click to other addons');
   if (onTabbarTop || onTabbarBottom) {
+    log('onMouseUp: on tab bar top or bottom');
     const allowed = await TSTAPIFrontend.tryMouseOperationAllowedWithExtraContents(
       TSTAPI.kNOTIFY_EXTRA_CONTENTS_MOUSEUP,
       TSTAPI.kNOTIFY_TABBAR_MOUSEUP,
@@ -599,10 +605,13 @@ async function handleDefaultMouseUp({ lastMousedown, tab, event }) {
       },
       lastMousedown.detail.$extraContentsInfo
     );
-    if (!allowed)
+    if (!allowed) {
+      log('onMouseUp: canceled');
       return;
+    }
   }
   else {
+    log('onMouseUp: on somewhere, tab = ', !!lastMousedown.tab);
     const mouseUpAllowed = await TSTAPI.tryOperationAllowed(
       TSTAPI.kNOTIFY_TABBAR_MOUSEUP,
       {
@@ -614,11 +623,14 @@ async function handleDefaultMouseUp({ lastMousedown, tab, event }) {
       },
       { tabProperties: ['tab'] }
     );
-    if (!mouseUpAllowed)
+    if (!mouseUpAllowed) {
+      log('onMouseUp: canceled');
       return;
+    }
   }
 
   if (onTabbarTop || onTabbarBottom) {
+    log('onMouseUp: extra contents on tab bar top or bottom');
     const allowed = await TSTAPIFrontend.tryMouseOperationAllowedWithExtraContents(
       TSTAPI.kNOTIFY_EXTRA_CONTENTS_CLICKED,
       TSTAPI.kNOTIFY_TABBAR_CLICKED,
@@ -629,10 +641,13 @@ async function handleDefaultMouseUp({ lastMousedown, tab, event }) {
       },
       lastMousedown.detail.$extraContentsInfo
     );
-    if (!allowed)
+    if (!allowed) {
+      log('onMouseUp: canceled');
       return;
+    }
   }
   else {
+    log('onMouseUp: on somewhere, tab = ', !!lastMousedown.tab);
     const clickAllowed = await TSTAPI.tryOperationAllowed(
       TSTAPI.kNOTIFY_TABBAR_CLICKED,
       {
@@ -644,8 +659,10 @@ async function handleDefaultMouseUp({ lastMousedown, tab, event }) {
       },
       { tabProperties: ['tab'] }
     );
-    if (!clickAllowed)
+    if (!clickAllowed) {
+      log('onMouseUp: canceled');
       return;
+    }
   }
 
   if (lastMousedown.detail.isMiddleClick) { // Ctrl-click does nothing on Firefox's tab bar!
