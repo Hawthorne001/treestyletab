@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 4.0.21 (2024.8.4)
    * Activate tree parent based on the user configuration more certainly if possible, when multiple tabs containing active are closed by one action.
    * Allow to close a group tab opened to replace a closed parent, when it is closed repeatedly. This behavior can be deactivated and you can keep such tabs unclosable like as old versions, with setting a secret option `closeParentBehavior_replaceWithGroup_thresholdToPrevent` to `-1`.
    * Reduce flashing of the vertical scroll bar on edge cases of overflowing.
