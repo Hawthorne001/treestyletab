@@ -6,6 +6,7 @@
    * Reduce flashing of the vertical scroll bar on edge cases of overflowing.
    * Don't place new child tabs opened from a pinned tab at odd location, even when there is any waiting-to-be-grouped tabs and the system is slow.
    * Keep structure of grouped tabs as possible as we can, when partial tabs in existing trees are grouped via the [`group-tabs` API](https://github.com/piroor/treestyletab/wiki/API-for-other-addons#create-new-group-from-given-tabs).
+   * Suppress flashing of the scrollbar on an edge case with the Photon theme.
    * Ignore mouse clicks only on animated closing tabs more certainly, to prevent detection of those clicks as ones on the blank area of the tab bar.
    * Determine to apply multi-column layout (or don't) to the tree in a group tab more robustly, even if its appearance is modified by the user style sheet.
    * Expose expert options temporarily when the options page is opened from internal links and the referred option is hidden as an expert option.
