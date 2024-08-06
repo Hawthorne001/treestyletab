@@ -310,12 +310,17 @@ async function rebuildAll(windows) {
       try {
         log(`build tabs for ${win.id} from scratch`);
         Window.init(win.id);
+        const promises = [];
         for (let tab of win.tabs) {
           tab = Tab.get(tab.id);
           tab.$TST.clear(); // clear dirty restored states
           TabsUpdate.updateTab(tab, tab, { forceApply: true });
+          promises.push(tab.$TST.getPermanentStates().then(states => {
+            tab.$TST.states = new Set(states);
+          }));
           tryStartHandleAccelKeyOnTab(tab);
         }
+        await Promise.all(promises);
       }
       catch(e) {
         log(`failed to build tabs for ${win.id}`, e);
