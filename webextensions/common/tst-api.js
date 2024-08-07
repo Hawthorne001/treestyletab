@@ -272,6 +272,11 @@ export function clearCache(cache) {
 // bacause instances of the class will be very short-life and increases RAM usage on
 // massive tabs case.
 export async function exportTab(sourceTab, { addonId, light, isContextTab, interval, permissions, cache, cacheKey } = {}) {
+  const normalizedSourceTab = Tab.get(sourceTab);
+  if (!normalizedSourceTab)
+    throw new Error(`Fatal error: tried to export not a tab. ${sourceTab}`);
+  sourceTab = normalizedSourceTab;
+
   if (!interval)
     interval = 0;
   if (!cache)
