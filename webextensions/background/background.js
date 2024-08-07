@@ -314,10 +314,16 @@ async function rebuildAll(windows) {
         for (let tab of win.tabs) {
           tab = Tab.get(tab.id);
           tab.$TST.clear(); // clear dirty restored states
-          TabsUpdate.updateTab(tab, tab, { forceApply: true });
-          promises.push(tab.$TST.getPermanentStates().then(states => {
-            tab.$TST.states = new Set(states);
-          }));
+          promises.push(
+            tab.$TST.getPermanentStates()
+              .then(states => {
+                tab.$TST.states = new Set(states);
+              })
+              .catch(console.error)
+              .then(() => {
+                TabsUpdate.updateTab(tab, tab, { forceApply: true });
+              })
+          );
           tryStartHandleAccelKeyOnTab(tab);
         }
         await Promise.all(promises);
