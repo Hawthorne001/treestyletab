@@ -582,6 +582,8 @@ async function rebuildAll(importedTabs) {
   }
   MetricsData.add('rebuildAll: end (from scratch)');
 
+  document.documentElement.classList.toggle(Constants.kTABBAR_STATE_MULTIPLE_HIGHLIGHTED, Tab.getHighlightedTabs(mTargetWindow).length > 1);
+
   importedTabs = null; // wipe it out from the RAM.
   return false;
 }
