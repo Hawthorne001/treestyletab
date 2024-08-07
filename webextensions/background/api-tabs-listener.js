@@ -285,8 +285,11 @@ async function onUpdated(tabId, changeInfo, tab) {
         continue;
       if ('key' in updatedTab)
         oldState[key] = updatedTab[key];
-      if (key == 'openerTabId')
+      if (key == 'openerTabId') {
+        if (changeInfo.openerTabId == updatedTab.openerTabId) // already processed
+          continue;
         log(`openerTabId of ${tabId} is changed by someone (notified via changeInfo)!: ${updatedTab.openerTabId} (original) => ${changeInfo[key]} (changed by someone)`, configs.debug && new Error().stack);
+      }
       updatedTab[key] = changeInfo[key];
     }
     if (changeInfo.url ||
