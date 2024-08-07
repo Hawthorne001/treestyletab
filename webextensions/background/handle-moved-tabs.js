@@ -73,21 +73,21 @@ Tab.onMoving.addListener((tab, moveInfo) => {
   const win              = TabsStore.windows.get(tab.windowId);
   const isNewlyOpenedTab = win.openingTabs.has(tab.id);
   const positionControlled = configs.insertNewChildAt != Constants.kINSERT_NO_CONTROL;
-  if (isNewlyOpenedTab &&
-      !moveInfo.byInternalOperation &&
-      !moveInfo.alreadyMoved &&
-      !moveInfo.isSubstantiallyMoved &&
-      positionControlled) {
-    const opener = tab.$TST.openerTab;
-    // if there is no valid opener, it can be a restored initial tab in a restored window
-    // and can be just moved as a part of window restoration process.
-    if (opener) {
-      log('onTabMove for new child tab: move back '+moveInfo.toIndex+' => '+moveInfo.fromIndex);
-      moveBack(tab, moveInfo);
-      return false;
-    }
-  }
-  return true;
+  if (!isNewlyOpenedTab ||
+      !positionControlled ||
+      moveInfo.byInternalOperation ||
+      moveInfo.alreadyMoved ||
+      moveInfo.isSubstantiallyMoved)
+    return true;
+
+  // if there is no valid opener, it can be a restored initial tab in a restored window
+  // and can be just moved as a part of window restoration process.
+  if (!tab.$TST.openerTab)
+    return true;
+
+  log('onTabMove for new child tab: move back '+moveInfo.toIndex+' => '+moveInfo.fromIndex);
+  moveBack(tab, moveInfo);
+  return false;
 });
 
 async function tryFixupTreeForInsertedTab(tab, moveInfo = {}) {
