@@ -1918,26 +1918,22 @@ export default class Tab {
     if (!this.tab) // already closed tab
       return;
     log(`memorizeNeighbors ${this.tab.id} as ${hint}`);
-
-    const previousTab = this.unsafePreviousTab;
-    this.lastPreviousTabId = previousTab && previousTab.id;
-
-    const nextTab = this.unsafeNextTab;
-    this.lastNextTabId = nextTab && nextTab.id;
+    this.lastPreviousTabId = this.unsafePreviousTab?.id;
+    this.lastNextTabId = this.unsafeNextTab?.id;
   }
 
   get isSubstantiallyMoved() {
     const previousTab = this.unsafePreviousTab;
     if (this.lastPreviousTabId &&
-        this.lastPreviousTabId != (previousTab && previousTab.id)) {
-      log(`isSubstantiallyMoved lastPreviousTabId=${this.lastNextTabId}, previousTab=${previousTab && previousTab.id}`);
+        this.lastPreviousTabId != previousTab?.id) {
+      log(`isSubstantiallyMoved lastPreviousTabId=${this.lastNextTabId}, previousTab=${previousTab?.id}`);
       return true;
     }
 
     const nextTab = this.unsafeNextTab;
     if (this.lastNextTabId &&
-        this.lastNextTabId != (nextTab && nextTab.id)) {
-      log(`isSubstantiallyMoved lastNextTabId=${this.lastNextTabId}, nextTab=${nextTab && nextTab.id}`);
+        this.lastNextTabId != nextTab?.id) {
+      log(`isSubstantiallyMoved lastNextTabId=${this.lastNextTabId}, nextTab=${nextTab?.id}`);
       return true;
     }
 
