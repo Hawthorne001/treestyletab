@@ -1040,7 +1040,7 @@ export function watchOverflowStateChange({ target, moreResizeTargets, onOverflow
   };
 
   let resizeObserver/*, mutationObserver*/;
-  if (useLegacyOverflowEvents) {
+  if (!useLegacyOverflowEvents) {
     const resizeTargets = new Set([target, ...(moreResizeTargets || [])]);
     resizeObserver = new ResizeObserver(entries => {
       for (const entry of entries) {
