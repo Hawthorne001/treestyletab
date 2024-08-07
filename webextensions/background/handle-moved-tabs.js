@@ -196,14 +196,14 @@ function reserveToEnsureRootTabVisible(tab) {
 reserveToEnsureRootTabVisible.tabIds = new Set();
 
 Tab.onMoved.addListener((tab, moveInfo = {}) => {
-  if (!moveInfo.byInternalOperation &&
-      !moveInfo.isSubstantiallyMoved &&
-      !tab.$TST.duplicating) {
-    log('process moved tab');
-    tryFixupTreeForInsertedTab(tab, moveInfo);
+  if (moveInfo.byInternalOperation ||
+      moveInfo.isSubstantiallyMoved ||
+      tab.$TST.duplicating) {
+    log('internal move');
   }
   else {
-    log('internal move');
+    log('process moved tab');
+    tryFixupTreeForInsertedTab(tab, moveInfo);
   }
   reserveToEnsureRootTabVisible(tab);
 });
