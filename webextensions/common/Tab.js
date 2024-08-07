@@ -1922,22 +1922,23 @@ export default class Tab {
     this.lastNextTabId = this.unsafeNextTab?.id;
   }
 
-  get isSubstantiallyMoved() {
+  // https://github.com/piroor/treestyletab/issues/2309#issuecomment-518583824
+  get movedInBulk() {
     const previousTab = this.unsafePreviousTab;
     if (this.lastPreviousTabId &&
         this.lastPreviousTabId != previousTab?.id) {
-      log(`isSubstantiallyMoved lastPreviousTabId=${this.lastNextTabId}, previousTab=${previousTab?.id}`);
-      return true;
+      log(`not bulkMoved lastPreviousTabId=${this.lastNextTabId}, previousTab=${previousTab?.id}`);
+      return false;
     }
 
     const nextTab = this.unsafeNextTab;
     if (this.lastNextTabId &&
         this.lastNextTabId != nextTab?.id) {
-      log(`isSubstantiallyMoved lastNextTabId=${this.lastNextTabId}, nextTab=${nextTab?.id}`);
-      return true;
+      log(`not bulkMoved lastNextTabId=${this.lastNextTabId}, nextTab=${nextTab?.id}`);
+      return false;
     }
 
-    return false;
+    return true;
   }
 
   get sanitized() {

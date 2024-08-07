@@ -77,7 +77,7 @@ Tab.onMoving.addListener((tab, moveInfo) => {
       !positionControlled ||
       moveInfo.byInternalOperation ||
       moveInfo.alreadyMoved ||
-      moveInfo.isSubstantiallyMoved)
+      !moveInfo.movedInBulk)
     return true;
 
   // if there is no valid opener, it can be a restored initial tab in a restored window
@@ -197,7 +197,7 @@ reserveToEnsureRootTabVisible.tabIds = new Set();
 
 Tab.onMoved.addListener((tab, moveInfo = {}) => {
   if (moveInfo.byInternalOperation ||
-      moveInfo.isSubstantiallyMoved ||
+      !moveInfo.movedInBulk ||
       tab.$TST.duplicating) {
     log('internal move');
   }

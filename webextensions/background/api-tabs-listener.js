@@ -1014,7 +1014,10 @@ async function onMoved(tabId, moveInfo) {
       alreadyMoved,
       oldPreviousTab,
       oldNextTab,
-      isSubstantiallyMoved: movedTab.$TST.isSubstantiallyMoved
+      // Multiselected tabs can be moved together in bulk, by drag and drop
+      // in the horizontal tab bar, or addons like
+      // https://addons.mozilla.org/firefox/addon/move-tab-hotkeys/
+      movedInBulk: !maybeInternalOperation && (movedTab.$TST.multiselected || movedTab.$TST.movedInBulk),
     };
     log('tabs.onMoved: ', movedTab, extendedMoveInfo);
 
