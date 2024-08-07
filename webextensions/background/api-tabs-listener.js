@@ -272,6 +272,7 @@ async function onUpdated(tabId, changeInfo, tab) {
       }
     }
     /*
+      Workaround for Firefox 130 and olders.
       Updated openerTabId is not notified via tabs.onUpdated due to
       https://bugzilla.mozilla.org/show_bug.cgi?id=1409262 , so it can be
       notified with delay as a part of the complete tabs.Tab object,
