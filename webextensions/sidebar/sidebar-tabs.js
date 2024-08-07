@@ -83,7 +83,7 @@ export function getTabFromDOMNode(node, options = {}) {
 }
 
 
-async function reserveToUpdateLoadingState() {
+export async function reserveToUpdateLoadingState() {
   if (mPromisedInitialized)
     await mPromisedInitialized;
   if (reserveToUpdateLoadingState.waiting)
