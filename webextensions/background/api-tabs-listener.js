@@ -958,6 +958,8 @@ async function onMoved(tabId, moveInfo) {
   // cases. Don't mind, the tab will be rearranged again by delayed
   // TabsMove.syncTabsPositionToApiTabs() anyway!
   const maybeInternalOperation = win.internalMovingTabs.has(tabId);
+  if (maybeInternalOperation)
+    log(`tabs.onMoved: ${tabId} is detected as moved internally`);
 
   if (!Tab.isTracked(tabId))
     await Tab.waitUntilTracked(tabId);
