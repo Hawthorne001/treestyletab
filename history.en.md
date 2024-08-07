@@ -1,6 +1,11 @@
 # History
 
  - master/HEAD
+   * Fixup tree correctly after multiselected tabs are moved together by drag and drop on the horizontal tab bar or the [Move Tab Hotkeys](https://addons.mozilla.org/firefox/addon/move-tab-hotkeys/).
+   * Synchronize throbber animations after the sidebar is reopened.
+   * Keep highlighted appearance of multiselected tabs after the sidebar is reopened.
+   * Track and update overflow/underflow state correctly even if legacy overflow/underflow events are disabled completely.
+   * Restore "sticky" state of tabs correctly after tree restoration without cache.
  - 4.0.21 (2024.8.4)
    * Activate tree parent based on the user configuration more certainly if possible, when multiple tabs containing active are closed by one action.
    * Allow to close a group tab opened to replace a closed parent, when it is closed repeatedly. This behavior can be deactivated and you can keep such tabs unclosable like as old versions, with setting a secret option `closeParentBehavior_replaceWithGroup_thresholdToPrevent` to `-1`.
