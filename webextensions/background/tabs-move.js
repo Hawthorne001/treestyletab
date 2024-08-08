@@ -362,12 +362,10 @@ async function syncToNativeTabsInternal(windowId) {
         if (fromIndex < toIndex)
           toIndex--;
         log(`syncToNativeTabs(${windowId}): step1, move ${moveTabIds.join(',')} before ${referenceId} / from = ${fromIndex}, to = ${toIndex}`);
-        let offset = 0;
         for (const movedId of moveTabIds) {
-          win.internalMovingTabs.set(movedId, toIndex + offset);
-          win.alreadyMovedTabs.set(movedId, toIndex + offset);
+          win.internalMovingTabs.set(movedId, -1);
+          win.alreadyMovedTabs.set(movedId, -1);
           movedTabs.add(movedId);
-          offset++;
         }
         logApiTabs(`tabs-move:syncToNativeTabs(${windowId}): step1, browser.tabs.move() `, moveTabIds, {
           windowId,
