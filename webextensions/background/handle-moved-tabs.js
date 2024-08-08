@@ -96,6 +96,7 @@ async function tryFixupTreeForInsertedTab(tab, moveInfo = {}) {
     ...moveInfo,
   });
   log('tryFixupTreeForInsertedTab ', {
+    tab: tab.id,
     parentTabOperationBehavior,
     moveInfo,
     childIds: tab.$TST.childIds,
@@ -118,6 +119,7 @@ async function tryFixupTreeForInsertedTab(tab, moveInfo = {}) {
         broadcast: true
       });
     }
+    if (tab.$TST.parentId)
     await Tree.detachTab(tab, {
       broadcast: true
     });
