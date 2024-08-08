@@ -969,6 +969,10 @@ export default class Tab {
     return ancestors;
   }
 
+  get level() {
+    return this.ancestorIds.length;
+  }
+
   invalidateCachedAncestors() {
     this.cachedAncestorIds = null;
     for (const child of this.children) {

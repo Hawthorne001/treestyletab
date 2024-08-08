@@ -1916,18 +1916,48 @@ export function detectTabActionFromNewPosition(tab, moveInfo = {}) {
 
   const prevTab = tree.tabsById[target.previous];
   const nextTab = tree.tabsById[target.next];
-  log('prevTab: ', dumpTab(prevTab));
-  log('nextTab: ', dumpTab(nextTab));
 
-  const prevParent = prevTab && tree.tabsById[prevTab.parent];
-  const nextParent = nextTab && tree.tabsById[nextTab.parent];
+  // When multiple tabs are moved at once by outside of TST (e.g. moving of multiselected tabs)
+  // this method may be called multiple times asynchronously before previous operation finishes.
+  // Thus we need to refer the calculated "parent" if it is given.
+  const futurePrevParent = Tab.get(Tab.get(prevTab?.id)?.$TST?.temporaryMetadata.get('goingToBeAttachedTo'));
+  const futureNextParent = Tab.get(Tab.get(nextTab?.id)?.$TST?.temporaryMetadata.get('goingToBeAttachedTo'));
+
+  const prevParent = prevTab && tree.tabsById[prevTab.parent] ||
+    snapshotTab(Tab.get(prevTab?.parent)) || // Given treeForActionDetection may not contain the parent tab, so failsafe
+    snapshotTab(futurePrevParent);
+  const nextParent = nextTab && tree.tabsById[nextTab.parent] ||
+    snapshotTab(Tab.get(nextTab?.parent)) || // Given treeForActionDetection may not contain the parent tab, so failsafe
+    snapshotTab(futureNextParent);
+  if (prevParent)
+    tree.tabsById[prevParent.id] = prevParent;
+  if (nextParent)
+    tree.tabsById[nextParent.id] = nextParent;
+
+  // Given treeForActionDetection may not contain the parent tab, so we fixup the information.
+  if (prevTab &&
+      !prevTab.parent &&
+      prevParent) {
+    prevTab.parent = prevParent.id;
+    prevTab.level  = prevParent.level + 1;
+  }
+  if (nextTab &&
+      !nextTab.parent &&
+      nextParent) {
+    nextTab.parent = nextParent.id;
+    nextTab.level  = nextParent.level + 1;
+  }
+  log('prevTab: ', dumpTab(prevTab), `parent: ${prevTab?.parent}`);
+  log('nextTab: ', dumpTab(nextTab), `parent: ${nextTab?.parent}`);
 
   const prevLevel  = prevTab ? prevTab.level : -1 ;
   const nextLevel  = nextTab ? nextTab.level : -1 ;
   log('prevLevel: '+prevLevel);
   log('nextLevel: '+nextLevel);
 
-  const oldParent = tree.tabsById[target.parent];
+  const oldParent = tree.tabsById[target.parent] || snapshotTab(Tab.get(target.parent));
+  if (oldParent)
+    tree.tabsById[oldParent.id] = oldParent;
   let newParent = null;
   let mustToApply = false;
 
@@ -1942,7 +1972,7 @@ export function detectTabActionFromNewPosition(tab, moveInfo = {}) {
       tab,
       isTabCreating,
       isMovingByShortcut,
-      insertAfter: prevTab && prevTab.id,
+      insertAfter: prevTab?.id,
       mustToApply,
     });
   }
@@ -1954,7 +1984,7 @@ export function detectTabActionFromNewPosition(tab, moveInfo = {}) {
   }
   else if (oldParent &&
            prevTab &&
-           oldParent == prevTab) {
+           oldParent?.id == prevTab?.id) {
     log('=> no need to fix case');
     newParent = oldParent;
   }
@@ -1967,7 +1997,7 @@ export function detectTabActionFromNewPosition(tab, moveInfo = {}) {
     log('=> moved to last position');
     let ancestor = oldParent;
     while (ancestor) {
-      if (ancestor == prevParent) {
+      if (ancestor.id == prevParent?.id) {
         log(' => moving in related tree: keep it attached in existing tree');
         newParent = prevParent;
         break;
@@ -1977,15 +2007,15 @@ export function detectTabActionFromNewPosition(tab, moveInfo = {}) {
     if (!newParent) {
       log(' => moving from other tree: keep it orphaned');
     }
-    mustToApply = !!oldParent && newParent != oldParent;
+    mustToApply = !!oldParent && newParent?.id != oldParent.id;
   }
-  else if (prevParent == nextParent) {
+  else if (prevParent?.id == nextParent?.id) {
     log('=> moved into existing tree');
     newParent = prevParent;
-    mustToApply = !oldParent || newParent != oldParent;
+    mustToApply = !oldParent || newParent?.id != oldParent.id;
   }
   else if (prevLevel > nextLevel  &&
-           nextTab.parent != tab.id) {
+           nextTab?.parent != tab.id) {
     log('=> moved to end of existing tree');
     if (!target.active &&
         target.children.length == 0 &&
@@ -1998,35 +2028,35 @@ export function detectTabActionFromNewPosition(tab, moveInfo = {}) {
       const realDelta = Math.abs(toIndex - fromIndex);
       newParent = realDelta < 2 ? prevParent : (oldParent || nextParent) ;
     }
-    while (newParent && newParent.collapsed) {
+    while (newParent?.collapsed) {
       log('=> the tree is collapsed, up to parent tree')
       newParent = tree.tabsById[newParent.parent];
     }
-    mustToApply = !!oldParent && newParent != oldParent;
+    mustToApply = !!oldParent && newParent?.id != oldParent.id;
   }
   else if (prevLevel < nextLevel &&
-           nextTab.parent == prevTab.id) {
+           nextTab?.parent == prevTab?.id) {
     log('=> moved to first child position of existing tree');
     newParent = prevTab || oldParent || nextParent;
-    mustToApply = !!oldParent && newParent != oldParent;
+    mustToApply = !!oldParent && newParent?.id != oldParent.id;
   }
 
   log('calculated parent: ', {
-    old: oldParent && oldParent.id,
-    new: newParent && newParent.id
+    old: oldParent?.id,
+    new: newParent?.id
   });
 
   if (newParent) {
     let ancestor = newParent;
     while (ancestor) {
-      if (ancestor == target) {
+      if (ancestor.id == target.id) {
         if (moveInfo.toIndex - moveInfo.fromIndex == 1) {
           log('=> maybe move-down by keyboard shortcut or something.');
           let nearestForeigner = tab.$TST.nearestFollowingForeignerTab;
           if (nearestForeigner &&
               nearestForeigner == tab)
             nearestForeigner = nearestForeigner.$TST.nextTab;
-          log('nearest foreigner tab: ', nearestForeigner && nearestForeigner.id);
+          log('nearest foreigner tab: ', nearestForeigner?.id);
           if (nearestForeigner) {
             if (nearestForeigner.$TST.hasChild)
               return new TabActionForNewPosition('attach', {
@@ -2060,8 +2090,8 @@ export function detectTabActionFromNewPosition(tab, moveInfo = {}) {
         isTabCreating,
         isMovingByShortcut,
         parent:       newParent.id,
-        insertBefore: nextTab && nextTab.id,
-        insertAfter:  prevTab && prevTab.id,
+        insertBefore: nextTab?.id,
+        insertAfter:  prevTab?.id,
         mustToApply,
       });
     }
@@ -2091,11 +2121,11 @@ export function snapshotForActionDetection(targetTab) {
   const prevTab = targetTab.$TST.nearestCompletelyOpenedNormalPrecedingTab;
   const nextTab = targetTab.$TST.nearestCompletelyOpenedNormalFollowingTab;
   const tabs = Array.from(new Set([
-    ...(prevTab && prevTab.$TST.ancestors || []),
+    ...(prevTab?.$TST?.ancestors || []),
     prevTab,
     targetTab,
     nextTab,
-    targetTab.$TST.parent
+    targetTab.$TST.parent,
   ]))
     .filter(TabsStore.ensureLivingTab)
     .sort((a, b) => a.index - b.index);
@@ -2109,37 +2139,40 @@ function snapshotTree(targetTab, tabs) {
   function snapshotChild(tab) {
     if (!TabsStore.ensureLivingTab(tab) || tab.pinned)
       return null;
-    return snapshotById[tab.id] = {
-      id:            tab.id,
-      url:           tab.url,
-      cookieStoreId: tab.cookieStoreId,
-      active:        tab.active,
-      children:      tab.$TST.children.map(child => child.id),
-      collapsed:     tab.$TST.subtreeCollapsed,
-      pinned:        tab.pinned,
-      level:         tab.$TST.ancestorIds.length, // parseInt(tab.$TST.getAttribute(Constants.kLEVEL) || 0), // we need to use the number of real ancestors instead of a cached "level", because it will be updated with delay
-      trackedAt:     tab.$TST.trackedAt,
-      mayBeReplacedWithContainer: tab.$TST.mayBeReplacedWithContainer
-    };
+    return snapshotById[tab.id] = snapshotTab(tab);
   }
   const snapshotArray = allTabs.map(tab => snapshotChild(tab));
   for (const tab of allTabs) {
     const item = snapshotById[tab.id];
     if (!item)
       continue;
-    const parent = tab.$TST.parent;
-    item.parent = parent && parent.id;
-    const next = tab.$TST.nearestCompletelyOpenedNormalFollowingTab;
-    item.next = next && next.id;
-    const previous = tab.$TST.nearestCompletelyOpenedNormalPrecedingTab;
-    item.previous = previous && previous.id;
+    item.parent   = tab.$TST.parent?.id;
+    item.next     = tab.$TST.nearestCompletelyOpenedNormalFollowingTab?.id;
+    item.previous = tab.$TST.nearestCompletelyOpenedNormalPrecedingTab?.id;
   }
   const activeTab = Tab.getActiveTab(targetTab.windowId);
   return {
     target:   snapshotById[targetTab.id],
     active:   activeTab && snapshotById[activeTab.id],
     tabs:     snapshotArray,
-    tabsById: snapshotById
+    tabsById: snapshotById,
+  };
+}
+
+function snapshotTab(tab) {
+  if (!tab)
+    return null;
+  return {
+    id:            tab.id,
+    url:           tab.url,
+    cookieStoreId: tab.cookieStoreId,
+    active:        tab.active,
+    children:      tab.$TST.children.map(child => child.id),
+    collapsed:     tab.$TST.subtreeCollapsed,
+    pinned:        tab.pinned,
+    level:         tab.$TST.level, // parseInt(tab.$TST.getAttribute(Constants.kLEVEL) || 0), // we need to use the number of real ancestors instead of a cached "level", because it will be updated with delay
+    trackedAt:     tab.$TST.trackedAt,
+    mayBeReplacedWithContainer: tab.$TST.mayBeReplacedWithContainer,
   };
 }
 

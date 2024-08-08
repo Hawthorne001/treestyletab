@@ -136,10 +136,18 @@ async function tryFixupTreeForInsertedTab(tab, moveInfo = {}) {
     isMovingByShortcut: mMaybeTabMovingByShortcut,
     ...moveInfo,
   });
+  log(' => action: ', action);
   if (!action.action) {
     log('no action');
     return;
   }
+
+  // When multiple tabs are moved at once by outside of TST (e.g. moving of multiselected tabs)
+  // Tree.detectTabActionFromNewPosition() may be called for other tabs asynchronously
+  // before this operation finishes. Thus we need to memorize the calculated "parent"
+  // and Tree.detectTabActionFromNewPosition() will use it.
+  if (action.parent)
+    tab.$TST.temporaryMetadata.set('goingToBeAttachedTo', action.parent);
 
   // notify event to helper addons with action and allow or deny
   const cache = {};
@@ -157,22 +165,26 @@ async function tryFixupTreeForInsertedTab(tab, moveInfo = {}) {
     { tabProperties: ['tab', 'parent', 'insertBefore', 'insertAfter'], cache }
   );
   TSTAPI.clearCache(cache);
+
   if (!allowed) {
     log('no action - canceled by a helper addon');
-    return;
+  }
+  else {
+    log('action: ', action);
+    switch (action.action) {
+      case 'invalid':
+        moveBack(tab, moveInfo);
+        break;
+
+      default:
+        log('tryFixupTreeForInsertedTab: apply action for unattached tab: ', tab, action);
+        await action.apply();
+        break;
+    }
   }
 
-  log('action: ', action);
-  switch (action.action) {
-    case 'invalid':
-      moveBack(tab, moveInfo);
-      return;
-
-    default:
-      log('tryFixupTreeForInsertedTab: apply action for unattached tab: ', tab, action);
-      await action.apply();
-      return;
-  }
+  if (tab.$TST.temporaryMetadata.get('goingToBeAttachedTo') == action.parent)
+    tab.$TST.temporaryMetadata.delete('goingToBeAttachedTo');
 }
 
 function reserveToEnsureRootTabVisible(tab) {
