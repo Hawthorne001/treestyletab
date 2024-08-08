@@ -1003,12 +1003,8 @@ async function onMoved(tabId, moveInfo) {
         oldNextTab = Tab.getTabAt(moveInfo.windowId, moveInfo.toIndex < moveInfo.fromIndex ? moveInfo.fromIndex : moveInfo.fromIndex - 1);
     }
 
-    let alreadyMoved = false;
     const expectedIndex = win.alreadyMovedTabs.get(tabId);
-    if (expectedIndex < 0 || expectedIndex == moveInfo.toIndex) {
-      win.alreadyMovedTabs.delete(tabId);
-      alreadyMoved = true;
-    }
+    const alreadyMoved = expectedIndex < 0 || expectedIndex == moveInfo.toIndex;
     if (win.alreadyMovedTabs.has(tabId))
       win.alreadyMovedTabs.delete(tabId);
 
