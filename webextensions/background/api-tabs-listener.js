@@ -956,7 +956,7 @@ async function onMoved(tabId, moveInfo) {
   // and other fixup operations around tabs moved by foreign triggers, on such
   // cases. Don't mind, the tab will be rearranged again by delayed
   // TabsMove.syncTabsPositionToApiTabs() anyway!
-  const maybeInternalOperation = win.internalMovingTabs.has(tabId);
+  const maybeInternalOperation = win.internalMovingTabs.get(tabId) == moveInfo.toIndex;
   if (maybeInternalOperation)
     log(`tabs.onMoved: ${tabId} is detected as moved internally`);
 
@@ -981,7 +981,7 @@ async function onMoved(tabId, moveInfo) {
        do following processes after the tab is completely pinned. */
     const movedTab = Tab.get(tabId);
     if (!movedTab) {
-      if (maybeInternalOperation)
+      if (win.internalMovingTabs.has(tabId))
         win.internalMovingTabs.delete(tabId);
       completelyMoved();
       warnTabDestroyedWhileWaiting(tabId, movedTab);
@@ -1065,7 +1065,7 @@ async function onMoved(tabId, moveInfo) {
           nextTabId: nextTab && nextTab.id
         });
     }
-    if (maybeInternalOperation)
+    if (win.internalMovingTabs.has(tabId))
       win.internalMovingTabs.delete(tabId);
     completelyMoved();
 

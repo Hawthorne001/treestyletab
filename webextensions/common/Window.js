@@ -35,8 +35,8 @@ export default class Window {
     this.containerClassList = null;
     this.pinnedContainerElement = null;
 
-    this.internalMovingTabs  = new Set();
-    this.alreadyMovedTabs    = new Set();
+    this.internalMovingTabs  = new Map();
+    this.alreadyMovedTabs    = new Map();
     this.internalClosingTabs = new Set();
     this.keepDescendantsTabs = new Set();
     this.highlightingTabs    = new Set();
