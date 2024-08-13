@@ -30,7 +30,8 @@ export const TabInvalidationTarget = Object.freeze({
   CloseBox:    1 << 2,
   Tooltip:     1 << 3,
   SharingState: 1 << 4,
-  All:         1 << 0 | 1 << 1 | 1 << 2 | 1 << 3 | 1 << 4,
+  Overflow:    1 << 5,
+  All:         1 << 0 | 1 << 1 | 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5,
 });
 
 export const TabUpdateTarget = Object.freeze({
@@ -325,8 +326,10 @@ export class TabElement extends HTMLElement {
     if (targets & TabInvalidationTarget.Tooltip)
       this.invalidateTooltip();
 
-    if (targets & TabInvalidationTarget.Overflow)
+    if (targets & TabInvalidationTarget.Overflow) {
+      this._labelElement.invalidateOverflow();
       this._needToUpdateOverflow = true;
+    }
   }
 
   invalidateTooltip() {
@@ -361,7 +364,8 @@ export class TabElement extends HTMLElement {
   }
 
   updateOverflow() {
-    if (this._needToUpdateOverflow || configs.labelOverflowStyle == 'fade')
+    if (this._needToUpdateOverflow ||
+        configs.labelOverflowStyle == 'fade')
       this._updateOverflow();
     this.invalidateTooltip();
   }
@@ -689,7 +693,9 @@ windowId = ${tab.windowId}
       return;
 
     this.invalidateTooltip();
-    if (this.$TST.collapsed)
+    if (this.$TST.collapsed) {
+      this._labelElement.invalidateOverflow();
       this._needToUpdateOverflow = true;
+    }
   }
 }
