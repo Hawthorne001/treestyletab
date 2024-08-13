@@ -310,29 +310,17 @@ export class TabElement extends HTMLElement {
     if (!this.initialized)
       return;
 
-    if (targets & TabInvalidationTarget.Twisty) {
-      const twisty = this.twisty;
-      if (twisty)
-        twisty.invalidate();
-    }
+    if (targets & TabInvalidationTarget.Twisty)
+      this.twisty?.invalidate();
 
-    if (targets & TabInvalidationTarget.SharingState) {
-      const sharingState = this._sharingStateElement;
-      if (sharingState)
-        sharingState.invalidate();
-    }
+    if (targets & TabInvalidationTarget.SharingState)
+      this._sharingStateElement?.invalidate();
 
-    if (targets & TabInvalidationTarget.SoundButton) {
-      const soundButton = this._soundButtonElement;
-      if (soundButton)
-        soundButton.invalidate();
-    }
+    if (targets & TabInvalidationTarget.SoundButton)
+      this._soundButtonElement?.invalidate();
 
-    if (targets & TabInvalidationTarget.CloseBox) {
-      const closeBox = this.closeBox;
-      if (closeBox)
-        closeBox.invalidate();
-    }
+    if (targets & TabInvalidationTarget.CloseBox)
+      this.closeBox?.invalidate();
 
     if (targets & TabInvalidationTarget.Tooltip)
       this.invalidateTooltip();
@@ -356,11 +344,8 @@ export class TabElement extends HTMLElement {
     if (!this.initialized)
       return;
 
-    if (targets & TabUpdateTarget.Counter) {
-      const counter = this._counterElement;
-      if (counter)
-        counter.update();
-    }
+    if (targets & TabUpdateTarget.Counter)
+      this._counterElement?.update();
 
     if (targets & TabUpdateTarget.Overflow)
       this._updateOverflow();
@@ -383,9 +368,7 @@ export class TabElement extends HTMLElement {
 
   _updateOverflow() {
     this._needToUpdateOverflow = false;
-    const label = this._labelElement;
-    if (label)
-      label.updateOverflow();
+    this._labelElement?.updateOverflow();
   }
 
   _updateTooltip() {
