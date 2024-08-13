@@ -138,15 +138,12 @@ async function onActivated(activeInfo) {
   try {
     const win = Window.init(activeInfo.windowId);
 
-    const byInternalOperation = win.internalFocusCount > 0;
-    if (byInternalOperation)
-      win.internalFocusCount--;
-    const byMouseOperation = win.internalByMouseFocusCount > 0;
-    if (byMouseOperation)
-      win.internalByMouseFocusCount--;
-    const silently = win.internalSilentlyFocusCount > 0;
-    if (silently)
-      win.internalSilentlyFocusCount--;
+    const byInternalOperation = win.internallyFocusingTabs.has(activeInfo.tabId);
+    win.internallyFocusingTabs.delete(activeInfo.tabId);
+    const byMouseOperation = win.internallyFocusingByMouseTabs.has(activeInfo.tabId);
+    win.internallyFocusingByMouseTabs.delete(activeInfo.tabId);
+    const silently = win.internallyFocusingSilentlyTabs.has(activeInfo.tabId);
+    win.internallyFocusingSilentlyTabs.delete(activeInfo.tabId);
     const byTabDuplication = parseInt(win.duplicatingTabsCount) > 0;
 
     if (!Tab.isTracked(activeInfo.tabId))
@@ -846,6 +843,10 @@ async function onRemoved(tabId, removeInfo) {
   const preventEntireTreeBehavior = win.keepDescendantsTabs.has(tabId);
   if (preventEntireTreeBehavior)
     win.keepDescendantsTabs.delete(tabId);
+
+  win.internallyFocusingTabs.delete(tabId);
+  win.internallyFocusingByMouseTabs.delete(tabId);
+  win.internallyFocusingSilentlyTabs.delete(tabId);
 
   if (Tab.needToWaitTracked(removeInfo.windowId))
     await Tab.waitUntilTrackedAll(removeInfo.windowId);

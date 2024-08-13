@@ -45,10 +45,11 @@ export default class Window {
     this.subTreeMovingCount =
       this.subTreeChildrenMovingCount =
       this.doingIntelligentlyCollapseExpandCount =
-      this.internalFocusCount =
-      this.internalSilentlyFocusCount =
-      this.internalByMouseFocusCount =
       this.duplicatingTabsCount = 0;
+
+    this.internallyFocusingTabs = new Set();
+    this.internallyFocusingByMouseTabs = new Set();
+    this.internallyFocusingSilentlyTabs = new Set();
 
     this.preventToDetectTabBunchesUntil = Date.now() + configs.tabBunchesDetectionDelayOnNewWindow;
 

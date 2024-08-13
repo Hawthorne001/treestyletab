@@ -39,17 +39,15 @@ export async function activateTab(tab, { byMouseOperation, keepMultiselection, s
     return;
   log('activateTab: ', dumpTab(tab));
   const win = TabsStore.windows.get(tab.windowId);
-  win.internalFocusCount++;
+  win.internallyFocusingTabs.add(tab.id);
   if (byMouseOperation)
-    win.internalByMouseFocusCount++;
+    win.internallyFocusingByMouseTabs.add(tab.id);
   if (silently)
-    win.internalSilentlyFocusCount++;
+    win.internallyFocusingSilentlyTabs.add(tab.id);
   const onError = (e) => {
-    win.internalFocusCount--;
-    if (byMouseOperation)
-      win.internalByMouseFocusCount--;
-    if (silently)
-      win.internalSilentlyFocusCount--;
+    win.internallyFocusingTabs.delete(tab.id);
+    win.internallyFocusingByMouseTabs.delete(tab.id);
+    win.internallyFocusingSilentlyTabs.delete(tab.id);
     ApiTabs.handleMissingTabError(e);
   };
   if (configs.supportTabsMultiselect &&
@@ -164,13 +162,12 @@ export async function removeTabs(tabs, { keepDescendants, byMouseOperation, orig
       clearCache(tab);
       if (keepDescendants)
         win.keepDescendantsTabs.add(tab.id);
-    }
-    if (willChangeFocus && byMouseOperation) {
-      win.internalByMouseFocusCount++;
-      setTimeout(() => { // the operation can be canceled
-        if (win.internalByMouseFocusCount > 0)
-          win.internalByMouseFocusCount--;
-      }, 250);
+      if (willChangeFocus && byMouseOperation) {
+        win.internallyFocusingByMouseTabs.add(tab.id);
+        setTimeout(() => { // the operation can be canceled
+          win.internallyFocusingByMouseTabs.delete(tab.id);
+        }, 250);
+      }
     }
   }
 
