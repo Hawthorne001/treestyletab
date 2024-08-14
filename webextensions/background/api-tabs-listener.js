@@ -838,11 +838,14 @@ async function onRemoved(tabId, removeInfo) {
   log('tabs.onRemoved: ', tabId, removeInfo);
   const win                 = Window.init(removeInfo.windowId);
   const byInternalOperation = win.internalClosingTabs.has(tabId);
-  if (byInternalOperation)
-    win.internalClosingTabs.delete(tabId);
   const preventEntireTreeBehavior = win.keepDescendantsTabs.has(tabId);
-  if (preventEntireTreeBehavior)
-    win.keepDescendantsTabs.delete(tabId);
+
+  win.internalMovingTabs.delete(tabId);
+  win.alreadyMovedTabs.delete(tabId);
+  win.internalClosingTabs.delete(tabId);
+  win.keepDescendantsTabs.delete(tabId);
+  win.highlightingTabs.delete(tabId);
+  win.tabsToBeHighlightedAlone.delete(tabId);
 
   win.internallyFocusingTabs.delete(tabId);
   win.internallyFocusingByMouseTabs.delete(tabId);

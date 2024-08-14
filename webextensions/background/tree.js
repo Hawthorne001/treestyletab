@@ -1263,6 +1263,7 @@ export async function collapseExpandTreesIntelligentlyFor(tab, options = {}) {
   }
   win.doingIntelligentlyCollapseExpandCount++;
 
+  try {
   const expandedAncestors = [tab.id]
     .concat(tab.$TST.ancestors.map(ancestor => ancestor.id))
     .concat(tab.$TST.descendants.map(descendant => descendant.id));
@@ -1312,6 +1313,10 @@ export async function collapseExpandTreesIntelligentlyFor(tab, options = {}) {
     ...options,
     collapsed: false
   });
+  }
+  catch(error) {
+    log(`failed to collapse/expand tree under ${tab.id}: ${String(error)}`, error);
+  }
   win.doingIntelligentlyCollapseExpandCount--;
 }
 
@@ -1365,8 +1370,8 @@ export async function moveTabSubtreeBefore(tab, nextTab, options = {}) {
       throw new Error('the tab was removed before moving of descendants');
     await followDescendantsToMovedRoot(tab, options);
   }
-  catch(e) {
-    log(`failed to move subtree: ${String(e)}`);
+  catch(error) {
+    log(`failed to move subtree: ${String(error)}`, error);
   }
   await wait(0);
   win.subTreeMovingCount--;
@@ -1390,8 +1395,8 @@ export async function moveTabSubtreeAfter(tab, previousTab, options = {}) {
       throw new Error('the tab was removed before moving of descendants');
     await followDescendantsToMovedRoot(tab, options);
   }
-  catch(e) {
-    log(`failed to move subtree: ${String(e)}`);
+  catch(error) {
+    log(`failed to move subtree: ${String(error)}`, error);
   }
   await wait(0);
   win.subTreeMovingCount--;
@@ -1405,7 +1410,12 @@ async function followDescendantsToMovedRoot(tab, options = {}) {
   const win = TabsStore.windows.get(tab.windowId);
   win.subTreeChildrenMovingCount++;
   win.subTreeMovingCount++;
-  await TabsMove.moveTabsAfter(tab.$TST.descendants, tab, options);
+  try {
+    await TabsMove.moveTabsAfter(tab.$TST.descendants, tab, options);
+  }
+  catch(error) {
+    log(`failed to move descendants of ${tab.id}: ${String(error)}`, error);
+  }
   win.subTreeChildrenMovingCount--;
   win.subTreeMovingCount--;
 }
