@@ -508,12 +508,12 @@ onMouseUp = EventUtils.wrapWithErrorHandler(onMouseUp);
 
 let mLastMouseupOnClosebox = false;
 async function handleDefaultMouseUp({ lastMousedown, tab, event }) {
-  log('handleDefaultMouseUp ', lastMousedown.detail);
+  log(`handleDefaultMouseUp on ${tab.id} `, lastMousedown.detail);
 
   if (tab &&
       lastMousedown.detail.button != 2 &&
       await handleDefaultMouseUpOnTab({ lastMousedown, tab, event })) {
-    log('onMouseUp: click on a tab');
+    log(`onMouseUp: click on the tab ${tab.id}, handled by default handler`);
     return;
   }
 
@@ -683,7 +683,7 @@ async function handleDefaultMouseUp({ lastMousedown, tab, event }) {
 handleDefaultMouseUp = EventUtils.wrapWithErrorHandler(handleDefaultMouseUp);
 
 async function handleDefaultMouseUpOnTab({ lastMousedown, tab, event } = {}) {
-  log('Ready to handle click action on the tab');
+  log(`Ready to handle click action on the tab ${tab.id}`);
 
   const onRegularArea = (
     !lastMousedown.detail.twisty &&
@@ -706,7 +706,7 @@ async function handleDefaultMouseUpOnTab({ lastMousedown, tab, event } = {}) {
     });
 
   if (lastMousedown.detail.isMiddleClick) { // Ctrl-click doesn't close tab on Firefox's tab bar!
-    log('onMouseUp: middle click on a tab: ', lastMousedown.detail.targetType);
+    log(`onMouseUp: middle click on the tab ${tab.id}: `, lastMousedown.detail.targetType);
     if (lastMousedown.detail.targetType != 'tab') // ignore middle click on blank area
       return false;
     const tabs = TreeBehavior.getClosingTabsFromParent(tab, {
@@ -732,7 +732,7 @@ async function handleDefaultMouseUpOnTab({ lastMousedown, tab, event } = {}) {
   }
   else if (lastMousedown.detail.twisty &&
            EventUtils.isEventFiredOnTwisty(event)) {
-    log('clicked on twisty');
+    log(`clicked on twisty of the tab ${tab.id}`);
     if (tab.$TST.hasChild) {
       if (!tab.$TST.subtreeCollapsed) // going to collapse
         await Scroll.tryLockPosition(
@@ -752,7 +752,7 @@ async function handleDefaultMouseUpOnTab({ lastMousedown, tab, event } = {}) {
   }
   else if (lastMousedown.detail.soundButton &&
            EventUtils.isEventFiredOnSoundButton(event)) {
-    log('clicked on sound button');
+    log(`clicked on sound button of the tab ${tab.id}`);
     if (tab.$TST.states.has(Constants.kTAB_STATE_AUTOPLAY_BLOCKED) ||
         tab.$TST.states.has(Constants.kTAB_STATE_HAS_AUTOPLAY_BLOCKED_MEMBER)) {
       // Note: there is no built-in handler for this command.
@@ -772,7 +772,7 @@ async function handleDefaultMouseUpOnTab({ lastMousedown, tab, event } = {}) {
   }
   else if (lastMousedown.detail.closebox &&
            EventUtils.isEventFiredOnClosebox(event)) {
-    log('clicked on closebox');
+    log(`clicked on closebox of the tab ${tab.id}`);
     //if (!warnAboutClosingTabSubtreeOf(tab)) {
     //  event.stopPropagation();
     //  event.preventDefault();
@@ -810,7 +810,7 @@ function updateMultiselectionByTabClick(tab, event) {
   const ctrlKeyPressed     = event.ctrlKey || (event.metaKey && isMacOS());
   const activeTab          = Tab.getActiveTab(tab.windowId);
   const highlightedTabIds  = new Set(Tab.getHighlightedTabs(tab.windowId).map(tab => tab.id));
-  log('updateMultiselectionByTabClick ', { ctrlKeyPressed, activeTab, highlightedTabIds, mIsInSelectionSession });
+  log(`updateMultiselectionByTabClick on ${tab.id} `, { ctrlKeyPressed, activeTab, highlightedTabIds, mIsInSelectionSession });
   if (event.shiftKey) {
     // select the clicked tab and tabs between last activated tab
     const lastClickedTab   = mLastClickedTab || activeTab;
@@ -823,14 +823,14 @@ function updateMultiselectionByTabClick(tab, event) {
     try {
       if (!ctrlKeyPressed) {
         const alreadySelectedTabs = Tab.getHighlightedTabs(tab.windowId, { iterator: true });
-        log('clear old selection by shift-click');
+        log(`clear old selection by shift-click on ${tab.id}`);
         for (const alreadySelectedTab of alreadySelectedTabs) {
           if (!targetTabs.has(alreadySelectedTab))
             highlightedTabIds.delete(alreadySelectedTab.id);
         }
       }
 
-      log('set selection by shift-click: ', configs.debug && Array.from(targetTabs, dumpTab));
+      log(`set selection by shift-click on ${tab.id}: `, configs.debug && Array.from(targetTabs, dumpTab));
       for (const toBeSelectedTab of targetTabs) {
         highlightedTabIds.add(toBeSelectedTab.id);
       }
@@ -862,7 +862,7 @@ function updateMultiselectionByTabClick(tab, event) {
   }
   else if (ctrlKeyPressed) {
     try {
-      log('change selection by ctrl-click: ', dumpTab(tab));
+      log(`change selection by ctrl-click on ${tab.id}`);
       /* Special operation to toggle selection of collapsed descendants for the active tab.
          - When there is no other multiselected foreign tab
            => toggle multiselection only descendants.
