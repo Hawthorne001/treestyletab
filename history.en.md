@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+   * Update overflow state of labels for recycled tab elements more certainly.
+   * Reduce misdetection of tab closing/moving operations as internal operations.
  - 4.0.22 (2024.8.9)
    * Fixup tree correctly after multiselected tabs are moved together by drag and drop on the horizontal tab bar or the [Move Tab Hotkeys](https://addons.mozilla.org/firefox/addon/move-tab-hotkeys/).
    * Synchronize throbber animations after the sidebar is reopened.
