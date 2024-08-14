@@ -1264,55 +1264,55 @@ export async function collapseExpandTreesIntelligentlyFor(tab, options = {}) {
   win.doingIntelligentlyCollapseExpandCount++;
 
   try {
-  const expandedAncestors = [tab.id]
-    .concat(tab.$TST.ancestors.map(ancestor => ancestor.id))
-    .concat(tab.$TST.descendants.map(descendant => descendant.id));
-  const collapseTabs = Tab.getSubtreeCollapsedTabs(tab.windowId, {
-    '!id': expandedAncestors
-  });
-  logCollapseExpand(`${collapseTabs.length} tabs can be collapsed, ancestors: `, expandedAncestors);
-  const allowedToCollapse = new Set();
-  await Promise.all(collapseTabs.map(async tab => {
-    const allowed = await TSTAPI.tryOperationAllowed(
-      TSTAPI.kNOTIFY_TRY_COLLAPSE_TREE_FROM_OTHER_EXPANSION,
-      { tab },
-      { tabProperties: ['tab'] }
-    );
-    if (allowed)
-      allowedToCollapse.add(tab);
-  }));
-  for (const collapseTab of collapseTabs) {
-    if (!allowedToCollapse.has(collapseTab))
-      continue;
-    let dontCollapse = false;
-    const parentTab = collapseTab.$TST.parent;
-    if (parentTab) {
-      dontCollapse = true;
-      if (!parentTab.$TST.subtreeCollapsed) {
-        for (const ancestor of collapseTab.$TST.ancestors) {
-          if (!expandedAncestors.includes(ancestor.id))
-            continue;
-          dontCollapse = false;
-          break;
+    const expandedAncestors = [tab.id]
+      .concat(tab.$TST.ancestors.map(ancestor => ancestor.id))
+      .concat(tab.$TST.descendants.map(descendant => descendant.id));
+    const collapseTabs = Tab.getSubtreeCollapsedTabs(tab.windowId, {
+      '!id': expandedAncestors
+    });
+    logCollapseExpand(`${collapseTabs.length} tabs can be collapsed, ancestors: `, expandedAncestors);
+    const allowedToCollapse = new Set();
+    await Promise.all(collapseTabs.map(async tab => {
+      const allowed = await TSTAPI.tryOperationAllowed(
+        TSTAPI.kNOTIFY_TRY_COLLAPSE_TREE_FROM_OTHER_EXPANSION,
+        { tab },
+        { tabProperties: ['tab'] }
+      );
+      if (allowed)
+        allowedToCollapse.add(tab);
+    }));
+    for (const collapseTab of collapseTabs) {
+      if (!allowedToCollapse.has(collapseTab))
+        continue;
+      let dontCollapse = false;
+      const parentTab = collapseTab.$TST.parent;
+      if (parentTab) {
+        dontCollapse = true;
+        if (!parentTab.$TST.subtreeCollapsed) {
+          for (const ancestor of collapseTab.$TST.ancestors) {
+            if (!expandedAncestors.includes(ancestor.id))
+              continue;
+            dontCollapse = false;
+            break;
+          }
         }
       }
+      logCollapseExpand(`${collapseTab.id}: dontCollapse = ${dontCollapse}`);
+
+      const manuallyExpanded = collapseTab.$TST.states.has(Constants.kTAB_STATE_SUBTREE_EXPANDED_MANUALLY);
+      if (!dontCollapse &&
+          !manuallyExpanded &&
+          collapseTab.$TST.descendants.every(tab => !tab.$TST.canBecomeSticky))
+        collapseExpandSubtree(collapseTab, {
+          ...options,
+          collapsed: true
+        });
     }
-    logCollapseExpand(`${collapseTab.id}: dontCollapse = ${dontCollapse}`);
 
-    const manuallyExpanded = collapseTab.$TST.states.has(Constants.kTAB_STATE_SUBTREE_EXPANDED_MANUALLY);
-    if (!dontCollapse &&
-        !manuallyExpanded &&
-        collapseTab.$TST.descendants.every(tab => !tab.$TST.canBecomeSticky))
-      collapseExpandSubtree(collapseTab, {
-        ...options,
-        collapsed: true
-      });
-  }
-
-  collapseExpandSubtree(tab, {
-    ...options,
-    collapsed: false
-  });
+    collapseExpandSubtree(tab, {
+      ...options,
+      collapsed: false
+    });
   }
   catch(error) {
     log(`failed to collapse/expand tree under ${tab.id}: ${String(error)}`, error);
