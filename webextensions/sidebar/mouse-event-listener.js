@@ -508,12 +508,12 @@ onMouseUp = EventUtils.wrapWithErrorHandler(onMouseUp);
 
 let mLastMouseupOnClosebox = false;
 async function handleDefaultMouseUp({ lastMousedown, tab, event }) {
-  log(`handleDefaultMouseUp on ${tab.id} `, lastMousedown.detail);
+  log(`handleDefaultMouseUp on ${tab?.id} `, lastMousedown.detail);
 
   if (tab &&
       lastMousedown.detail.button != 2 &&
       await handleDefaultMouseUpOnTab({ lastMousedown, tab, event })) {
-    log(`onMouseUp: click on the tab ${tab.id}, handled by default handler`);
+    log(`onMouseUp: click on the tab ${tab?.id}, handled by default handler`);
     return;
   }
 
