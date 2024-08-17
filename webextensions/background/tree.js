@@ -455,11 +455,11 @@ export function getReferenceTabsForNewChild(child, parent, { insertAt, ignoreTab
       case Constants.kINSERT_END:
       default:
         insertAfter = lastDescendant;
-        log(`  insert ${child && child.id} after lastDescendant ${insertAfter && insertAfter.id} (insertAt=kINSERT_END)`);
+        log(`  insert ${child?.id} after lastDescendant ${insertAfter?.id} (insertAt=kINSERT_END)`);
         break;
       case Constants.kINSERT_TOP:
         insertBefore = firstChild;
-        log(`  insert ${child && child.id} before firstChild ${insertBefore && insertBefore.id} (insertAt=kINSERT_TOP)`);
+        log(`  insert ${child?.id} before firstChild ${insertBefore?.id} (insertAt=kINSERT_TOP)`);
         break;
       case Constants.kINSERT_NEAREST: {
         const allTabs = Tab.getOtherTabs((child || parent).windowId, ignoreTabs);
@@ -468,11 +468,11 @@ export function getReferenceTabsForNewChild(child, parent, { insertAt, ignoreTab
         if (index < allTabs.indexOf(firstChild)) {
           insertBefore = firstChild;
           insertAfter  = parent;
-          log(`  insert ${child && child.id} between parent ${insertAfter && insertAfter.id} and firstChild ${insertBefore && insertBefore.id} (insertAt=kINSERT_NEAREST)`);
+          log(`  insert ${child?.id} between parent ${insertAfter?.id} and firstChild ${insertBefore?.id} (insertAt=kINSERT_NEAREST)`);
         }
         else if (index > allTabs.indexOf(lastDescendant)) {
           insertAfter  = lastDescendant;
-          log(`  insert ${child && child.id} after lastDescendant ${insertAfter && insertAfter.id} (insertAt=kINSERT_NEAREST)`);
+          log(`  insert ${child?.id} after lastDescendant ${insertAfter?.id} (insertAt=kINSERT_NEAREST)`);
         }
         else { // inside the tree
           if (parent && !children)
@@ -483,12 +483,12 @@ export function getReferenceTabsForNewChild(child, parent, { insertAt, ignoreTab
             if (index > allTabs.indexOf(child))
               continue;
             insertBefore = child;
-            log(`  insert ${child && child.id} before nearest following child ${insertBefore && insertBefore.id} (insertAt=kINSERT_NEAREST)`);
+            log(`  insert ${child?.id} before nearest following child ${insertBefore?.id} (insertAt=kINSERT_NEAREST)`);
             break;
           }
           if (!insertBefore) {
             insertAfter = lastDescendant;
-            log(`  insert ${child && child.id} after lastDescendant ${insertAfter && insertAfter.id} (insertAt=kINSERT_NEAREST)`);
+            log(`  insert ${child?.id} after lastDescendant ${insertAfter?.id} (insertAt=kINSERT_NEAREST)`);
           }
         }
       }; break;
@@ -500,11 +500,11 @@ export function getReferenceTabsForNewChild(child, parent, { insertAt, ignoreTab
           lastRelatedTab = child && parent.$TST.lastRelatedTabId == child.id ? parent.$TST.previousLastRelatedTab : parent.$TST.lastRelatedTab; // it could be updated already...
         if (lastRelatedTab) {
           insertAfter  = lastRelatedTab.$TST.lastDescendant || lastRelatedTab;
-          log(`  insert ${child && child.id} after lastRelatedTab ${lastRelatedTab.id} (insertAt=kINSERT_NEXT_TO_LAST_RELATED_TAB)`);
+          log(`  insert ${child?.id} after lastRelatedTab ${lastRelatedTab.id} (insertAt=kINSERT_NEXT_TO_LAST_RELATED_TAB)`);
         }
         else {
           insertBefore = firstChild;
-          log(`  insert ${child && child.id} before firstChild (insertAt=kINSERT_NEXT_TO_LAST_RELATED_TAB)`);
+          log(`  insert ${child?.id} before firstChild (insertAt=kINSERT_NEXT_TO_LAST_RELATED_TAB)`);
         }
       }; break;
       case Constants.kINSERT_NO_CONTROL:
@@ -513,23 +513,23 @@ export function getReferenceTabsForNewChild(child, parent, { insertAt, ignoreTab
   }
   else {
     insertAfter = parent;
-    log(`  insert ${child && child.id} after parent`);
+    log(`  insert ${child?.id} after parent`);
   }
   if (insertBefore == child) {
     // Return unsafe tab, to avoid placing the child after hidden tabs
     // (too far from the place it should be.)
-    insertBefore = insertBefore && insertBefore.$TST.unsafeNextTab;
-    log(`  => insert ${child && child.id} before next tab ${insertBefore && insertBefore.id} of the child tab itelf`);
+    insertBefore = insertBefore?.$TST.unsafeNextTab;
+    log(`  => insert ${child?.id} before next tab ${insertBefore?.id} of the child tab itelf`);
   }
   if (insertAfter == child) {
-    insertAfter = insertAfter && insertAfter.$TST.previousTab;
-    log(`  => insert ${child && child.id} after previous tab ${insertAfter && insertAfter.id} of the child tab itelf`);
+    insertAfter = insertAfter?.$TST.previousTab;
+    log(`  => insert ${child?.id} after previous tab ${insertAfter?.id} of the child tab itelf`);
   }
   // disallow to place tab in invalid position
   if (insertBefore) {
     if (parent && insertBefore.index <= parent.index) {
       insertBefore = null;
-      log(`  => do not put ${child && child.id} before a tab preceding to the parent`);
+      log(`  => do not put ${child?.id} before a tab preceding to the parent`);
     }
     //TODO: we need to reject more cases...
   }
@@ -541,7 +541,7 @@ export function getReferenceTabsForNewChild(child, parent, { insertAt, ignoreTab
     if (lastMember != insertAfter &&
         insertAfter.index >= lastMember.index) {
       insertAfter = lastMember;
-      log(`  => do not put ${child && child.id} after the last tab ${insertAfter && insertAfter.id} in the tree`);
+      log(`  => do not put ${child?.id} after the last tab ${insertAfter?.id} in the tree`);
     }
     //TODO: we need to reject more cases...
   }
@@ -551,8 +551,7 @@ export function getReferenceTabsForNewChild(child, parent, { insertAt, ignoreTab
 export function getReferenceTabsForNewNextSibling(base, options = {}) {
   log('getReferenceTabsForNewNextSibling ', base);
   let insertBefore = base.$TST.nextSiblingTab;
-  if (insertBefore &&
-      insertBefore.pinned &&
+  if (insertBefore?.pinned &&
       !options.pinned) {
     insertBefore = Tab.getFirstNormalTab(base.windowId);
   }
@@ -653,7 +652,7 @@ export async function detachAllChildren(
     descendants = tab.$TST.descendants;
   }
   log('detachAllChildren: ',
-      tab && tab.id,
+      tab?.id,
       { children, parent, nearestFollowingRootTab, newParent, behavior, dontExpand, dontSyncParentToOpenerTab },
       options);
   // the "children" option is used for removing tab.
@@ -678,12 +677,11 @@ export async function detachAllChildren(
   options.dontUpdateInsertionPositionInfo = true;
 
   // the "parent" option is used for removing tab.
-  parent = TabsStore.ensureLivingTab(parent) || (tab && tab.$TST.parent);
+  parent = TabsStore.ensureLivingTab(parent) || tab?.$TST.parent;
   while (ignoreTabsSet.has(parent)) {
     parent = parent.$TST.parent;
   }
-  if (tab &&
-      tab.$TST.isGroupTab &&
+  if (tab?.$TST.isGroupTab &&
       Tab.getRemovingTabs(tab.windowId).length == children.length) {
     behavior = Constants.kPARENT_TAB_OPERATION_BEHAVIOR_PROMOTE_ALL_CHILDREN;
     options.dontUpdateIndent = false;
@@ -695,7 +693,7 @@ export async function detachAllChildren(
       !configs.moveTabsToBottomWhenDetachedFromClosedParent) {
     nextTab = nearestFollowingRootTab !== undefined ?
       nearestFollowingRootTab :
-      tab && tab.$TST.nearestFollowingRootTab;
+      tab?.$TST.nearestFollowingRootTab;
     previousTab = nextTab ?
       nextTab.$TST.previousTab :
       Tab.getLastTab(windowId || tab.windowId);
@@ -740,9 +738,9 @@ export async function detachAllChildren(
       promises.push(detachTab(child, { ...options, dontSyncParentToOpenerTab }));
 
       // reference tabs can be closed while waiting...
-      if (nextTab && nextTab.$TST.removing)
+      if (nextTab?.$TST.removing)
         nextTab = null;
-      if (previousTab && previousTab.$TST.removing)
+      if (previousTab?.$TST.removing)
         previousTab = null;
 
       if (nextTab) {
@@ -807,8 +805,7 @@ export async function behaveAutoAttachedTab(
   baseTab = baseTab || Tab.getActiveTab(TabsStore.getCurrentWindowId() || tab.windowId);
   log('behaveAutoAttachedTab ', tab.id, baseTab.id, { baseTab, behavior });
 
-  if (baseTab &&
-      baseTab.$TST.ancestors.includes(tab)) {
+  if (baseTab?.$TST.ancestors.includes(tab)) {
     log(' => ignore possibly restored ancestor tab to avoid cyclic references');
     return false;
   }
@@ -1101,7 +1098,7 @@ async function collapseExpandSubtreeInternal(tab, params = {}) {
     tabId:     tab.id,
     collapsed: !!params.collapsed,
     justNow:   params.justNow,
-    anchorId:  anchor && anchor.id,
+    anchorId:  anchor?.id,
     visibilityChangedTabIds,
     last:      true
   });
@@ -1237,7 +1234,7 @@ export async function collapseExpandTab(tab, params = {}) {
       type:      Constants.kCOMMAND_NOTIFY_TAB_COLLAPSED_STATE_CHANGED,
       windowId:  tab.windowId,
       tabId:     tab.id,
-      anchorId:  collapseExpandInfo.anchor && collapseExpandInfo.anchor.id,
+      anchorId:  collapseExpandInfo.anchor?.id,
       justNow:   params.justNow,
       collapsed: params.collapsed,
       last,
@@ -1356,12 +1353,12 @@ export async function fixupSubtreeCollapsedState(tab, options = {}) {
 export async function moveTabSubtreeBefore(tab, nextTab, options = {}) {
   if (!tab)
     return;
-  if (nextTab && nextTab.$TST.isAllPlacedBeforeSelf([tab].concat(tab.$TST.descendants))) {
+  if (nextTab?.$TST.isAllPlacedBeforeSelf([tab].concat(tab.$TST.descendants))) {
     log('moveTabSubtreeBefore:no need to move');
     return;
   }
 
-  log('moveTabSubtreeBefore: ', tab.id, nextTab && nextTab.id);
+  log('moveTabSubtreeBefore: ', tab.id, nextTab?.id);
   const win = TabsStore.windows.get(tab.windowId);
   win.subTreeMovingCount++;
   try {
@@ -1381,8 +1378,8 @@ export async function moveTabSubtreeAfter(tab, previousTab, options = {}) {
   if (!tab)
     return;
 
-  log('moveTabSubtreeAfter: ', tab.id, previousTab && previousTab.id);
-  if (previousTab && previousTab.$TST.isAllPlacedAfterSelf([tab].concat(tab.$TST.descendants))) {
+  log('moveTabSubtreeAfter: ', tab.id, previousTab?.id);
+  if (previousTab?.$TST.isAllPlacedAfterSelf([tab].concat(tab.$TST.descendants))) {
     log(' => no need to move');
     return;
   }
@@ -1545,8 +1542,7 @@ export async function moveTabs(tabs, options = {}) {
       log('moveTabs: all windows and tabs are ready, ', movedTabIds, destinationWindowId);
       let toIndex = (tabs.some(tab => tab.pinned) ? Tab.getPinnedTabs(destinationWindowId) : Tab.getAllTabs(destinationWindowId)).length;
       log('toIndex = ', toIndex);
-      if (options.insertBefore &&
-          options.insertBefore.windowId == destinationWindowId) {
+      if (options.insertBefore?.windowId == destinationWindowId) {
         try {
           toIndex = Tab.get(options.insertBefore.id).index;
         }
@@ -1555,8 +1551,7 @@ export async function moveTabs(tabs, options = {}) {
           log('options.insertBefore is unavailable');
         }
       }
-      else if (options.insertAfter &&
-               options.insertAfter.windowId == destinationWindowId) {
+      else if (options.insertAfter?.windowId == destinationWindowId) {
         try {
           toIndex = Tab.get(options.insertAfter.id).index + 1;
         }
@@ -1902,8 +1897,8 @@ class TabActionForNewPosition {
 }
 
 export function detectTabActionFromNewPosition(tab, moveInfo = {}) {
-  const isTabCreating = moveInfo && !!moveInfo.isTabCreating;
-  const isMovingByShortcut = moveInfo && !!moveInfo.isMovingByShortcut;
+  const isTabCreating = !!moveInfo?.isTabCreating;
+  const isMovingByShortcut = !!moveInfo?.isMovingByShortcut;
 
   if (tab.pinned)
     return new TabActionForNewPosition(tab.$TST.parentId ? 'detach' : 'move', {
