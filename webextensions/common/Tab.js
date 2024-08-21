@@ -389,6 +389,10 @@ export default class Tab {
     return this.states.has(Constants.kTAB_STATE_STICKY);
   }
 
+  get sticked() {
+    return this.element?.parentNode?.classList.contains('sticky-tabs-container');
+  }
+
   get isNewTabCommandTab() {
     if (!this.tab ||
         !configs.guessNewOrphanTabAsOpenedByNewTabCommand)
@@ -2051,6 +2055,8 @@ export default class Tab {
         ancestorTabIds: this.tab.$TST.ancestorIds,
         bundledTabId:   this.tab.$TST.bundledTabId,
       };
+      if (this.sticked)
+        exportedTab.states.push(Constants.kTAB_STATE_STICKED);
       if (configs.cacheAPITreeItems && light)
         this.$exportedForAPI = exportedTab;
     }
