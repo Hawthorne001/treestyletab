@@ -52,7 +52,8 @@ const options = new Options(configs, {
 });
 
 document.title = browser.i18n.getMessage('config_title');
-if ((location.hash && location.hash != '#') ||
+if ((location.hash &&
+     /^#!?$/.test(location.hash)) ||
     /independent=true/.test(location.search))
   document.body.classList.add('independent');
 
@@ -620,8 +621,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   mShowExpertOptionsTemporarily = !!(
     location.hash &&
-    location.hash != '#' &&
-    document.querySelector(`.expert #${location.hash.replace(/^#/, '')}, .expert#${location.hash.replace(/^#/, '')}`)
+    !/^#!?$/.test(location.hash) &&
+    document.querySelector(`.expert #${location.hash.replace(/^#!?/, '')}, .expert#${location.hash.replace(/^#!?/, '')}`)
   );
 
   try {
