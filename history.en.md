@@ -125,13 +125,13 @@
    * More respect labels of menu commands in the context menu on blank area of the tab bar.
    * Update `zh_CN` locale by [NightSharp](https://github.com/NightSharp). Thanks!
  - 4.0.1 (2024.3.8)
-   * Tabs containing sticky tabs are kept expanded when another tree is expanded, even if those tabs are sticked via API.
+   * Tabs containing sticky tabs are kept expanded when another tree is expanded, even if those tabs are stuck via API.
  - 4.0 (2024.3.7)
    * Improved performance on cases with large number of tabs. Now tabs only in the viewport are rendered.
      * Pinned tabs and unpinned (normal) tabs are now placed under separate container elements: `#pinned-tabs-container > .tabs.pinned` and `#normal-tabs-container > .virtual-scroll-container > .tabs.normal`.
      * Each rendered tab element now has `data-index` attribute corresponding to [`tabs.Tab.index`](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/Tab#index).
      * Due to this design change, customization with CSS `counter` won't be work as expected anymore. You'll need to create something helper addon to do such customizations.
-   * Introduce new context menu commands and other triggers to stick arbitrary tabs to edges of the tab bar. It is similar to "Pin/Unpin Tab" but sticked tab keeps its tree.
+   * Introduce new context menu commands and other triggers to stick arbitrary tabs to edges of the tab bar. It is similar to "Pin/Unpin Tab" but stuck tab keeps its tree.
    * Indicate sharing state of tabs (camera, microphone and/or screen) with icons.
    * Show dropshadow before normal tabs when the tab bar is scrolled.
    * Show dropshadow after normal tabs when the tab bar is not fully scrolled.
@@ -153,7 +153,7 @@
      * Introduce new values of [`states`](https://github.com/piroor/treestyletab/wiki/API-for-other-addons#data-format) to know detection result determined by TST internally.
      * Introduce new message types [`stick-tab`, `unstick-tab` and `toggle-sticky-state`](https://github.com/piroor/treestyletab/wiki/API-for-other-addons#control-sticky-state-of-tabs-at-tab-bar-edges) to control tabs' sticky state at tab bar edges.
      * Introduce new message types [`register-auto-sticky-states` and `unregister-auto-sticky-states`](https://github.com/piroor/treestyletab/wiki/API-for-other-addons#set-locked-as-collapsed-state-of-tree) to stick tabs with specific state to tab bar adges automaitcally.
-     * Introduce a new notification type [`tab-sticky-state-changed`](https://github.com/piroor/treestyletab/wiki/API-for-other-addons#when-a-tab-is-sticked-or-unsticked-tofrom-tab-bar-edges) to observe a tab is sticked or unsticked.
+     * Introduce a new notification type [`tab-sticky-state-changed`](https://github.com/piroor/treestyletab/wiki/API-for-other-addons#when-a-tab-is-stuck-or-unstuck-tofrom-tab-bar-edges) to observe a tab is stuck or unstuck.
      * [Introduce a new option `rendered:true` for the message types `get-tree` and `get-light-tree`, to get information only about rendered tabs.](https://github.com/piroor/treestyletab/wiki/API-for-other-addons#when-one-or-more-tabs-are-renderedun-rendered)
      * Support [bulk messaging to TST (sending multiple messages at once)](https://github.com/piroor/treestyletab/wiki/API-for-other-addons#abstract) and [bulk messaging from TST (receiving multiple messages at once](https://github.com/piroor/treestyletab/wiki/API-for-other-addons#bulk-messages-from-tst) for better performance.
      * Add ability to [minimize tree item information contained in notification type messages](https://github.com/piroor/treestyletab/wiki/API-for-other-addons#listening-of-notification-messages), to reduce messaging cost.
