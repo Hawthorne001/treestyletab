@@ -324,6 +324,7 @@
         browser.runtime.sendMessage({
           type: 'treestyletab:open-tab',
           uri,
+          active: true,
         });
       });
       hint.firstChild.addEventListener('keydown', event => {
@@ -333,6 +334,7 @@
         browser.runtime.sendMessage({
           type: 'treestyletab:open-tab',
           uri,
+          active: true,
         });
       });
 
