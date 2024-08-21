@@ -1249,7 +1249,7 @@ async function onBackgroundMessage(message) {
       }
     }; break;
 
-    case Constants.kCOMMAND_NOTIFY_TAB_ACTIVATED:
+    case Constants.kCOMMAND_NOTIFY_TAB_ACTIVATED: {
       if (tryLockScrollToSuccessor.tabId == message.tabId) {
         log('tryLockScrollToSuccessor: wait until unlocked for ', message.tabId);
         mLastToBeActivatedTabId = message.tabId;
@@ -1263,6 +1263,19 @@ async function onBackgroundMessage(message) {
       }
       unlockScrollToSuccessor(false);
       mLastToBeActivatedTabId = null;
+      await Tab.waitUntilTracked(message.tabId);
+      const tab = Tab.get(message.tabId);
+      if (!tab)
+        break;
+      const allowed = await TSTAPI.tryOperationAllowed(
+        TSTAPI.kNOTIFY_TRY_SCROLL_TO_ACTIVATED_TAB,
+        { tab },
+        { tabProperties: ['tab'] }
+      );
+      if (allowed)
+        reserveToScrollToTab(tab);
+    }; break;
+
     case Constants.kCOMMAND_NOTIFY_TAB_UNPINNED:
       await Tab.waitUntilTracked(message.tabId);
       reserveToScrollToTab(Tab.get(message.tabId));
