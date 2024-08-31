@@ -57,6 +57,15 @@
   --non-lwt-selected-tab-background-color-proton: transparent;
 }
 
+:root[data-user-agent*="Win"] {
+  --toolbar-non-lwt-textcolor: rgb(21, 20, 26);
+  --tabbar-bg: rgb(240, 240, 244); /* Windows 11, Light, active */
+}
+:root[data-user-agent*="Win"]:-moz-window-inactive {
+  --toolbar-non-lwt-textcolor: rgb(31, 30, 37);
+  --tabbar-bg: rgb(235, 235, 239); /* Windows 11, Light, inactive */
+}
+
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -64,6 +73,15 @@
     --tabbar-bg: var(--browser-bg-darker, var(--dark-frame));
     --tab-highlighted-glow: rgb(84, 255, 189); /* https://searchfox.org/mozilla-central/rev/74f3c420ee54001059e1850bef3be876749ff873/browser/themes/shared/tabs.inc.css#931 */
     --toolbar-non-lwt-bgcolor: rgb(66,65,77) /* https://searchfox.org/mozilla-central/rev/0c7c41109902cb8967ec3ef2c0ddb326701cfbee/toolkit/mozapps/extensions/default-theme/manifest.json#23 */;
+  }
+
+  :root[data-user-agent*="Win"] {
+    --toolbar-non-lwt-textcolor: rgb(251, 251, 254);
+    --tabbar-bg: var(--browser-bg-darker, rgb(28, 27, 34)); /* Windows 11, Dark, active */
+  }
+  :root[data-user-agent*="Win"]:-moz-window-inactive {
+    --toolbar-non-lwt-textcolor: rgb(235, 235, 239);
+    --tabbar-bg: var(--browser-bg-darker, rgb(31, 30, 37)); /* Windows 11, Dark, inactive */
   }
 }
 
