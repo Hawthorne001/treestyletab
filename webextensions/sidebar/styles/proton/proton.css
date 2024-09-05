@@ -88,7 +88,7 @@
 :root[color-scheme="system-color"][data-user-agent*="Linux"] {
   --toolbar-non-lwt-textcolor: -moz-dialogtext;
   --toolbar-non-lwt-bgcolor: -moz-dialog;
-  --in-content-box-border-color-mixed: ThreeDShadow;
+  --in-content-box-border-color-mixed: ButtonBorder;
 }
 :root[color-scheme="system-color"][data-user-agent*="Linux"] #background {
   --tabbar-bg: AppWorkspace;
