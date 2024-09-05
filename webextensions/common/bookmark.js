@@ -20,6 +20,7 @@ import {
   isLinux,
 } from './common.js';
 import * as ApiTabs from './api-tabs.js';
+import * as TreeBehavior from './tree-behavior.js';
 import * as Constants from './constants.js';
 import * as ContextualIdentities from './contextual-identities.js';
 import * as Dialog from './dialog.js';
@@ -694,14 +695,17 @@ async function tryGroupCreatedBookmarks() {
     }
   }
 
-  const possibleSourceTabs = (await Promise.all(bookmarks.map(async bookmark => {
-    const tabs = await browser.tabs.query({ url: bookmark.url });
-    if (tabs.length == 0)
-      return null;
-    return tabs[0];
-  }))).filter(tab => !!tab);
-  console.log('possibleSourceTabs ', possibleSourceTabs);
-  if (possibleSourceTabs.length != bookmarks.length) {
+  const tabs = lastDraggedTabs ?
+    lastDraggedTabs.tabIds.map(id => Tab.get(id)) :
+    (await Promise.all(bookmarks.map(async bookmark => {
+      const tabs = await browser.tabs.query({ url: bookmark.url });
+      if (tabs.length == 0)
+        return null;
+      const tab = tabs.find(tab => tab.highlighted) || tabs[0];
+      return Tab.get(tab);
+    }))).filter(tab => !!tab);
+  log('tabs: ', tabs);
+  if (tabs.length != bookmarks.length) {
     log(' => ignore bookmarks created from non-tab sources');
     return;
   }
@@ -729,10 +733,6 @@ async function tryGroupCreatedBookmarks() {
     });
   }
 
-  if (!lastDraggedTabs)
-    return;
-
-  const tabs = lastDraggedTabs.tabIds.map(id => Tab.get(id));
   let titles = getTitlesWithTreeStructure(tabs);
   if (tabs[0].$TST.isGroupTab &&
       titles.filter(title => !/^>/.test(title)).length == 1) {
@@ -742,6 +742,7 @@ async function tryGroupCreatedBookmarks() {
     bookmarks.shift();
     titles = getTitlesWithTreeStructure(tabs);
   }
+  log('titles: ', titles);
 
   log('save tree structure to bookmarks');
   for (let i = 0, maxi = bookmarks.length; i < maxi; i++) {
