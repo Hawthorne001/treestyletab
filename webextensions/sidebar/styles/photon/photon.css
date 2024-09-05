@@ -60,7 +60,7 @@ body,
     --tabbar-bg: var(--browser-bg-darker, var(--in-content-box-border-color));
   }
   :root[color-scheme="system-color"] #background::after {
-    background: var(--browser-bg-darker, AppWorkspace);
+    background: var(--browser-bg-darker, Canvas);
     opacity: 0.15;
 
     bottom: 0;

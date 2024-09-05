@@ -91,7 +91,7 @@
   --in-content-box-border-color-mixed: ButtonBorder;
 }
 :root[color-scheme="system-color"][data-user-agent*="Linux"] #background {
-  --tabbar-bg: AppWorkspace;
+  --tabbar-bg: Canvas;
 }
 
 @media not (prefers-color-scheme: dark) {
