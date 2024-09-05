@@ -88,10 +88,10 @@
 :root[color-scheme="system-color"][data-user-agent*="Linux"] {
   --toolbar-non-lwt-textcolor: -moz-dialogtext;
   --toolbar-non-lwt-bgcolor: -moz-dialog;
-  --in-content-box-border-color-mixed: color-mix(in srgb, ButtonText 30%, ButtonFace) /* simulating ThreeDShadow */;
+  --in-content-box-border-color-mixed: var(--ThreeDShadow);
 }
 :root[color-scheme="system-color"][data-user-agent*="Linux"] #background {
-  --tabbar-bg: color-mix(in srgb, CanvasText 20%, Canvas) /* simulating AppWorkspace */;
+  --tabbar-bg: var(--AppWorkspace);
 }
 
 @media not (prefers-color-scheme: dark) {
@@ -110,8 +110,8 @@
     #subpanel-selector-anchor,
   :root[color-scheme="system-color"][data-user-agent*="Linux"]
     #background {
-    --toolbar-non-lwt-bgcolor: color-mix(in srgb, ButtonText 85%, ButtonFace) /* simulating MenuText */;
-    --toolbar-non-lwt-textcolor: ButtonFace /* instead of Menu */;
+    --toolbar-non-lwt-bgcolor: var(--MenuText);
+    --toolbar-non-lwt-textcolor: var(--Menu);
     --tabbar-bg: var(--toolbar-non-lwt-bgcolor);
     /* these colors need to redefined here to apply new --toolbar-non-lwt-textcolor */
     --tab-text-regular: var(--browser-fg, var(--toolbar-non-lwt-textcolor));
