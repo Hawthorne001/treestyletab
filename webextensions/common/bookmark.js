@@ -710,6 +710,14 @@ async function tryGroupCreatedBookmarks() {
     return;
   }
 
+  const treeStructure = TreeBehavior.getTreeStructureFromTabs(tabs);
+  log('treeStructure: ', treeStructure);
+  const topLevelTabsCount = treeStructure.filter(item => item.parent < 0).length;
+  if (topLevelTabsCount == treeStructure.length) {
+    log(' => no need to group bookmarks from dragged flat tabs');
+    return;
+  }
+
   log('ready to group bookmarks under a folder');
 
   log('create a folder for grouping');
