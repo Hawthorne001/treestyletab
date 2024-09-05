@@ -789,6 +789,7 @@ function onDragStart(event, options = {}) {
   }).catch(ApiTabs.createErrorSuppressor());
 
   if (!dataOverridden) {
+    const urls    = [];
     const mozUrl  = [];
     const urlList = [];
     for (const draggedTab of dragData.tabs) {
@@ -796,16 +797,20 @@ function onDragStart(event, options = {}) {
       TabsStore.addDraggingTab(draggedTab);
       if (!dragData.individualOnOutside ||
           mozUrl.length == 0) {
+        urls.push(draggedTab.url);
         mozUrl.push(`${draggedTab.url}\n${draggedTab.title}`);
         urlList.push(`#${draggedTab.title}\n${draggedTab.url}`);
       }
     }
+    mCurrentDragDataForExternals[RetrieveURL.kTYPE_PLAIN_TEXT] = urls.join('\n');
     mCurrentDragDataForExternals[RetrieveURL.kTYPE_X_MOZ_URL] = mozUrl.join('\n');
     mCurrentDragDataForExternals[RetrieveURL.kTYPE_URI_LIST] = urlList.join('\n');
     if (allowBookmark) {
-      log('set kTYPE_X_MOZ_URL');
+      log('set kTYPE_PLAIN_TEXT ', mCurrentDragDataForExternals[RetrieveURL.kTYPE_PLAIN_TEXT]);
+      dt.setData(RetrieveURL.kTYPE_PLAIN_TEXT, mCurrentDragDataForExternals[RetrieveURL.kTYPE_PLAIN_TEXT]);
+      log('set kTYPE_X_MOZ_URL ', mCurrentDragDataForExternals[RetrieveURL.kTYPE_X_MOZ_URL]);
       dt.setData(RetrieveURL.kTYPE_X_MOZ_URL, mCurrentDragDataForExternals[RetrieveURL.kTYPE_X_MOZ_URL]);
-      log('set kTYPE_URI_LIST');
+      log('set kTYPE_URI_LIST ', mCurrentDragDataForExternals[RetrieveURL.kTYPE_URI_LIST]);
       dt.setData(RetrieveURL.kTYPE_URI_LIST, mCurrentDragDataForExternals[RetrieveURL.kTYPE_URI_LIST]);
     }
   }
