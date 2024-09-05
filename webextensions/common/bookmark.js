@@ -638,6 +638,11 @@ reserveToGroupCreatedBookmarks.retryCount = 0;
 async function tryGroupCreatedBookmarks() {
   log('tryGroupCreatedBookmarks ', mCreatedBookmarks);
 
+  if (!configs.autoCreateFolderForBookmarksFromTree) {
+    log(' => autoCreateFolderForBookmarksFromTree is false');
+    return;
+  }
+
   const lastDraggedTabs = configs.lastDraggedTabs;
   if (lastDraggedTabs &&
       lastDraggedTabs.tabIds.length > mCreatedBookmarks.length) {

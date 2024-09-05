@@ -260,6 +260,8 @@ export const configs = new Configs({
   autoExpandOnLongHoverDelay: 500,
   autoExpandOnLongHoverRestoreIniitalState: true,
 
+  autoCreateFolderForBookmarksFromTree: true,
+
   accelKey: '',
 
   skipCollapsedTabsForTabSwitchingShortcuts: false,

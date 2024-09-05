@@ -731,6 +731,7 @@
   "config_insertDroppedTabsAt_first": { "message": "The top of the tree (next to the parent)" },
   "config_insertDroppedTabsAt_end": { "message": "The end of the tree" },
 
+  "config_autoCreateFolderForBookmarksFromTree_label":  { "message": "Auto-group bookmark items under a folder when they are guessed to be created from multiple tabs (ex. drag and drop of multiselected tabs)" },
   "config_autoExpandOnLongHoverDelay_before":  { "message": "Expand collapsed tree with hovering over " },
   "config_autoExpandOnLongHoverDelay_after":  { "message": "msec while dragging" },
   "config_autoExpandOnLongHoverRestoreIniitalState_label":  { "message": "Collapse such trees automatically after a drag action is finished" },
