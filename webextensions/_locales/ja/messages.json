@@ -728,7 +728,7 @@
   "config_insertDroppedTabsAt_first": { "message": "ツリーの先頭（親タブの隣）" },
   "config_insertDroppedTabsAt_end": { "message": "ツリーの末尾" },
 
-  "config_autoCreateFolderForBookmarksFromTree_label":  { "message": "選択したタブのドラッグ＆ドロップなどの操作で複数のブックマークが作成されたと推測でき、タブがツリー構造を持っていた場合に、作成されたブックマークを自動的に1つのフォルダーにまとめる" },
+  "config_autoCreateFolderForBookmarksFromTree_label":  { "message": "ツリー構造を持ったタブを複数選択してのドラッグ＆ドロップなどの操作で複数のブックマークが作成されたと推測できる場合に、作成されたブックマークを自動的に1つのフォルダーにまとめる" },
   "config_autoExpandOnLongHoverDelay_before":  { "message": "ドラッグ操作中、折りたたまれたツリーの上で" },
   "config_autoExpandOnLongHoverDelay_after":  { "message": "ミリ秒以上経過したらツリーを展開する" },
   "config_autoExpandOnLongHoverRestoreIniitalState_label":  { "message": "ドラッグ操作の終了後、ツリーを折りたたんだ状態に自動的に戻す" },
