@@ -125,7 +125,7 @@
 
   /* simulating deprecated CSS system colors */
   --ThreeDShadow: color-mix(in srgb, ButtonText 30%, ButtonFace);
-  --ThreeDHighlight: color-mix(in srgb, ButtonText 10%, ButtonFace)
+  --ThreeDHighlight: color-mix(in srgb, ButtonText 5%, ButtonFace);
   --AppWorkspace: color-mix(in srgb, CanvasText 20%, Canvas);
   --MenuText: color-mix(in srgb, ButtonText 85%, ButtonFace);
   --Menu: ButtonFace;
