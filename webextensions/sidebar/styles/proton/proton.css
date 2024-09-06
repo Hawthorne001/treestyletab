@@ -61,10 +61,13 @@
   --toolbar-non-lwt-textcolor: rgb(21, 20, 26);
   --tabbar-bg: rgb(240, 240, 244); /* Windows 11, Light, active */
 }
+/* Firefox does not apply pale color to tabs in inactive windows when tabs are placed not in the titlebar, so we follow the decision. */
+/*
 :root[data-user-agent*="Win"]:-moz-window-inactive {
   --toolbar-non-lwt-textcolor: rgb(31, 30, 37);
-  --tabbar-bg: rgb(235, 235, 239); /* Windows 11, Light, inactive */
+  --tabbar-bg: rgb(235, 235, 239); /* Windows 11, Light, inactive * /
 }
+*/
 
 
 @media (prefers-color-scheme: dark) {
@@ -79,10 +82,13 @@
     --toolbar-non-lwt-textcolor: rgb(251, 251, 254);
     --tabbar-bg: var(--browser-bg-darker, rgb(28, 27, 34)); /* Windows 11, Dark, active */
   }
+  /* Firefox does not apply pale color to tabs in inactive windows when tabs are placed not in the titlebar, so we follow the decision. */
+  /*
   :root[data-user-agent*="Win"]:-moz-window-inactive {
     --toolbar-non-lwt-textcolor: rgb(235, 235, 239);
-    --tabbar-bg: var(--browser-bg-darker, rgb(31, 30, 37)); /* Windows 11, Dark, inactive */
+    --tabbar-bg: var(--browser-bg-darker, rgb(31, 30, 37)); /* Windows 11, Dark, inactive * /
   }
+  */
 }
 
 :root[color-scheme="system-color"][data-user-agent*="Linux"] {
