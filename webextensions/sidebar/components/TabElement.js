@@ -411,7 +411,10 @@ windowId = ${tab.windowId}
 
     const highPriorityTooltipText = this.$TST.getHighPriorityTooltipText();
     if (typeof highPriorityTooltipText == 'string') {
-      this.$TST.setAttribute('title', this.tooltip);
+      if (highPriorityTooltipText)
+        this.$TST.setAttribute('title', this.tooltip);
+      else
+        this.$TST.removeAttribute('title');
       return;
     }
 
