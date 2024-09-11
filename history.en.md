@@ -1,8 +1,18 @@
 # History
 
  - master/HEAD
+   * Remove dependencies to CSS2 system colors deprecated at letely versions of Firefox.
+   * Set `text/plain` drag data for shift-dragged tabs. Now you can drop tree items to any text input area.
    * Update overflow state of labels for recycled tab elements more certainly.
    * Reduce misdetection of tab closing/moving operations as internal operations.
+   * Open options page from group tabs, in a foreground tab with no error.
+   * Use text and bg colors of tabs same to Firefox's native tab bar on Windows 11. There is a difference v.s. the native tabs: colors of sidebar UI won't become pale in inactive windows.
+   * Improve integration for bookmarks creation from drag-and-dropped tabs: Save tree structure to bookmarks even if they are dragged from Friefox's native tabs, but don't create new folder if dragged with no tree structure (flat tabs) whether from native tab bar or TST's sidebar.
+   * Add ability to deactivate auto-grouping of bookmarks from dropped tabs with tree structure.
+   * API: Add new notification type [`try-scroll-to-activated-tab`](https://github.com/piroor/treestyletab/wiki/API-for-other-addons#suppress-auto-scrolling-to-activated-tabs) to block auto-scrolling to the activated tab.
+   * API: Expose a new tab state `stuck` as a part of [tree item](https://github.com/piroor/treestyletab/wiki/API-for-other-addons#data-format). It indicates that the tab is shown as stuck on an edge of the sidebar.
+   * API: Deactivate tab tooltip completely when a blank text is registered with high priority.
+   * Update `nl` locale by [Vistaus](https://github.com/Vistaus). Thanks!
  - 4.0.22 (2024.8.9)
    * Fixup tree correctly after multiselected tabs are moved together by drag and drop on the horizontal tab bar or the [Move Tab Hotkeys](https://addons.mozilla.org/firefox/addon/move-tab-hotkeys/).
    * Synchronize throbber animations after the sidebar is reopened.
