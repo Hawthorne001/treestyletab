@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 4.0.23 (2024.9.11)
    * Remove dependencies to CSS2 system colors deprecated at letely versions of Firefox.
    * Set `text/plain` drag data for shift-dragged tabs. Now you can drop tree items to any text input area.
    * Update overflow state of labels for recycled tab elements more certainly.
