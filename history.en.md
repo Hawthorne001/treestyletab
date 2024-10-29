@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 4.0.24 (2024.10.29)
+   * Never store raw URL of tabs to save user privacy. Tab URLs were stored just to associate effective favicon URLs with tabs (so they were not sent to anywhere), but today, favicon URLs are exposed to addons as data: URIs and on mostcases there is no need to store effective favicon URLs. On required cases, only hashed strings are stored instead of raw URLs.
  - 4.0.23 (2024.9.11)
    * Remove dependencies to CSS2 system colors deprecated at letely versions of Firefox.
    * Set `text/plain` drag data for shift-dragged tabs. Now you can drop tree items to any text input area.
