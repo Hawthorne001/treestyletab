@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 4.0.25 (2024.11.11)
+   * Fix disability of `get-tree` API for other addons and disability of tree view in group tabs. (regression at 4.0.24)
  - 4.0.24 (2024.10.29)
    * Never store raw URL of tabs to save user privacy. Tab URLs were stored just to associate effective favicon URLs with tabs (so they were not sent to anywhere), but today, favicon URLs are exposed to addons as data: URIs and on most cases there is no need to store effective favicon URLs. On required cases, only hashed strings are stored instead of raw URLs.
    * Never cache tree of private windows, to save user privacy.
