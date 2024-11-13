@@ -413,16 +413,20 @@
         "hash": "b45c6754f808b40779ef29b3c6160e8b"
     },
     "bookmarkDialog_url": {
-        "message": "주소:",
+        "message": "URL:",
         "hash": "d3304a6af52921ec7fbf6469ba358327"
     },
     "bookmarkDialog_url_accessKey": {
-        "message": "l",
+        "message": "u",
         "hash": "f539fdab7bdf9f622c08ef48c391feb9"
     },
     "bookmarkDialog_parentId": {
-        "message": "폴더:",
-        "hash": "5f43a7c36ca597f9151fdc6df9e1b8a5"
+        "message": "주소:",
+        "hash": "d3304a6af52921ec7fbf6469ba358327"
+    },
+    "bookmarkDialog_parentId_accessKey": {
+        "message": "l",
+        "hash": "f539fdab7bdf9f622c08ef48c391feb9"
     },
     "bookmarkDialog_saveContainerRedirectKey": {
         "message": "컨테이너의 정보를 Container Bookmarks 형식으로 저장",

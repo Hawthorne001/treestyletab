@@ -352,11 +352,11 @@
     "hash": "bcc9f177b0a20c395aac47bd88204419"
   },
   "bookmarkDialog_url": {
-    "message": "Adresse :",
+    "message": "URL :",
     "hash": "d3304a6af52921ec7fbf6469ba358327"
   },
   "bookmarkDialog_parentId": {
-    "message": "Dossier :",
+    "message": "Adresse :",
     "hash": "5f43a7c36ca597f9151fdc6df9e1b8a5"
   },
   "bookmarkDialog_accept": {

@@ -424,13 +424,16 @@
     "message": "n"
   },
   "bookmarkDialog_url": {
-    "message": "位置："
+    "message": "URL："
   },
   "bookmarkDialog_url_accessKey": {
-    "message": "l"
+    "message": "u"
   },
   "bookmarkDialog_parentId": {
-    "message": "文件夹："
+    "message": "位置："
+  },
+  "bookmarkDialog_parentId_accessKey": {
+    "message": "l"
   },
   "bookmarkDialog_saveContainerRedirectKey": {
     "message": "为身份书签项保存身份信息"
