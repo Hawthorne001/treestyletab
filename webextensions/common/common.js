@@ -398,7 +398,6 @@ export const configs = new Configs({
   exposeUnblockAutoplayFeatures: false,
   bookmarkTreeFolderName: browser.i18n.getMessage('bookmarkFolder_label_default', ['%TITLE%', '%YEAR%', '%MONTH%', '%DATE%']),
   defaultBookmarkParentId: 'toolbar_____', // 'unfiled_____' for Firefox 83 and olders,
-  incrementalSearchTimeout: 1000, // same to the default value of Firefox's "ui.menu.incremental_search.timeout"
   defaultSearchEngine: 'https://www.google.com/search?q=%s',
   acceleratedTabOperations: true,
   acceleratedTabCreation: false,

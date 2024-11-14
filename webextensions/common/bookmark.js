@@ -11,7 +11,6 @@ import RichConfirm from '/extlib/RichConfirm.js';
 import {
   log as internalLogger,
   configs,
-  shouldApplyAnimation,
   notify,
   wait,
   sha1sum,
@@ -45,10 +44,6 @@ export async function getItemById(id) {
   catch(_error) {
   }
   return null;
-}
-
-function getAnimationDuration() {
-  return shouldApplyAnimation() ? configs.collapseDuration : 0.001;
 }
 
 if (Constants.IS_BACKGROUND) {
@@ -368,7 +363,7 @@ export async function bookmarkTab(tab, { parentId, showDialog } = {}) {
                                ></span></div
        ></div>
       `.trim(),
-      async onShown(container, { initFolderChooser, animationDuration, parentId, incrementalSearchTimeout, inline }) {
+      async onShown(container, { initFolderChooser, parentId, inline }) {
         if (container.classList.contains('simulation'))
           return;
         container.classList.add('bookmark-dialog');
@@ -377,10 +372,8 @@ export async function bookmarkTab(tab, { parentId, showDialog } = {}) {
           browser.runtime.sendMessage({ type: 'treestyletab:get-bookmark-child-items' })
         ]);
         initFolderChooser({
-          animationDuration,
           defaultItem,
           rootItems,
-          incrementalSearchTimeout,
           container,
           inline,
         });
@@ -388,9 +381,7 @@ export async function bookmarkTab(tab, { parentId, showDialog } = {}) {
       },
       inject: {
         initFolderChooser,
-        animationDuration: getAnimationDuration(),
         parentId,
-        incrementalSearchTimeout: configs.incrementalSearchTimeout,
         inline,
       },
       buttons: [
@@ -565,7 +556,7 @@ export async function bookmarkTabs(tabs, { parentId, index, showDialog, title } 
                                ></span></div
        ></div>
       `.trim(),
-      async onShown(container, { initFolderChooser, animationDuration, parentId, incrementalSearchTimeout, inline }) {
+      async onShown(container, { initFolderChooser, parentId, inline }) {
         if (container.classList.contains('simulation'))
           return;
         container.classList.add('bookmark-dialog');
@@ -574,10 +565,8 @@ export async function bookmarkTabs(tabs, { parentId, index, showDialog, title } 
           browser.runtime.sendMessage({ type: 'treestyletab:get-bookmark-child-items' })
         ]);
         initFolderChooser({
-          animationDuration,
           defaultItem,
           rootItems,
-          incrementalSearchTimeout,
           container,
           inline,
         });
@@ -585,9 +574,7 @@ export async function bookmarkTabs(tabs, { parentId, index, showDialog, title } 
       },
       inject: {
         initFolderChooser,
-        animationDuration: getAnimationDuration(),
         parentId: folderParams.parentId,
-        incrementalSearchTimeout: configs.incrementalSearchTimeout,
         inline,
       },
       buttons: [
@@ -663,7 +650,7 @@ function getTitlesWithTreeStructure(tabs) {
   return titles;
 }
 
-export async function initFolderChooser({ container, ...params } = {}) {
+export async function initFolderChooser({ rootItems, defaultItem, defaultValue, container, inline } = {}) {
   const miniList = container.querySelector('select.parentIdChooserMini');
   const fullList = container.querySelector('ul.parentIdChooserFull');
   const fullListFocusibleContainer = container.querySelector('.parentIdChooserFullTreeContainer');
@@ -690,7 +677,7 @@ export async function initFolderChooser({ container, ...params } = {}) {
   };
 
   // Initialize mini chooser
-  for (const rootItem of params.rootItems) {
+  for (const rootItem of rootItems) {
     const item = miniList.appendChild(document.createElement('option'));
     item.textContent = rootItem.title;
     item.value = rootItem.id;
@@ -704,8 +691,8 @@ export async function initFolderChooser({ container, ...params } = {}) {
   miniList.appendChild(document.createElement('hr'));
   const lastChosenOption = miniList.appendChild(document.createElement('option'));
 
-  let lastChosenItem = params.defaultItem ||
-    params.defaultValue && await getItemById(params.defaultValue) ||
+  let lastChosenItem = defaultItem ||
+    defaultValue && await getItemById(defaultValue) ||
     null;
   const getLastChosenItem = () => {
     return lastChosenItem || miniList.firstChild.$item || null;
@@ -730,7 +717,7 @@ export async function initFolderChooser({ container, ...params } = {}) {
     expanded = !expanded;
     fullContainer.classList.toggle('expanded', expanded);
     expandeFullListButton.classList.toggle('expanded', expanded);
-    if (!params.inline) {
+    if (!inline) {
       fullChooserHeight = Math.max(fullChooserHeight, 150);
       await browser.runtime.sendMessage({
         type: 'treestyletab:resize-bookmark-dialog-by',
@@ -1081,7 +1068,7 @@ export async function initFolderChooser({ container, ...params } = {}) {
     return createdItems;
   };
 
-  const topLevelItems = await buildItems(params.rootItems, fullList);
+  const topLevelItems = await buildItems(rootItems, fullList);
   let itemToBeFocused = topLevelItems.length > 0 && topLevelItems[0];
   if (lastChosenItem) {
     const ancestorIds = await browser.runtime.sendMessage({

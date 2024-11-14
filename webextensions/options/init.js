@@ -368,12 +368,7 @@ async function updateBookmarksUI(enabled) {
     document.querySelector('#defaultBookmarkParentChooserStyle').textContent = Bookmark.FOLDER_CHOOSER_STYLE;
     Bookmark.initFolderChooser({
       defaultValue: defaultParentFolder.id,
-      onCommand:    (item, _event) => {
-        if (item.dataset.id)
-          configs.defaultBookmarkParentId = item.dataset.id;
-      },
       rootItems: (await browser.bookmarks.getTree().catch(ApiTabs.createErrorHandler()))[0].children,
-      incrementalSearchTimeout: configs.incrementalSearchTimeout,
       container: document.querySelector('#defaultBookmarkParentGroup'),
       inline: true,
     });
