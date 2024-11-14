@@ -194,6 +194,9 @@ export const FOLDER_CHOOSER_STYLE = `
     display: flex;
     user-select: none;
   }
+  .parentIdChooserFull li > label:hover {
+    background: rgba(0, 0, 0, 0.15);
+  }
 
   .parentIdChooserFull .twisty {
     height: 1em;
