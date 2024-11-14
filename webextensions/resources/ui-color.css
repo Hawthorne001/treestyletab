@@ -181,7 +181,7 @@ select:focus {
               0 0 0 4px var(--in-content-border-active-shadow);
 }
 option {
-  background: var(--bg-color);
+  background: var(--in-content-button-background-mixed);
   color: var(--text-color);
 }
 option:active,
