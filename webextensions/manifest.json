@@ -261,7 +261,8 @@
     "browser_style": false
   },
   "web_accessible_resources": [
-    "/resources/group-tab.html*"
+    "/resources/group-tab.html*",
+    "/sidebar/styles/icons/*"
   ],
   "protocol_handlers": [
     { "protocol":    "ext+treestyletab",

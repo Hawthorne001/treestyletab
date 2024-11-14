@@ -132,7 +132,7 @@ export const FOLDER_CHOOSER_STYLE = `
     fill: currentColor;
     height: 1em;
     line-height: 1;
-    mask: url("/sidebar/styles/icons/ArrowheadDown.svg") no-repeat center / 60%;
+    mask: url("${browser.runtime.getURL('/sidebar/styles/icons/ArrowheadDown.svg')}") no-repeat center / 60%;
     max-height: 1em;
     max-width: 1em;
     transform-origin: 50% 50%;
@@ -203,7 +203,7 @@ export const FOLDER_CHOOSER_STYLE = `
     display: inline-block;
     height: 1em;
     line-height: 1;
-    mask: url("/sidebar/styles/icons/ArrowheadDown.svg") no-repeat center / 60%;
+    mask: url("${browser.runtime.getURL('/sidebar/styles/icons/ArrowheadDown.svg')}") no-repeat center / 60%;
     max-height: 1em;
     max-width: 1em;
     transform-origin: 50% 50%;
