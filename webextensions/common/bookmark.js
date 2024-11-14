@@ -107,61 +107,68 @@ if (Constants.IS_BACKGROUND) {
 }
 
 export const FOLDER_CHOOSER_STYLE = `
+  .parentIdChooserMiniContainer,
+  .parentIdChooserFullContainer {
+    display: flex;
+    flex-direction: row;
+  }
+
   .parentIdChooserMiniContainer {
     display: flex;
     flex-direction: row;
   }
-  [name="parentId"] {
+  .parentIdChooserMini {
     display: flex;
     flex-grow: 1;
     margin-right: 0.2em;
     max-width: calc(100% - 2em /* width of the showAllFolders button */ - 0.2em);
   }
 
-  [name="showAllFolders"] {
+  .showAllFolders {
     display: flex;
     flex-grow: 0;
     width: 2em;
   }
 
-  [name="showAllFolders"]::before {
+  .showAllFolders::before {
     -moz-context-properties: fill;
     background: currentColor;
     content: "";
     display: inline-block;
     fill: currentColor;
-    height: 1em;
+    height: var(--icon-size);
     line-height: 1;
     mask: url("${browser.runtime.getURL('/sidebar/styles/icons/ArrowheadDown.svg')}") no-repeat center / 60%;
-    max-height: 1em;
-    max-width: 1em;
+    max-height: var(--icon-size);
+    max-width: var(--icon-size);
     transform-origin: 50% 50%;
-    width: 1em;;
+    width: var(--icon-size);
   }
-  [name="showAllFolders"].expanded::before {
+  .showAllFolders.expanded::before {
     transform: rotatez(180deg);
   }
 
-  [name="parentIdChooserFullContainer"] {
+  .parentIdChooserFullContainer {
     flex-grow: 1;
     flex-shrink: 1;
+    --icon-size: 16px;
   }
-  [name="parentIdChooserFullContainer"]:not(.expanded) {
+  .parentIdChooserFullContainer:not(.expanded) {
     display: none;
   }
 
-  [name="parentIdChooserFullContainer"] ul {
+  .parentIdChooserFullContainer ul {
     list-style: none;
     margin: 0;
     padding: 0;
   }
 
-  [name="parentIdChooserFullContainer"] ul[name="parentIdChooserFull"] {
+  .parentIdChooserFullContainer ul.parentIdChooserFull {
     max-height: 0;
     overflow: visible;
   }
 
-  [name="parentIdChooserFullContainer"] li:not(.expanded) > ul {
+  .parentIdChooserFullContainer li:not(.expanded) > ul {
     display: none;
   }
 
@@ -176,27 +183,30 @@ export const FOLDER_CHOOSER_STYLE = `
     overflow-y: auto;
   }
 
-  [name="parentIdChooserFull"] li {
+  .parentIdChooserFull li {
     list-style: none;
     margin: 0;
     padding: 0;
   }
 
-  [name="parentIdChooserFull"] li > label {
+  .parentIdChooserFull li > label {
     padding: 0.25em;
     white-space: nowrap;
     display: flex;
     user-select: none;
   }
 
-  [name="parentIdChooserFull"] .twisty {
+  .parentIdChooserFull .twisty {
     height: 1em;
     width: 1em;
   }
-  [name="parentIdChooserFull"] li.noChild .twisty {
+  .parentIdChooserFull li.noChild .twisty {
     visibility: hidden;
   }
-  [name="parentIdChooserFull"] .twisty::before {
+  .parentIdChooserFull li > label > .twisty {
+    order: 1;
+  }
+  .parentIdChooserFull li > label > .twisty::before {
     -moz-context-properties: fill;
     background: currentColor;
     content: "";
@@ -210,20 +220,38 @@ export const FOLDER_CHOOSER_STYLE = `
     transform: rotatez(-90deg);
     width: 1em;;
   }
-  [name="parentIdChooserFull"] li.expanded > label > .twisty::before {
+  .parentIdChooserFull li.expanded > label > .twisty::before {
     transform: rotatez(0deg);
   }
 
-  [name="parentIdChooserFull"] li.focused > label {
+  .parentIdChooserFull li.focused > label {
     color: highlightText;
     background: highlight;
     outline: 1px dotted;
   }
-  [name="parentIdChooserFull"] li.chosen > label > .twisty::before {
+  .parentIdChooserFull li.chosen > label > .twisty::before {
     background: highlightText;
   }
 
-  [name="parentIdChooserFull"] li > label > .label-text {
+  .parentIdChooserFull li > label::before {
+    -moz-context-properties: fill;
+    background: currentColor;
+    content: "";
+    display: inline-block;
+    height: var(--icon-size);
+    line-height: 1;
+    mask: url("${browser.runtime.getURL('/resources/icons/folder-16.svg')}") no-repeat center / 60%;
+    max-height: var(--icon-size);
+    max-width: var(--icon-size);
+    order: 2;
+    width: var(--icon-size);
+  }
+
+  .parentIdChooserFull li > label > * {
+    order: 3;
+  }
+
+  .parentIdChooserFull li > label > .label-text {
     overflow: hidden;
     text-overflow: ellipsis
   }
@@ -320,18 +348,18 @@ export async function bookmarkTab(tab, { parentId, showDialog } = {}) {
                         >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_parentId'))}</label
                  ><span class="parentIdChooserMiniContainer"
                        ><select id="${BASE_ID}parentId"
-                                name="parentId"></select
-                       ><button name="showAllFolders"
+                                name="parentId"
+                                class="parentIdChooserMini"></select
+                       ><button class="showAllFolders"
                                 data-no-accept-by-enter="true"
                                 title=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_showAllFolders_tooltip')))}></button
                        ></span></div
-            ><div class="itemContainer"
-                  name="parentIdChooserFullContainer"
+            ><div class="itemContainer parentIdChooserFullContainer"
                  ><div class="parentIdChooserFullTreeContainer"
                        tabindex="0"
                        data-no-accept-by-enter="true"
-                      ><ul name="parentIdChooserFull"></ul></div
-                 ><span><button name="newFolder"
+                      ><ul class="parentIdChooserFull"></ul></div
+                 ><span><button class="newFolder"
                                 accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_newFolder_accessKey')))}
                                 data-no-accept-by-enter="true"
                                >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_newFolder'))}</button
@@ -517,18 +545,18 @@ export async function bookmarkTabs(tabs, { parentId, index, showDialog, title } 
                         >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_parentId'))}</label
                  ><span class="parentIdChooserMiniContainer"
                        ><select id="${BASE_ID}parentId"
-                                name="parentId"></select
-                       ><button name="showAllFolders"
+                                name="parentId"
+                                class="parentIdChooserMini"></select
+                       ><button class="showAllFolders"
                                 data-no-accept-by-enter="true"
                                 title=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_showAllFolders_tooltip')))}></button
                        ></span></div
-            ><div class="itemContainer"
-                  name="parentIdChooserFullContainer"
+            ><div class="itemContainer parentIdChooserFullContainer"
                  ><div class="parentIdChooserFullTreeContainer"
                        tabindex="0"
                        data-no-accept-by-enter="true"
-                      ><ul name="parentIdChooserFull"></ul></div
-                 ><span><button name="newFolder"
+                      ><ul class="parentIdChooserFull"></ul></div
+                 ><span><button class="newFolder"
                                 accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_newFolder_accessKey')))}
                                 data-no-accept-by-enter="true"
                                >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_newFolder'))}</button
@@ -634,12 +662,12 @@ function getTitlesWithTreeStructure(tabs) {
 }
 
 export async function initFolderChooser({ container, ...params } = {}) {
-  const miniList = container.querySelector('select[name="parentId"]');
-  const fullList = container.querySelector('ul[name="parentIdChooserFull"]');
+  const miniList = container.querySelector('select.parentIdChooserMini');
+  const fullList = container.querySelector('ul.parentIdChooserFull');
   const fullListFocusibleContainer = container.querySelector('.parentIdChooserFullTreeContainer');
-  const fullContainer = container.querySelector('[name="parentIdChooserFullContainer"]');
-  const expandeFullListButton = container.querySelector('button[name="showAllFolders"]');
-  const newFolderButton = container.querySelector('button[name="newFolder"]');
+  const fullContainer = container.querySelector('.parentIdChooserFullContainer');
+  const expandeFullListButton = container.querySelector('.showAllFolders');
+  const newFolderButton = container.querySelector('.newFolder');
 
   const BASE_ID = `folderChooser-${Date.now()}-${parseInt(Math.random() * 65000)}:`;
 
