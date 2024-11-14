@@ -5,7 +5,6 @@
 */
 'use strict';
 
-import MenuUI from '/extlib/MenuUI.js';
 import * as PlaceHolderParser from '/extlib/placeholder-parser.js';
 import RichConfirm from '/extlib/RichConfirm.js';
 
@@ -53,7 +52,7 @@ function getAnimationDuration() {
 }
 
 if (Constants.IS_BACKGROUND) {
-  browser.runtime.onMessage.addListener((message, _sender) => {
+  browser.runtime.onMessage.addListener((message, sender) => {
     if (!message ||
         typeof message != 'object')
       return;
@@ -78,9 +77,195 @@ if (Constants.IS_BACKGROUND) {
           } while (lastId != 'root________');
           return ancestorIds;
         })();
+
+      case 'treestyletab:create-new-bookmark-folder':
+        return (async () => {
+          const folder = await browser.bookmarks.create({
+            type: 'folder',
+            title: browser.i18n.getMessage('bookmarkDialog_newFolder_defaultTitle'),
+            parentId: message.parentId,
+            ...(typeof message.index == 'number' ? { index: message.index } : {}),
+          }).catch(ApiTabs.createErrorHandler());
+          return folder;
+        })();
+
+      case 'treestyletab:update-bookmark-folder':
+        return browser.bookmarks.update(message.id, {
+          title: message.title,
+        }).catch(ApiTabs.createErrorHandler());
+
+      case 'treestyletab:resize-bookmark-dialog-by':
+        return (async () => {
+          const win = await browser.windows.get(sender.tab.windowId);
+          return browser.windows.update(win.id, {
+            width: win.width + (message.width || 0),
+            height: win.height + (message.height || 0),
+          });
+        })();
     }
   });
 }
+
+export const FOLDER_CHOOSER_STYLE = `
+  .parentIdChooserMiniContainer {
+    display: flex;
+    flex-direction: row;
+  }
+  [name="parentId"] {
+    display: flex;
+    flex-grow: 1;
+    margin-right: 0.2em;
+    max-width: calc(100% - 2em /* width of the showAllFolders button */ - 0.2em);
+  }
+
+  [name="showAllFolders"] {
+    display: flex;
+    flex-grow: 0;
+    width: 2em;
+  }
+
+  [name="showAllFolders"]::before {
+    -moz-context-properties: fill;
+    background: currentColor;
+    content: "";
+    display: inline-block;
+    fill: currentColor;
+    height: 1em;
+    line-height: 1;
+    mask: url("/sidebar/styles/icons/ArrowheadDown.svg") no-repeat center / 60%;
+    max-height: 1em;
+    max-width: 1em;
+    transform-origin: 50% 50%;
+    width: 1em;;
+  }
+  [name="showAllFolders"].expanded::before {
+    transform: rotatez(180deg);
+  }
+
+  [name="parentIdChooserFullContainer"] {
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+  [name="parentIdChooserFullContainer"]:not(.expanded) {
+    display: none;
+  }
+
+  [name="parentIdChooserFullContainer"] ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  [name="parentIdChooserFullContainer"] ul[name="parentIdChooserFull"] {
+    max-height: 0;
+    overflow: visible;
+  }
+
+  [name="parentIdChooserFullContainer"] li:not(.expanded) > ul {
+    display: none;
+  }
+
+  .parentIdChooserFullTreeContainer {
+    border: 1px solid;
+    margin: 0.5em 0;
+    min-height: 10em;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-shrink: 1;
+    overflow-y: auto;
+  }
+
+  [name="parentIdChooserFull"] li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  [name="parentIdChooserFull"] li > label {
+    padding: 0.25em;
+    white-space: nowrap;
+    display: flex;
+    user-select: none;
+  }
+
+  [name="parentIdChooserFull"] .twisty {
+    height: 1em;
+    width: 1em;
+  }
+  [name="parentIdChooserFull"] li.noChild .twisty {
+    visibility: hidden;
+  }
+  [name="parentIdChooserFull"] .twisty::before {
+    -moz-context-properties: fill;
+    background: currentColor;
+    content: "";
+    display: inline-block;
+    height: 1em;
+    line-height: 1;
+    mask: url("/sidebar/styles/icons/ArrowheadDown.svg") no-repeat center / 60%;
+    max-height: 1em;
+    max-width: 1em;
+    transform-origin: 50% 50%;
+    transform: rotatez(-90deg);
+    width: 1em;;
+  }
+  [name="parentIdChooserFull"] li.expanded > label > .twisty::before {
+    transform: rotatez(0deg);
+  }
+
+  [name="parentIdChooserFull"] li.focused > label {
+    color: highlightText;
+    background: highlight;
+    outline: 1px dotted;
+  }
+  [name="parentIdChooserFull"] li.chosen > label > .twisty::before {
+    background: highlightText;
+  }
+
+  [name="parentIdChooserFull"] li > label > .label-text {
+    overflow: hidden;
+    text-overflow: ellipsis
+  }
+
+  li.editing > label > .label-text {
+    display: none;
+  }
+
+  li.editing > label > input[type="text"] {
+    display: flex;
+    flex-grow: 1;
+  }
+`;
+
+const DIALOG_STYLE = `
+  .itemContainer {
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    margin: 0.2em 0;
+    text-align: start;
+  }
+  .itemContainer.last {
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+
+  .itemContainer > label {
+    display: flex;
+    margin-bottom: 0.2em;
+    white-space: nowrap;
+  }
+
+  .itemContainer > input[type="text"] {
+    display: flex;
+  }
+  .itemContainer.dialog > input[type="text"] {
+    min-width: 30em;
+  }
+
+  ${FOLDER_CHOOSER_STYLE}
+`;
 
 export async function bookmarkTab(tab, { parentId, showDialog } = {}) {
   try {
@@ -106,82 +291,77 @@ export async function bookmarkTab(tab, { parentId, showDialog } = {}) {
     parentId = parent && parent.id;
   if (showDialog) {
     const windowId = tab.windowId;
-    const inSidebar = location.pathname.startsWith('/sidebar/');
-    const divStyle = `
-      display: flex;
-      flex-direction: column;
-    `;
-    const labelStyle = `
-      display: flex;
-      flex-direction: ${inSidebar ? 'column' : 'row'};
-      ${inSidebar ? 'align-items: stretch;' : ''}
-      ${inSidebar ? 'text-align: start;' : ''}
-    `;
-    const labelTextStyle = `
-      white-space: nowrap;
-    `;
-    const inputFieldStyle = `
-      display: flex;
-      ${inSidebar ? '' : 'margin-left: 0.25em;'}
-      ${inSidebar ? '' : 'flex-grow: 1;'}
-      ${inSidebar ? '' : 'flex-shrink: 1;'}
-      ${inSidebar ? '' : 'min-width: 30em;'}
-    `;
-    const buttonContainerStyle = `
-      ${inSidebar ? '' : 'margin-left: 0.25em;'}
-    `;
+    const inline = location.pathname.startsWith('/sidebar/');
+    const inlineClass = inline ? 'inline' : 'dialog';
+    const BASE_ID = `dialog-${Date.now()}-${parseInt(Math.random() * 65000)}:`;
     const dialogParams = {
       content: `
-        <div style="${divStyle}"
-            ><label accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_title_accessKey')))}
-                    style="${labelStyle}"
-                   ><span style="${labelTextStyle}"
-                         >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_title'))}</span
-                   ><input type="text"
-                           name="title"
-                           style="${inputFieldStyle}"
-                           value=${JSON.stringify(sanitizeForHTMLText(title))}></label></div
-       ><div style="${divStyle}"
-            ><label accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_url_accessKey')))}
-                    style="${labelStyle}"
-                   ><span style="${labelTextStyle}"
-                         >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_url'))}</span
-                   ><input type="text"
-                           name="url"
-                           style="${inputFieldStyle}"
-                           value=${JSON.stringify(sanitizeForHTMLText(url))}></label></div
-       ><div style="${divStyle}; margin-bottom: 3em;"
-            ><label accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_parentId_accessKey')))}
-                    style="${labelStyle}"
-                   ><span style="${labelTextStyle}"
-                         >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_parentId'))}</span
-                   ><span style="${buttonContainerStyle}"
-                         ><button name="parentId">-</button></span></label></div>
+        <style type="text/css">${DIALOG_STYLE}</style>
+        <div class="itemContainer ${inlineClass}"
+            ><label for="${BASE_ID}title"
+                    accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_title_accessKey')))}
+                   >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_title'))}</label
+            ><input id="${BASE_ID}title"
+                    type="text"
+                    name="title"
+                    value=${JSON.stringify(sanitizeForHTMLText(title))}></div
+       ><div class="itemContainer ${inlineClass}"
+            ><label for="${BASE_ID}url"
+                    accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_url_accessKey')))}
+                   >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_url'))}</label
+            ><input id="${BASE_ID}url"
+                    type="text"
+                    name="url"
+                    value=${JSON.stringify(sanitizeForHTMLText(url))}></div
+       ><div class="itemContainer last ${inlineClass}"
+            ><div class="itemContainer"
+                 ><label for="${BASE_ID}parentId"
+                         accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_parentId_accessKey')))}
+                        >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_parentId'))}</label
+                 ><span class="parentIdChooserMiniContainer"
+                       ><select id="${BASE_ID}parentId"
+                                name="parentId"></select
+                       ><button name="showAllFolders"
+                                data-no-accept-by-enter="true"
+                                title=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_showAllFolders_tooltip')))}></button
+                       ></span></div
+            ><div class="itemContainer"
+                  name="parentIdChooserFullContainer"
+                 ><div class="parentIdChooserFullTreeContainer"
+                       tabindex="0"
+                       data-no-accept-by-enter="true"
+                      ><ul name="parentIdChooserFull"></ul></div
+                 ><span><button name="newFolder"
+                                accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_newFolder_accessKey')))}
+                                data-no-accept-by-enter="true"
+                               >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_newFolder'))}</button
+                               ></span></div
+       ></div>
       `.trim(),
-      async onShown(container, { MenuUI, initFolderChooser, animationDuration, parentId, incrementalSearchTimeout }) {
+      async onShown(container, { initFolderChooser, animationDuration, parentId, incrementalSearchTimeout, inline }) {
         if (container.classList.contains('simulation'))
           return;
-        MenuUI.init();
         container.classList.add('bookmark-dialog');
         const [defaultItem, rootItems] = await Promise.all([
           browser.runtime.sendMessage({ type: 'treestyletab:get-bookmark-item-by-id', id: parentId }),
           browser.runtime.sendMessage({ type: 'treestyletab:get-bookmark-child-items' })
         ]);
-        initFolderChooser(container.querySelector('button'), {
-          MenuUI,
+        initFolderChooser({
           animationDuration,
           defaultItem,
           rootItems,
           incrementalSearchTimeout,
+          container,
+          inline,
         });
         container.querySelector('[name="title"]').select();
       },
       inject: {
-        MenuUI,
         initFolderChooser,
         animationDuration: getAnimationDuration(),
         parentId,
         incrementalSearchTimeout: configs.incrementalSearchTimeout,
+        inline,
       },
       buttons: [
         browser.i18n.getMessage('bookmarkDialog_accept'),
@@ -189,7 +369,7 @@ export async function bookmarkTab(tab, { parentId, showDialog } = {}) {
       ]
     };
     let result;
-    if (inSidebar) {
+    if (inline) {
       try {
         UserOperationBlocker.blockIn(windowId, { throbber: false });
         result = await RichConfirm.show(dialogParams);
@@ -212,9 +392,9 @@ export async function bookmarkTab(tab, { parentId, showDialog } = {}) {
     }
     if (result.buttonIndex != 0)
       return null;
-    title    = result.values.title;
-    url      = result.values.url;
-    parentId = result.values.parentId;
+    title    = result.values[`${BASE_ID}title`];
+    url      = result.values[`${BASE_ID}url`];
+    parentId = result.values[`${BASE_ID}parentId`];
   }
 
   mCreatingCount++;
@@ -316,72 +496,69 @@ export async function bookmarkTabs(tabs, { parentId, index, showDialog, title } 
 
   if (showDialog) {
     const windowId = tabs[0].windowId;
-    const inSidebar = location.pathname.startsWith('/sidebar/');
-    const divStyle = `
-      display: flex;
-      flex-direction: column;
-    `;
-    const labelStyle = `
-      display: flex;
-      flex-direction: ${inSidebar ? 'column' : 'row'};
-      ${inSidebar ? 'align-items: stretch;' : ''}
-      ${inSidebar ? 'text-align: start;' : ''}
-    `;
-    const labelTextStyle = `
-      white-space: nowrap;
-    `;
-    const inputFieldStyle = `
-      display: flex;
-      ${inSidebar ? '' : 'margin-left: 0.25em;'}
-      ${inSidebar ? '' : 'flex-grow: 1;'}
-      ${inSidebar ? '' : 'flex-shrink: 1;'}
-      ${inSidebar ? '' : 'min-width: 30em;'}
-    `;
-    const buttonContainerStyle = `
-      ${inSidebar ? '' : 'margin-left: 0.25em;'}
-    `;
+    const inline = location.pathname.startsWith('/sidebar/');
+    const inlineClass = inline ? 'inline' : 'dialog';
+    const BASE_ID = `dialog-${Date.now()}-${parseInt(Math.random() * 65000)}:`;
     const dialogParams = {
       content: `
-        <div style="${divStyle}"
-            ><label accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_title_accessKey')))}
-                    style="${labelStyle}"
-                   ><span style="${labelTextStyle}"
-                         >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_title'))}</span
-                   ><input type="text"
-                           name="title"
-                           style="${inputFieldStyle}"
-                           value=${JSON.stringify(sanitizeForHTMLText(folderParams.title))}></label></div
-       ><div style="${divStyle}; margin-bottom: 3em;"
-            ><label accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_parentId_accessKey')))} style="${labelStyle}"
-                   ><span style="${labelTextStyle}"
-                         >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_parentId'))}</span
-                   ><span style="${buttonContainerStyle}"
-                         ><button name="parentId">-</button></span></label></div>
+        <style type="text/css">${DIALOG_STYLE}</style>
+        <div class="itemContainer ${inlineClass}"
+            ><label for="${BASE_ID}title"
+                    accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_title_accessKey')))}
+                   >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_title'))}</label
+            ><input id="${BASE_ID}title"
+                    type="text"
+                    name="title"
+                    value=${JSON.stringify(sanitizeForHTMLText(title))}></div
+       ><div class="itemContainer last ${inlineClass}"
+            ><div class="itemContainer"
+                 ><label for="${BASE_ID}parentId"
+                         accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_parentId_accessKey')))}
+                        >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_parentId'))}</label
+                 ><span class="parentIdChooserMiniContainer"
+                       ><select id="${BASE_ID}parentId"
+                                name="parentId"></select
+                       ><button name="showAllFolders"
+                                data-no-accept-by-enter="true"
+                                title=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_showAllFolders_tooltip')))}></button
+                       ></span></div
+            ><div class="itemContainer"
+                  name="parentIdChooserFullContainer"
+                 ><div class="parentIdChooserFullTreeContainer"
+                       tabindex="0"
+                       data-no-accept-by-enter="true"
+                      ><ul name="parentIdChooserFull"></ul></div
+                 ><span><button name="newFolder"
+                                accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_newFolder_accessKey')))}
+                                data-no-accept-by-enter="true"
+                               >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_newFolder'))}</button
+                               ></span></div
+       ></div>
       `.trim(),
-      async onShown(container, { MenuUI, initFolderChooser, animationDuration, parentId, incrementalSearchTimeout }) {
+      async onShown(container, { initFolderChooser, animationDuration, parentId, incrementalSearchTimeout }) {
         if (container.classList.contains('simulation'))
           return;
-        MenuUI.init();
         container.classList.add('bookmark-dialog');
         const [defaultItem, rootItems] = await Promise.all([
           browser.runtime.sendMessage({ type: 'treestyletab:get-bookmark-item-by-id', id: parentId }),
           browser.runtime.sendMessage({ type: 'treestyletab:get-bookmark-child-items' })
         ]);
-        initFolderChooser(container.querySelector('button'), {
-          MenuUI,
+        initFolderChooser({
           animationDuration,
           defaultItem,
           rootItems,
           incrementalSearchTimeout,
+          container,
+          inline,
         });
         container.querySelector('[name="title"]').select();
       },
       inject: {
-        MenuUI,
         initFolderChooser,
         animationDuration: getAnimationDuration(),
         parentId: folderParams.parentId,
         incrementalSearchTimeout: configs.incrementalSearchTimeout,
+        inline,
       },
       buttons: [
         browser.i18n.getMessage('bookmarkDialog_accept'),
@@ -389,7 +566,7 @@ export async function bookmarkTabs(tabs, { parentId, index, showDialog, title } 
       ]
     };
     let result;
-    if (inSidebar) {
+    if (inline) {
       try {
         UserOperationBlocker.blockIn(windowId, { throbber: false });
         result = await RichConfirm.show(dialogParams);
@@ -412,8 +589,8 @@ export async function bookmarkTabs(tabs, { parentId, index, showDialog, title } 
     }
     if (result.buttonIndex != 0)
       return null;
-    folderParams.title    = result.values.title;
-    folderParams.parentId = result.values.parentId;
+    folderParams.title    = result.values[`${BASE_ID}title`];
+    folderParams.parentId = result.values[`${BASE_ID}parentId`];
   }
 
   const toBeCreatedCount = tabs.length + 1;
@@ -456,106 +633,340 @@ function getTitlesWithTreeStructure(tabs) {
   return titles;
 }
 
-export async function initFolderChooser(anchor, params = {}) {
-  let chooserTree = window.$bookmarkFolderChooserTree;
-  if (!chooserTree) {
-    chooserTree = window.$bookmarkFolderChooserTree = document.documentElement.appendChild(document.createElement('ul'));
-  }
-  else {
-    const range = document.createRange();
-    range.selectNodeContents(chooserTree);
-    range.deleteContents();
-    range.detach();
-  }
+export async function initFolderChooser({ container, ...params } = {}) {
+  const miniList = container.querySelector('select[name="parentId"]');
+  const fullList = container.querySelector('ul[name="parentIdChooserFull"]');
+  const fullListFocusibleContainer = container.querySelector('.parentIdChooserFullTreeContainer');
+  const fullContainer = container.querySelector('[name="parentIdChooserFullContainer"]');
+  const expandeFullListButton = container.querySelector('button[name="showAllFolders"]');
+  const newFolderButton = container.querySelector('button[name="newFolder"]');
 
-  delete anchor.dataset.value;
-  anchor.textContent = browser.i18n.getMessage('bookmarkFolderChooser_unspecified');
+  const BASE_ID = `folderChooser-${Date.now()}-${parseInt(Math.random() * 65000)}:`;
 
-  anchor.style.overflow     = 'hidden';
-  anchor.style.textOverflow = 'ellipsis';
-  anchor.style.whiteSpace   = 'pre';
-
-  let lastChosenId = null;
-  if (params.defaultItem || params.defaultValue) {
-    const item = params.defaultItem || await getItemById(params.defaultValue);
-    if (item) {
-      lastChosenId         = item.id;
-      anchor.dataset.value = lastChosenId;
-      anchor.dataset.title = item.title;
-      anchor.textContent   = item.title || browser.i18n.getMessage('bookmarkFolderChooser_blank');
-      anchor.setAttribute('title', anchor.textContent);
+  const ensureItemVisible = item => {
+    const itemRect = item.querySelector('label').getBoundingClientRect();
+    const containerRect = fullListFocusibleContainer.getBoundingClientRect();
+    if (itemRect.top < containerRect.top) {
+      fullListFocusibleContainer.scrollBy(0, itemRect.top - containerRect.top - (itemRect.height / 2));
     }
+    else if (itemRect.bottom > containerRect.bottom) {
+      fullListFocusibleContainer.scrollBy(0, itemRect.bottom - containerRect.bottom + (itemRect.height / 2));
+    }
+  };
+
+  const cancelEvent = event => {
+    event.stopImmediatePropagation();
+    event.preventDefault();
+  };
+
+  // Initialize mini chooser
+  for (const rootItem of params.rootItems) {
+    const item = miniList.appendChild(document.createElement('option'));
+    item.textContent = rootItem.title;
+    item.value = rootItem.id;
   }
 
-  // eslint-disable-next-line prefer-const
-  let topLevelItems;
-  anchor.ui = new (params.MenuUI || MenuUI)({
-    root:       chooserTree,
-    appearance: 'menu',
-    onCommand(item, event) {
-      if (item.dataset.id) {
-        lastChosenId         = item.dataset.id;
-        anchor.dataset.value = lastChosenId;
-        anchor.dataset.title = item.dataset.title;
-        anchor.textContent   = item.dataset.title || browser.i18n.getMessage('bookmarkFolderChooser_blank');
-        anchor.setAttribute('title', anchor.textContent);
-      }
-      if (typeof params.onCommand == 'function')
-        params.onCommand(item, event);
-      anchor.ui.close();
-    },
-    onShown() {
-      for (const item of chooserTree.querySelectorAll('.checked')) {
-        item.classList.remove('checked');
-      }
-      if (lastChosenId) {
-        const item = chooserTree.querySelector(`.radio[data-id="${lastChosenId}"]`);
-        if (item)
-          item.classList.add('checked');
-      }
-    },
-    onHidden() {
-      const range = document.createRange();
-      for (const folderItem of topLevelItems) {
-        const separator = folderItem.lastChild.querySelector('.separator');
-        if (!separator)
-          continue;
-        range.selectNodeContents(folderItem.lastChild);
-        range.setStartBefore(separator);
-        range.deleteContents();
-        folderItem.classList.remove('has-built-children');
-      }
-      range.detach();
-    },
-    animationDuration: params.animationDuration || getAnimationDuration(),
-    incrementalSearch: true,
-    incrementalSearchTimeout: params.incrementalSearchTimeout,
-  });
-  anchor.addEventListener('click', () => {
-    anchor.ui.open({
-      anchor
-    });
-  });
-  anchor.addEventListener('keydown', event => {
-    if (event.key == 'Enter')
-      anchor.ui.open({
-        anchor
+  miniList.appendChild(document.createElement('hr'));
+  const expanderOption = miniList.appendChild(document.createElement('option'));
+  expanderOption.textContent = browser.i18n.getMessage('bookmarkDialog_showAllFolders_label');
+  expanderOption.setAttribute('value', `${BASE_ID}expandChooser`);
+
+  miniList.appendChild(document.createElement('hr'));
+  const lastChosenOption = miniList.appendChild(document.createElement('option'));
+
+  let lastChosenItem = params.defaultItem ||
+    params.defaultValue && await getItemById(params.defaultValue) ||
+    null;
+  const getLastChosenItem = () => {
+    return lastChosenItem || miniList.firstChild.$item || null;
+  };
+
+  const updateLastChosenOption = () => {
+    if (lastChosenItem) {
+      lastChosenOption.value       = lastChosenItem.id;
+      lastChosenOption.textContent = lastChosenItem.title;
+      lastChosenOption.style.display = '';
+    }
+    else {
+      lastChosenOption.style.display = 'none';
+    }
+    miniList.value = getLastChosenItem().id;
+  };
+  updateLastChosenOption();
+
+  let expanded = false;
+  let fullChooserHeight = 0;
+  const toggleFullChooser = async () => {
+    expanded = !expanded;
+    fullContainer.classList.toggle('expanded', expanded);
+    expandeFullListButton.classList.toggle('expanded', expanded);
+    if (!params.inline) {
+      fullChooserHeight = Math.max(fullChooserHeight, 150);
+      await browser.runtime.sendMessage({
+        type: 'treestyletab:resize-bookmark-dialog-by',
+        width: 0,
+        height: expanded ? fullChooserHeight : -fullChooserHeight,
       });
+    }
+    if (lastChosenItem) {
+      const item = fullList.querySelector(`li[data-id="${lastChosenItem.id}"]`);
+      if (item)
+        ensureItemVisible(item);
+    }
+  };
+
+  // Initialize expander
+  const getElementTarget = event => {
+    return event.target.nodeType == Node.ELEMENT_NODE ?
+      event.target :
+      event.target.parentNode;;
+  };
+
+  expandeFullListButton.addEventListener('click', event => {
+    if (event.button != 0)
+      return;
+    toggleFullChooser();
+  });
+  expandeFullListButton.addEventListener('keydown', event => {
+    const elementTarget = getElementTarget(event);
+    if (elementTarget != expandeFullListButton)
+      return;
+
+    switch (event.key) {
+      case 'Enter':
+        cancelEvent(event);
+      case 'Space':
+        toggleFullChooser();
+        break;
+
+      default:
+        break;
+    }
+  }, { capture: true });
+
+  // Initialize full chooser
+  fullList.level = 0;
+
+  const exitAllEditings = () => {
+    for (const item of fullList.querySelectorAll('li.editing')) {
+      item.$exitTitleEdit();
+    }
+  };
+
+  const getTargetItem = event => {
+    const elementTarget = getElementTarget(event);
+    return elementTarget?.closest('li');
+  };
+
+  const onItemClicked = item => {
+    if (!item)
+      return;
+
+    exitAllEditings();
+
+    for (const oldFocused of fullListFocusibleContainer.querySelectorAll('.focused')) {
+      if (oldFocused == item)
+        continue;
+      oldFocused.classList.remove('focused');
+    }
+    item.classList.add('focused');
+    lastChosenItem = item.$item;
+
+    ensureItemVisible(item);
+    updateLastChosenOption();
+  };
+
+  const onCommand = event => {
+    const item = getTargetItem(event);
+    if (!item)
+      return;
+
+    item.classList.toggle('expanded');
+    if (item.classList.contains('expanded'))
+      item.$completeFolderItem();
+
+    onItemClicked(item);
+  };
+
+  fullListFocusibleContainer.addEventListener('dblclick', event => {
+    if (event.button != 0)
+      return;
+    if (getElementTarget(event)?.closest('.twisty'))
+      return;
+    const item = getTargetItem(event);
+    if (item)
+      item.$enterTitleEdit();
+  });
+  fullListFocusibleContainer.addEventListener('click', event => {
+    if (event.button != 0)
+      return;
+    const target = getElementTarget(event);
+    if (target?.closest('.twisty')) {
+      onCommand(event);
+    }
+    else if (!target?.closest('input[type="text"]')) {
+      onItemClicked(getTargetItem(event));
+    }
+  });
+  fullListFocusibleContainer.addEventListener('keydown', event => {
+    if (getElementTarget(event)?.closest('input[type="text"]') &&
+        event.key != 'Enter')
+      return;
+
+    const focusibleItems = [...fullList.querySelectorAll('li:not(li:not(.expanded) li)')];
+    const focusedItem = fullList.querySelector('li.focused');
+    const index = focusedItem ? focusibleItems.indexOf(focusedItem) : -1;
+    switch (event.key) {
+      case 'Enter':
+        cancelEvent(event);
+        if (focusedItem && focusedItem.matches('.editing'))
+          focusedItem.$exitTitleEdit();
+        onCommand(event);
+        break;
+
+      case 'ArrowUp': {
+        cancelEvent(event);
+        const toBeFocused = focusibleItems[(index == 0 ? focusibleItems.length : index) - 1];
+        onItemClicked(toBeFocused);
+      }; break;
+
+      case 'ArrowDown': {
+        cancelEvent(event);
+        const toBeFocused = focusibleItems[index == focusibleItems.length - 1 ? 0 : index + 1];
+        onItemClicked(toBeFocused);
+      }; break;
+
+      case 'ArrowRight':
+        cancelEvent(event);
+        if (!focusedItem.classList.contains('expanded')) {
+          focusedItem.classList.add('expanded');
+          focusedItem.$completeFolderItem();
+        }
+        else {
+          const firstChild = focusedItem.querySelector('li');
+          if (firstChild)
+            onItemClicked(firstChild);
+        }
+        break;
+
+      case 'ArrowLeft':
+        cancelEvent(event);
+        if (focusedItem.classList.contains('expanded')) {
+          focusedItem.classList.remove('expanded');
+        }
+        else {
+          const nearestAncestor = focusedItem.parentNode.closest('li');
+          if (nearestAncestor)
+            onItemClicked(nearestAncestor);
+        }
+        break;
+
+      case 'PageUp': {
+        cancelEvent(event);
+        const toBeFocusedIndex = Math.min(focusibleItems.length - 1, Math.max(0, index - Math.floor(fullListFocusibleContainer.offsetHeight / focusedItem.offsetHeight) + 1));
+        const toBeFocused = focusibleItems[toBeFocusedIndex];
+        onItemClicked(toBeFocused);
+      }; break;
+
+      case 'PageDown': {
+        cancelEvent(event);
+        const toBeFocusedIndex = Math.min(focusibleItems.length - 1, Math.max(0, index + Math.floor(fullListFocusibleContainer.offsetHeight / focusedItem.offsetHeight) - 1));
+        const toBeFocused = focusibleItems[toBeFocusedIndex];
+        onItemClicked(toBeFocused);
+      }; break;
+
+      case 'Home':
+        cancelEvent(event);
+        onItemClicked(focusibleItems[0]);
+        break;
+
+      case 'End':
+        cancelEvent(event);
+        onItemClicked(focusibleItems[focusibleItems.length - 1]);
+        break;
+    }
+  }, { capture: true });
+
+  container.addEventListener('focus', event => {
+    if (!getElementTarget(event)?.closest('input[type="text"], .parentIdChooserFullTreeContainer'))
+      exitAllEditings();
+  }, { capture: true });
+
+  container.addEventListener('blur', event => {
+    if (getElementTarget(event)?.closest('input[type="text"]')) {
+      const editingItem = fullList.querySelector('li.editing');
+      if (editingItem)
+        editingItem.$exitTitleEdit();
+    }
+  }, { capture: true });
+
+  miniList.addEventListener('change', () => {
+    if (miniList.value == `${BASE_ID}expandChooser`) {
+      if (!fullContainer.classList.contains('expanded'))
+        toggleFullChooser();
+      miniList.value = getLastChosenItem().id;
+      return;
+    }
+
+    const fullListItem = fullList.querySelector(`li[data-id="${miniList.value}"]`);
+    if (fullListItem)
+      onItemClicked(fullListItem);
   });
 
-  const generateFolderItem = (folder) => {
+  const createNewSubFolder = async () => {
+    const folder = await browser.runtime.sendMessage({
+      type:     'treestyletab:create-new-bookmark-folder',
+      parentId: getLastChosenItem().id,
+    });
+    const parentItem = fullList.querySelector(`li[data-id="${folder.parentId}"]`);
+    if (!parentItem)
+      return;
+    parentItem.$invalidate();
+    parentItem.classList.add('expanded');
+    await parentItem.$completeFolderItem();
+    const folderItem = parentItem.querySelector(`li[data-id="${folder.id}"]`);
+    if (!folderItem)
+      return;
+
+    onItemClicked(folderItem);
+    folderItem.$enterTitleEdit();
+  };
+
+  newFolderButton.addEventListener('click', event => {
+    if (event.button != 0)
+      return;
+    createNewSubFolder();
+  });
+  newFolderButton.addEventListener('keydown', event => {
+    const elementTarget = getElementTarget(event);
+    if (elementTarget != newFolderButton)
+      return;
+
+    switch (event.key) {
+      case 'Enter':
+        cancelEvent(event);
+      case 'Space':
+        createNewSubFolder();
+        break;
+
+      default:
+        break;
+    }
+  }, { capture: true });
+
+  const generateFolderItem = (folder, level) => {
     const item = document.createElement('li');
-    item.appendChild(document.createTextNode(folder.title));
-    item.setAttribute('title', folder.title || browser.i18n.getMessage('bookmarkFolderChooser_blank'));
-    item.dataset.id    = folder.id;
-    item.dataset.title = folder.title;
-    item.classList.add('folder');
-    item.classList.add('radio');
-    const container = item.appendChild(document.createElement('ul'));
-    const useThisItem = container.appendChild(document.createElement('li'));
-    useThisItem.textContent   = browser.i18n.getMessage('bookmarkFolderChooser_useThisFolder');
-    useThisItem.dataset.id    = folder.id;
-    useThisItem.dataset.title = folder.title;
+    item.$item = folder;
+    item.setAttribute('data-id', folder.id);
+    const title = folder.title || browser.i18n.getMessage('bookmarkFolderChooser_blank');
+    const label = item.appendChild(document.createElement('label'));
+    label.setAttribute('style', `padding-left: calc(1.25em * ${level} + 0.25em);`);
+    label.setAttribute('title', title);
+    const twisty = label.appendChild(document.createElement('span'));
+    twisty.setAttribute('class', 'twisty');
+    const text = label.appendChild(document.createElement('div'));
+    text.setAttribute('class', 'label-text');
+    text.textContent = title;
     return item;
   };
 
@@ -574,39 +985,94 @@ export async function initFolderChooser(anchor, params = {}) {
       }
       if (item.type != 'folder')
         continue;
-      const folderItem = generateFolderItem(item);
-      container.appendChild(folderItem);
+
+      if (container.querySelector(`li[data-id="${item.id}"]`))
+        continue;
+
+      const folderItem = generateFolderItem(item, container.level);
+      container.insertBefore(folderItem, 'index' in item ? container.childNodes[item.index] : null);
       createdItems.push(folderItem);
       folderItem.$completeFolderItem = async () => {
-        if (!item.$fetched &&
-            !('children' in item)) {
+        if (!item.$fetched) {
           item.$fetched = true;
-          item.children = await browser.runtime.sendMessage({
+          item.children = (await browser.runtime.sendMessage({
             type: 'treestyletab:get-bookmark-child-items',
             id:   item.id
-          });
+          })).filter(item => item.type == 'folder');
         }
+        folderItem.classList.toggle('noChild', !item.children || item.children.length == 0);
         if (item.children &&
-            item.children.length > 0 &&
-            !folderItem.classList.contains('has-built-children')) {
-          folderItem.classList.add('has-built-children');
-          await buildItems(item.children, folderItem.lastChild);
-          anchor.ui.updateMenuItem(folderItem);
+            item.children.length > 0) {
+          let subFolderContainer = folderItem.querySelector('ul');;
+          if (!subFolderContainer) {
+            subFolderContainer = folderItem.appendChild(document.createElement('ul'));
+            subFolderContainer.level = container.level + 1;
+          }
+          await buildItems(item.children, subFolderContainer);
         }
         return folderItem;
       };
-      folderItem.addEventListener('focus', folderItem.$completeFolderItem);
-      folderItem.addEventListener('mouseover', folderItem.$completeFolderItem);
-    }
-    const firstFolderItem = container.querySelector('.folder');
-    if (firstFolderItem && firstFolderItem.previousSibling) {
-      const separator = container.insertBefore(document.createElement('li'), firstFolderItem);
-      separator.classList.add('separator');
+      folderItem.$invalidate = () => {
+        item.$fetched = false;
+      };
+      let titleField;
+      folderItem.$enterTitleEdit = async () => {
+        exitAllEditings();
+        if (!titleField) {
+          const label = folderItem.querySelector('label');
+          folderItem.classList.add('editing');
+          titleField = label.appendChild(document.createElement('input'));
+          titleField.setAttribute('type', 'text');
+          label.appendChild(titleField);
+          titleField.value = item.title || browser.i18n.getMessage('bookmarkFolderChooser_blank');
+        }
+        titleField.focus();
+        titleField.select();
+      };
+      folderItem.$exitTitleEdit = async () => {
+        if (!titleField)
+          return;
+        browser.runtime.sendMessage({
+          type:  'treestyletab:update-bookmark-folder',
+          id:    item.id,
+          title: titleField.value,
+        });
+        item.title =
+           folderItem.querySelector('.label-text').textContent = titleField.value;
+        folderItem.querySelector('label').setAttribute('title', titleField.value);
+        if (lastChosenItem?.id == item.id)
+          lastChosenItem.title = item.title;
+        titleField.parentNode.removeChild(titleField);
+        titleField = null;
+        folderItem.classList.remove('editing');
+        updateLastChosenOption();
+      };
     }
     return createdItems;
   };
 
-  topLevelItems = await buildItems(params.rootItems, chooserTree);
+  const topLevelItems = await buildItems(params.rootItems, fullList);
+  let itemToBeFocused = topLevelItems.length > 0 && topLevelItems[0];
+  if (lastChosenItem) {
+    const ancestorIds = await browser.runtime.sendMessage({
+      type: 'treestyletab:get-bookmark-ancestor-ids',
+      id:   lastChosenItem.id,
+    });
+    for (const id of [...ancestorIds.reverse(), lastChosenItem.id]) {
+      if (id == 'root________')
+        continue;
+
+      const item = fullList.querySelector(`li[data-id="${id}"]`);
+      if (!item)
+        break;
+
+      itemToBeFocused = item;
+      item.classList.add('expanded');
+      await item.$completeFolderItem();
+    }
+  }
+  if (itemToBeFocused)
+    itemToBeFocused.classList.add('focused');
 }
 
 let mCreatedBookmarks = [];

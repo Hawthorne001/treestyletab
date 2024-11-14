@@ -178,12 +178,17 @@
 
   "bookmarkDialog_dialogTitle_single":   { "message": "新しいブックマーク" },
   "bookmarkDialog_dialogTitle_multiple": { "message": "新しいブックマーク" },
-  "bookmarkDialog_title":    { "message": "名前(N):" },
+  "bookmarkDialog_title":    { "message": "名前(N)" },
   "bookmarkDialog_title_accessKey": { "message": "n" },
-  "bookmarkDialog_url":      { "message": "URL:" },
+  "bookmarkDialog_url":      { "message": "URL" },
   "bookmarkDialog_url_accessKey": { "message": "u" },
-  "bookmarkDialog_parentId": { "message": "保存場所:" },
+  "bookmarkDialog_parentId": { "message": "保存場所(L)" },
   "bookmarkDialog_parentId_accessKey": { "message": "l" },
+  "bookmarkDialog_showAllFolders_label":      { "message": "選択..." },
+  "bookmarkDialog_showAllFolders_tooltip":      { "message": "すべてのブックマークフォルダーを表示します" },
+  "bookmarkDialog_newFolder":      { "message": "新しいフォルダー(O)" },
+  "bookmarkDialog_newFolder_accessKey": { "message": "o" },
+  "bookmarkDialog_newFolder_defaultTitle":   { "message": "新しいフォルダー" },
   "bookmarkDialog_saveContainerRedirectKey": { "message": "コンテナーの情報をContainer Bookmarks形式で保存する" },
   "bookmarkDialog_accept":   { "message": "保存" },
   "bookmarkDialog_cancel":   { "message": "キャンセル" },
@@ -759,8 +764,7 @@
   "config_bookmarkTreeFolderName_after": { "message": "\u200b" },
   "config_bookmarkTreeFolderName_description": { "message": "以下のプレースホルダを使用できます: %TITLE%（1つ目のタブのタイトル）, %URL%（1つ目のタブのURL）, %YEAR%（4桁の年）, %SHORT_YEAR%（2桁の年）, %MONTH%（2桁の月）, %DATE%（2桁の日）, %HOURS%（2桁の時間）, %MINUTES%（2桁の分）, %SECONDS%（2桁の秒）, %MILLISECONDS%（3桁のミリ秒）, %GROUP%（最初のタブがグループタブだった場合はそのタイトル、それ以外の場合は空）, %ANY(値1, 値2, ...)%（与えられたリストの中で最初に有効な値）" },
 
-  "config_defaultBookmarkParentId_label_before":  { "message": "ブックマークを" },
-  "config_defaultBookmarkParentId_label_after":   { "message": "の中に作成する" },
+  "config_defaultBookmarkParentId_label":  { "message": "ブックマークの作成先フォルダーの既定値" },
 
   "config_supportTabsMultiselect_label": { "message": "タブのフォーカスの制御にタブの複数選択APIを使う（※ブラウザーの設定である\"browser.tabs.multiselect\"=\"true\"に依存)" },
 

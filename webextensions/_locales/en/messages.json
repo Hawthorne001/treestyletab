@@ -178,12 +178,17 @@
 
   "bookmarkDialog_dialogTitle_single":   { "message": "New Bookmark" },
   "bookmarkDialog_dialogTitle_multiple": { "message": "New Bookmarks" },
-  "bookmarkDialog_title":    { "message": "Name:" },
+  "bookmarkDialog_title":    { "message": "Name" },
   "bookmarkDialog_title_accessKey": { "message": "n" },
-  "bookmarkDialog_url":      { "message": "URL:" },
+  "bookmarkDialog_url":      { "message": "URL" },
   "bookmarkDialog_url_accessKey": { "message": "u" },
-  "bookmarkDialog_parentId":      { "message": "Location:" },
+  "bookmarkDialog_parentId":      { "message": "Location" },
   "bookmarkDialog_parentId_accessKey": { "message": "l" },
+  "bookmarkDialog_showAllFolders_label":      { "message": "Choose…" },
+  "bookmarkDialog_showAllFolders_tooltip":      { "message": "Show all the bookmarks folders" },
+  "bookmarkDialog_newFolder":      { "message": "New Folder" },
+  "bookmarkDialog_newFolder_accessKey": { "message": "o" },
+  "bookmarkDialog_newFolder_defaultTitle":   { "message": "New Folder" },
   "bookmarkDialog_saveContainerRedirectKey": { "message": "Save container information for Container Bookmarks" },
   "bookmarkDialog_accept":   { "message": "Save" },
   "bookmarkDialog_cancel":   { "message": "Cancel" },
@@ -762,8 +767,7 @@
   "config_bookmarkTreeFolderName_after": { "message": "\u200b" },
   "config_bookmarkTreeFolderName_description": { "message": "Available placeholders: %TITLE% (title of the first tab), %URL% (URL of the first tab), %YEAR% (year, four digits), %SHORT_YEAR% (year, two digits), %MONTH% (month, two digits), %DATE% (date, two digits), %HOURS% (hours, two digits), %MINUTES% (minutes, two digits), %SECONDS% (seconds, two digits), %MILLISECONDS% (milliseconds, three digits), %GROUP% (title of the first tab if it is group tab - otherwise blank), %ANY(value1, value2, ...)% (the first effective value from the given list)" },
 
-  "config_defaultBookmarkParentId_label_before":  { "message": "Create new bookmarks under" },
-  "config_defaultBookmarkParentId_label_after":   { "message": "\u200b" },
+  "config_defaultBookmarkParentId_label":  { "message": "Default location to create new bookmarks" },
 
   "config_supportTabsMultiselect_label": { "message": "Use tab multiselection API to control tab focus (*depends on a built-in preference \"browser.tabs.multiselect\"=\"true\" of the browser itself)" },
 
