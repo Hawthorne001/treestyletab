@@ -47,6 +47,7 @@ export async function getItemById(id) {
 }
 
 if (Constants.IS_BACKGROUND) {
+  // Dialog loaded in a popup cannot call privileged APIs, so the background script proxies such operations.
   browser.runtime.onMessage.addListener((message, sender) => {
     if (!message ||
         typeof message != 'object')
@@ -101,6 +102,9 @@ if (Constants.IS_BACKGROUND) {
   });
 }
 
+// The base URL of style declarations embedded into a popup become an unprivileged URL,
+// and it is different from the URL of this file and the base URL of this addon.
+// Thus we need to load images with their complete URL.
 export const FOLDER_CHOOSER_STYLE = `
   .parentIdChooserMiniContainer,
   .parentIdChooserFullContainer {
@@ -650,6 +654,10 @@ function getTitlesWithTreeStructure(tabs) {
   return titles;
 }
 
+// This large method have to contain everything required to simulate the folder
+// chooser of the bookmark creation dialog.
+// Bookmark creation dialog is loaded into a popup window and we use this large
+// method to inject the behavior of the folder chooser.
 export async function initFolderChooser({ rootItems, defaultItem, defaultValue, container, inline } = {}) {
   const miniList = container.querySelector('select.parentIdChooserMini');
   const fullList = container.querySelector('ul.parentIdChooserFull');
@@ -676,7 +684,9 @@ export async function initFolderChooser({ rootItems, defaultItem, defaultValue, 
     event.preventDefault();
   };
 
+  //==========================================================================
   // Initialize mini chooser
+  //==========================================================================
   for (const rootItem of rootItems) {
     const item = miniList.appendChild(document.createElement('option'));
     item.textContent = rootItem.title;
@@ -739,36 +749,18 @@ export async function initFolderChooser({ rootItems, defaultItem, defaultValue, 
     }
   };
 
+  //==========================================================================
   // Initialize expander
+  //==========================================================================
   const getElementTarget = event => {
     return event.target.nodeType == Node.ELEMENT_NODE ?
       event.target :
       event.target.parentNode;;
   };
 
-  expandeFullListButton.addEventListener('click', event => {
-    if (event.button != 0)
-      return;
-    toggleFullChooser();
-  });
-  expandeFullListButton.addEventListener('keydown', event => {
-    const elementTarget = getElementTarget(event);
-    if (elementTarget != expandeFullListButton)
-      return;
-
-    switch (event.key) {
-      case 'Enter':
-        cancelEvent(event);
-      case 'Space':
-        toggleFullChooser();
-        break;
-
-      default:
-        break;
-    }
-  }, { capture: true });
-
+  //==========================================================================
   // Initialize full chooser
+  //==========================================================================
   fullList.level = 0;
 
   const exitAllEditings = () => {
@@ -782,7 +774,7 @@ export async function initFolderChooser({ rootItems, defaultItem, defaultValue, 
     return elementTarget?.closest('li');
   };
 
-  const onItemClicked = item => {
+  const focusToItem = item => {
     if (!item)
       return;
 
@@ -800,8 +792,7 @@ export async function initFolderChooser({ rootItems, defaultItem, defaultValue, 
     updateLastChosenOption();
   };
 
-  const onCommand = event => {
-    const item = getTargetItem(event);
+  const toggleItemExpanded = item => {
     if (!item)
       return;
 
@@ -809,133 +800,8 @@ export async function initFolderChooser({ rootItems, defaultItem, defaultValue, 
     if (item.classList.contains('expanded'))
       item.$completeFolderItem();
 
-    onItemClicked(item);
+    focusToItem(item);
   };
-
-  fullListFocusibleContainer.addEventListener('dblclick', event => {
-    if (event.button != 0)
-      return;
-    if (getElementTarget(event)?.closest('.twisty'))
-      return;
-    const item = getTargetItem(event);
-    if (item)
-      item.$enterTitleEdit();
-  });
-  fullListFocusibleContainer.addEventListener('click', event => {
-    if (event.button != 0)
-      return;
-    const target = getElementTarget(event);
-    if (target?.closest('.twisty')) {
-      onCommand(event);
-    }
-    else if (!target?.closest('input[type="text"]')) {
-      onItemClicked(getTargetItem(event));
-    }
-  });
-  fullListFocusibleContainer.addEventListener('keydown', event => {
-    if (getElementTarget(event)?.closest('input[type="text"]') &&
-        event.key != 'Enter')
-      return;
-
-    const focusibleItems = [...fullList.querySelectorAll('li:not(li:not(.expanded) li)')];
-    const focusedItem = fullList.querySelector('li.focused');
-    const index = focusedItem ? focusibleItems.indexOf(focusedItem) : -1;
-    switch (event.key) {
-      case 'Enter':
-        cancelEvent(event);
-        if (focusedItem && focusedItem.matches('.editing'))
-          focusedItem.$exitTitleEdit();
-        onCommand(event);
-        break;
-
-      case 'ArrowUp': {
-        cancelEvent(event);
-        const toBeFocused = focusibleItems[(index == 0 ? focusibleItems.length : index) - 1];
-        onItemClicked(toBeFocused);
-      }; break;
-
-      case 'ArrowDown': {
-        cancelEvent(event);
-        const toBeFocused = focusibleItems[index == focusibleItems.length - 1 ? 0 : index + 1];
-        onItemClicked(toBeFocused);
-      }; break;
-
-      case 'ArrowRight':
-        cancelEvent(event);
-        if (!focusedItem.classList.contains('expanded')) {
-          focusedItem.classList.add('expanded');
-          focusedItem.$completeFolderItem();
-        }
-        else {
-          const firstChild = focusedItem.querySelector('li');
-          if (firstChild)
-            onItemClicked(firstChild);
-        }
-        break;
-
-      case 'ArrowLeft':
-        cancelEvent(event);
-        if (focusedItem.classList.contains('expanded')) {
-          focusedItem.classList.remove('expanded');
-        }
-        else {
-          const nearestAncestor = focusedItem.parentNode.closest('li');
-          if (nearestAncestor)
-            onItemClicked(nearestAncestor);
-        }
-        break;
-
-      case 'PageUp': {
-        cancelEvent(event);
-        const toBeFocusedIndex = Math.min(focusibleItems.length - 1, Math.max(0, index - Math.floor(fullListFocusibleContainer.offsetHeight / focusedItem.offsetHeight) + 1));
-        const toBeFocused = focusibleItems[toBeFocusedIndex];
-        onItemClicked(toBeFocused);
-      }; break;
-
-      case 'PageDown': {
-        cancelEvent(event);
-        const toBeFocusedIndex = Math.min(focusibleItems.length - 1, Math.max(0, index + Math.floor(fullListFocusibleContainer.offsetHeight / focusedItem.offsetHeight) - 1));
-        const toBeFocused = focusibleItems[toBeFocusedIndex];
-        onItemClicked(toBeFocused);
-      }; break;
-
-      case 'Home':
-        cancelEvent(event);
-        onItemClicked(focusibleItems[0]);
-        break;
-
-      case 'End':
-        cancelEvent(event);
-        onItemClicked(focusibleItems[focusibleItems.length - 1]);
-        break;
-    }
-  }, { capture: true });
-
-  container.addEventListener('focus', event => {
-    if (!getElementTarget(event)?.closest('input[type="text"], .parentIdChooserFullTreeContainer'))
-      exitAllEditings();
-  }, { capture: true });
-
-  container.addEventListener('blur', event => {
-    if (getElementTarget(event)?.closest('input[type="text"]')) {
-      const editingItem = fullList.querySelector('li.editing');
-      if (editingItem)
-        editingItem.$exitTitleEdit();
-    }
-  }, { capture: true });
-
-  miniList.addEventListener('change', () => {
-    if (miniList.value == `${BASE_ID}expandChooser`) {
-      if (!fullContainer.classList.contains('expanded'))
-        toggleFullChooser();
-      miniList.value = getLastChosenItem().id;
-      return;
-    }
-
-    const fullListItem = fullList.querySelector(`li[data-id="${miniList.value}"]`);
-    if (fullListItem)
-      onItemClicked(fullListItem);
-  });
 
   const createNewSubFolder = async () => {
     const folder = await browser.runtime.sendMessage({
@@ -952,31 +818,9 @@ export async function initFolderChooser({ rootItems, defaultItem, defaultValue, 
     if (!folderItem)
       return;
 
-    onItemClicked(folderItem);
+    focusToItem(folderItem);
     folderItem.$enterTitleEdit();
   };
-
-  newFolderButton.addEventListener('click', event => {
-    if (event.button != 0)
-      return;
-    createNewSubFolder();
-  });
-  newFolderButton.addEventListener('keydown', event => {
-    const elementTarget = getElementTarget(event);
-    if (elementTarget != newFolderButton)
-      return;
-
-    switch (event.key) {
-      case 'Enter':
-        cancelEvent(event);
-      case 'Space':
-        createNewSubFolder();
-        break;
-
-      default:
-        break;
-    }
-  }, { capture: true });
 
   const generateFolderItem = (folder, level) => {
     const item = document.createElement('li');
@@ -1076,6 +920,8 @@ export async function initFolderChooser({ rootItems, defaultItem, defaultValue, 
   };
 
   const topLevelItems = await buildItems(rootItems, fullList);
+
+  // Expand deeply nested tree until the chosen folder
   let itemToBeFocused = topLevelItems.length > 0 && topLevelItems[0];
   if (lastChosenItem) {
     const ancestorIds = await browser.runtime.sendMessage({
@@ -1097,6 +943,178 @@ export async function initFolderChooser({ rootItems, defaultItem, defaultValue, 
   }
   if (itemToBeFocused)
     itemToBeFocused.classList.add('focused');
+
+
+  //==========================================================================
+  // UI events handling
+  //==========================================================================
+  container.addEventListener('focus', event => {
+    if (!getElementTarget(event)?.closest('input[type="text"], .parentIdChooserFullTreeContainer'))
+      exitAllEditings();
+  }, { capture: true });
+  container.addEventListener('blur', event => {
+    if (getElementTarget(event)?.closest('input[type="text"]')) {
+      const editingItem = fullList.querySelector('li.editing');
+      if (editingItem)
+        editingItem.$exitTitleEdit();
+    }
+  }, { capture: true });
+
+  miniList.addEventListener('change', () => {
+    if (miniList.value == `${BASE_ID}expandChooser`) {
+      if (!fullContainer.classList.contains('expanded'))
+        toggleFullChooser();
+      miniList.value = getLastChosenItem().id;
+      return;
+    }
+
+    const fullListItem = fullList.querySelector(`li[data-id="${miniList.value}"]`);
+    if (fullListItem)
+      focusToItem(fullListItem);
+  });
+
+  expandeFullListButton.addEventListener('click', event => {
+    if (event.button != 0)
+      return;
+    toggleFullChooser();
+  });
+  expandeFullListButton.addEventListener('keydown', event => {
+    const elementTarget = getElementTarget(event);
+    if (elementTarget != expandeFullListButton)
+      return;
+
+    switch (event.key) {
+      case 'Enter':
+        cancelEvent(event);
+      case 'Space':
+        toggleFullChooser();
+        break;
+
+      default:
+        break;
+    }
+  }, { capture: true });
+
+  fullListFocusibleContainer.addEventListener('dblclick', event => {
+    if (event.button != 0)
+      return;
+    if (getElementTarget(event)?.closest('.twisty'))
+      return;
+    const item = getTargetItem(event);
+    if (item)
+      item.$enterTitleEdit();
+  });
+  fullListFocusibleContainer.addEventListener('click', event => {
+    if (event.button != 0)
+      return;
+    const target = getElementTarget(event);
+    if (target?.closest('.twisty')) {
+      toggleItemExpanded(getTargetItem(event));
+    }
+    else if (!target?.closest('input[type="text"]')) {
+      focusToItem(getTargetItem(event));
+    }
+  });
+  fullListFocusibleContainer.addEventListener('keydown', event => {
+    if (getElementTarget(event)?.closest('input[type="text"]') &&
+        event.key != 'Enter')
+      return;
+
+    const focusibleItems = [...fullList.querySelectorAll('li:not(li:not(.expanded) li)')];
+    const focusedItem = fullList.querySelector('li.focused');
+    const index = focusedItem ? focusibleItems.indexOf(focusedItem) : -1;
+    switch (event.key) {
+      case 'Enter':
+        cancelEvent(event);
+        if (focusedItem && focusedItem.matches('.editing'))
+          focusedItem.$exitTitleEdit();
+        toggleItemExpanded(focusedItem);
+        break;
+
+      case 'ArrowUp': {
+        cancelEvent(event);
+        const toBeFocused = focusibleItems[(index == 0 ? focusibleItems.length : index) - 1];
+        focusToItem(toBeFocused);
+      }; break;
+
+      case 'ArrowDown': {
+        cancelEvent(event);
+        const toBeFocused = focusibleItems[index == focusibleItems.length - 1 ? 0 : index + 1];
+        focusToItem(toBeFocused);
+      }; break;
+
+      case 'ArrowRight':
+        cancelEvent(event);
+        if (!focusedItem.classList.contains('expanded')) {
+          focusedItem.classList.add('expanded');
+          focusedItem.$completeFolderItem();
+        }
+        else {
+          const firstChild = focusedItem.querySelector('li');
+          if (firstChild)
+            focusToItem(firstChild);
+        }
+        break;
+
+      case 'ArrowLeft':
+        cancelEvent(event);
+        if (focusedItem.classList.contains('expanded')) {
+          focusedItem.classList.remove('expanded');
+        }
+        else {
+          const nearestAncestor = focusedItem.parentNode.closest('li');
+          if (nearestAncestor)
+            focusToItem(nearestAncestor);
+        }
+        break;
+
+      case 'PageUp': {
+        cancelEvent(event);
+        const toBeFocusedIndex = Math.min(focusibleItems.length - 1, Math.max(0, index - Math.floor(fullListFocusibleContainer.offsetHeight / focusedItem.offsetHeight) + 1));
+        const toBeFocused = focusibleItems[toBeFocusedIndex];
+        focusToItem(toBeFocused);
+      }; break;
+
+      case 'PageDown': {
+        cancelEvent(event);
+        const toBeFocusedIndex = Math.min(focusibleItems.length - 1, Math.max(0, index + Math.floor(fullListFocusibleContainer.offsetHeight / focusedItem.offsetHeight) - 1));
+        const toBeFocused = focusibleItems[toBeFocusedIndex];
+        focusToItem(toBeFocused);
+      }; break;
+
+      case 'Home':
+        cancelEvent(event);
+        focusToItem(focusibleItems[0]);
+        break;
+
+      case 'End':
+        cancelEvent(event);
+        focusToItem(focusibleItems[focusibleItems.length - 1]);
+        break;
+    }
+  }, { capture: true });
+
+  newFolderButton.addEventListener('click', event => {
+    if (event.button != 0)
+      return;
+    createNewSubFolder();
+  });
+  newFolderButton.addEventListener('keydown', event => {
+    const elementTarget = getElementTarget(event);
+    if (elementTarget != newFolderButton)
+      return;
+
+    switch (event.key) {
+      case 'Enter':
+        cancelEvent(event);
+      case 'Space':
+        createNewSubFolder();
+        break;
+
+      default:
+        break;
+    }
+  }, { capture: true });
 }
 
 let mCreatedBookmarks = [];
