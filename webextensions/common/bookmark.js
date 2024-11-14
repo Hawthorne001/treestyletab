@@ -718,7 +718,14 @@ export async function initFolderChooser({ rootItems, defaultItem, defaultValue, 
     fullContainer.classList.toggle('expanded', expanded);
     expandeFullListButton.classList.toggle('expanded', expanded);
     if (!inline) {
-      fullChooserHeight = Math.max(fullChooserHeight, 150);
+      const fullContainerStyle = window.getComputedStyle(fullContainer, null);
+      fullChooserHeight = Math.max(
+        fullChooserHeight,
+        Math.ceil(fullContainer.offsetHeight
+          + parseFloat(fullContainerStyle.getPropertyValue('margin-top'))
+          + parseFloat(fullContainerStyle.getPropertyValue('margin-bottom'))),
+        150
+      );
       await browser.runtime.sendMessage({
         type: 'treestyletab:resize-bookmark-dialog-by',
         width: 0,
