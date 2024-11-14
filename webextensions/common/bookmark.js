@@ -109,8 +109,7 @@ if (Constants.IS_BACKGROUND) {
 export const FOLDER_CHOOSER_STYLE = `
   .parentIdChooserMiniContainer,
   .parentIdChooserFullContainer {
-    display: flex;
-    flex-direction: row;
+    --icon-size: 16px;
   }
 
   .parentIdChooserMiniContainer {
@@ -149,9 +148,9 @@ export const FOLDER_CHOOSER_STYLE = `
   }
 
   .parentIdChooserFullContainer {
+    flex-direction: column;
     flex-grow: 1;
     flex-shrink: 1;
-    --icon-size: 16px;
   }
   .parentIdChooserFullContainer:not(.expanded) {
     display: none;
