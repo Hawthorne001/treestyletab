@@ -535,7 +535,7 @@ export async function bookmarkTabs(tabs, { parentId, index, showDialog, title } 
                                ></span></div
        ></div>
       `.trim(),
-      async onShown(container, { initFolderChooser, animationDuration, parentId, incrementalSearchTimeout }) {
+      async onShown(container, { initFolderChooser, animationDuration, parentId, incrementalSearchTimeout, inline }) {
         if (container.classList.contains('simulation'))
           return;
         container.classList.add('bookmark-dialog');
