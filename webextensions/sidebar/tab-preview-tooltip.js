@@ -154,12 +154,9 @@ async function prepareFrame(tabId) {
 }
 
 async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolver) {
-  if (!tabId)
-    return browser.runtime.sendMessage({
-      ...message,
-      timestamp: Date.now(),
-      windowId: TabsStore.getCurrentWindowId(),
-    });
+  if (!tabId) { // in-sidebar mode
+    return sendInSidebarTabPreviewMessage(message);
+  }
 
   const retrying = !!deferredReturnedValueResolver;
 
@@ -170,10 +167,14 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
     }).catch(_error => {});
     if (!frameId) {
       if (retrying) {
-        deferredReturnedValueResolver(false);
-        return false;
+        // Retried to load tab preview frame, but failed, so
+        // now we fall back to the in-sidebar tab preview.
+        return sendInSidebarTabPreviewMessage(message)
+          .then(deferredReturnedValueResolver)
+          .then(() => true);
       }
 
+      // We prepare tab preview frame now, and retry sending after that.
       await prepareFrame(tabId);
       let returnedValueResolver;
       const promisedReturnedValue = new Promise((resolve, _reject) => {
@@ -187,21 +188,20 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
   }
   catch (_error) {
     // We cannot show tab preview tooltip in a tab with privileged contents.
-    // Let's fall back to the in-sidebar tab preview tooltip.
-    browser.runtime.sendMessage({
-      ...message,
-      timestamp: Date.now(),
-      windowId: TabsStore.getCurrentWindowId(),
-    });
-    //console.log('Could not send tab preview message: ', tabId, message, error);
+    // Let's fall back to the in-sidebar tab preview.
+    await sendInSidebarTabPreviewMessage(message);
     if (deferredReturnedValueResolver)
       deferredReturnedValueResolver(true);
     return true;
   }
 
+  // hide in-sidebar tab preview if in-content tab preview is available
+  sendInSidebarTabPreviewMessage({
+    type: 'treestyletab:hide-tab-preview',
+  });
+
   let returnValue;
   try {
-    //console.log('Sending message to the frame ', frameId);
     returnValue = await browser.tabs.sendMessage(tabId, {
       ...message,
       timestamp: Date.now(),
@@ -211,11 +211,12 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
   }
   catch (error) {
     if (retrying) {
-      console.log(`Could not send tab preview message to the frame ${frameId}: `, tabId, message, error);
-      deferredReturnedValueResolver(false);
-      return false;
+      // Retried to load tab preview frame, but failed, so
+      // now we fall back to the in-sidebar tab preview.
+      return sendInSidebarTabPreviewMessage(message)
+        .then(deferredReturnedValueResolver)
+        .then(() => true);
     }
-    //console.log('Failed to send message to the frame ', frameId, ' : retry');
 
     // the frame was destroyed unexpectedly, so we re-prepare it.
     await prepareFrame(tabId);
@@ -229,9 +230,24 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
     return promisedReturnedValue;
   }
 
+  if (!returnValue) {
+    // Failed to show in-content tab preview, so
+    // now we fall back to the in-sidebar tab preview.
+    return sendInSidebarTabPreviewMessage(message);
+  }
+
+  // Everything is OK!
   return returnValue;
 }
 
+async function sendInSidebarTabPreviewMessage(message) {
+  await browser.runtime.sendMessage({
+    ...message,
+    timestamp: Date.now(),
+    windowId: TabsStore.getCurrentWindowId(),
+  });
+  return true;
+}
 
 async function onTabSubstanceEnter(event) {
   const activeTab = Tab.getActiveTab(TabsStore.getCurrentWindowId());
