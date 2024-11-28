@@ -209,7 +209,7 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
     if (deferredReturnedValueResolver)
       deferredReturnedValueResolver(returnValue);
   }
-  catch (error) {
+  catch (_error) {
     if (retrying) {
       // Retried to load tab preview frame, but failed, so
       // now we fall back to the in-sidebar tab preview.
