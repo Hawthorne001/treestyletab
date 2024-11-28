@@ -148,7 +148,14 @@ async function prepareFrame(tabId) {
         frame.parentNode.removeChild(frame);
         browser.runtime.onMessage.removeListener(onMessage);
       };
-      frame.addEventListener('mouseenter', destroy, { once: true });
+      frame.addEventListener('mouseenter', () => {
+        browser.runtime.sendMessage({
+          type: 'treestyletab:hide-tab-preview',
+          windowId,
+          timestamp: Date.now(),
+        });
+        destroy();
+      }, { once: true });
     })()`,
   });
 }
@@ -203,8 +210,8 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
   let returnValue;
   try {
     returnValue = await browser.tabs.sendMessage(tabId, {
-      ...message,
       timestamp: Date.now(),
+      ...message,
     }, { frameId });
     if (deferredReturnedValueResolver)
       deferredReturnedValueResolver(returnValue);
@@ -250,6 +257,7 @@ async function sendInSidebarTabPreviewMessage(message) {
 }
 
 async function onTabSubstanceEnter(event) {
+  const startAt = Date.now();
   const activeTab = Tab.getActiveTab(TabsStore.getCurrentWindowId());
   if (!configs.tabPreviewTooltip) {;
     sendTabPreviewMessage(activeTab.id, {
@@ -271,17 +279,6 @@ async function onTabSubstanceEnter(event) {
     PREVIEW_WITH_TITLE_URLS_MATCHER.test(event.target.tab.url) ? null :
       event.target.tab.url;
 
-  let previewURL;
-  try {
-    if (!active &&
-        !event.target.tab.discarded &&
-        CAPTURABLE_URLS_MATCHER.test(event.target.tab.url)) {
-      previewURL = await browser.tabs.captureTab(event.target.tab.id);
-    }
-  }
-  catch (_error) {
-  }
-
   // This calculation logic is buggy for a window in a screen placed at
   // left of the primary display and scaled. As the result, a sidebar
   // placed at left can be mis-detected as placed at right. For safety
@@ -290,9 +287,7 @@ async function onTabSubstanceEnter(event) {
   const mayBeRight = window.screenX < 0 && window.devicePixelRatio > 1 ?
     false :
     window.mozInnerScreenX - window.screenX > (window.outerWidth - window.innerWidth) / 2;
-
-  //console.log(event.type, event, event.target.tab, event.target, activeTab);
-  const succeeded = await sendTabPreviewMessage(targetTabId, {
+  const message = {
     type: 'treestyletab:show-tab-preview',
     tabId: event.target.tab.id,
     tabRect: {
@@ -310,9 +305,37 @@ async function onTabSubstanceEnter(event) {
     active,
     title: event.target.tab.title,
     url,
-    previewURL,
+  };
+
+  // First try: render title and url ASAP
+  let succeeded = await sendTabPreviewMessage(targetTabId, {
+    ...message,
+    timestamp: startAt, // Don't call Date.now() here, because it can become larger than the timestamp on mouseleave.
   }).catch(_error => {});
-  //console.log('tab preview for ', event.target.tab?.id, ' : success? : ', success);
+
+  let previewURL = null;
+  if (!active &&
+      !event.target.tab.discarded &&
+      CAPTURABLE_URLS_MATCHER.test(event.target.tab.url)) {
+    try {
+      previewURL = await browser.tabs.captureTab(event.target.tab.id);
+      if (!event.target.tab) // the tab may be destroyied while capturing
+        return;
+    }
+    catch (_error) {
+    }
+  }
+
+  if (previewURL) {
+    //console.log(event.type, event, event.target.tab, event.target, activeTab);
+    // Second try: inject preview image URL
+    succeeded = await sendTabPreviewMessage(targetTabId, {
+      ...message,
+      previewURL,
+      timestamp: Date.now(),
+    }).catch(_error => {});
+    //console.log('tab preview for ', event.target.tab?.id, ' : success? : ', success);
+  }
   if (event.target.tab.$TST.element &&
       succeeded)
     event.target.tab.$TST.element.invalidateTooltip();
@@ -320,6 +343,7 @@ async function onTabSubstanceEnter(event) {
 onTabSubstanceEnter = EventUtils.wrapWithErrorHandler(onTabSubstanceEnter);
 
 function onTabSubstanceLeave(event) {
+  const startAt = Date.now();
   if (!event.target.tab)
     return;
 
@@ -332,6 +356,7 @@ function onTabSubstanceLeave(event) {
   sendTabPreviewMessage(targetTabId, {
     type: 'treestyletab:hide-tab-preview',
     tabId: event.target.tab.id,
+    timestamp: startAt,
   });
 }
 onTabSubstanceLeave = EventUtils.wrapWithErrorHandler(onTabSubstanceLeave);
@@ -378,4 +403,15 @@ browser.runtime.onMessage.addListener((message, sender) => {
 Sidebar.onReady.addListener(() => {
   const windowId = TabsStore.getCurrentWindowId();
   document.querySelector('#tab-preview-tooltip-frame').src = `/resources/tab-preview-frame.html?windowId=${windowId}`;
+});
+
+document.querySelector('#tabbar').addEventListener('mouseleave', async () => {
+  sendInSidebarTabPreviewMessage({
+    type: 'treestyletab:hide-tab-preview',
+  });
+
+  const activeTab = Tab.getActiveTab(TabsStore.getCurrentWindowId());
+  sendTabPreviewMessage(activeTab.id, {
+    type: 'treestyletab:hide-tab-preview',
+  });
 });

@@ -169,8 +169,9 @@ try{
 
     switch (message?.type) {
       case 'treestyletab:show-tab-preview':
-        if (message.timestamp < lastTimestamp)
-          return Promise.resolve(false);
+        if (message.timestamp < lastTimestamp) {
+          return Promise.resolve(true);
+        }
         lastTimestamp = message.timestamp;
         if (!panel) {
           panel = createPanel();
@@ -181,15 +182,18 @@ try{
         return Promise.resolve(true);
 
       case 'treestyletab:hide-tab-preview':
-        if (message.timestamp < lastTimestamp)
+        if (!panel ||
+            (message.tabId &&
+             panel.dataset.tabId != message.tabId)) {
           return;
-        lastTimestamp = message.timestamp;
-        if (panel &&
-            (!message.tabId ||
-             panel.dataset.tabId == message.tabId)) {
-          panel.classList.add('hidden');
         }
-        break;
+
+        if (message.timestamp < lastTimestamp) {
+          return Promise.resolve(true);
+        }
+        lastTimestamp = message.timestamp;
+        panel.classList.add('hidden');
+        return Promise.resolve(true);
 
       case 'treestyletab:notify-sidebar-closed':
         if (panel) {
