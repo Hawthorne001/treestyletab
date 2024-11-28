@@ -24,6 +24,9 @@ import { kTAB_CLOSE_BOX_ELEMENT_NAME } from './TabCloseBoxElement.js';
 export const kTAB_ELEMENT_NAME = 'tab-item';
 export const kTAB_SUBSTANCE_ELEMENT_NAME = 'tab-item-substance';
 
+export const kEVENT_TAB_SUBSTANCE_ENTER = 'tab-item-substance-enter';
+export const kEVENT_TAB_SUBSTANCE_LEAVE = 'tab-item-substance-leave';
+
 export const TabInvalidationTarget = Object.freeze({
   Twisty:      1 << 0,
   SoundButton: 1 << 1,
@@ -69,8 +72,11 @@ export class TabElement extends HTMLElement {
     super();
 
     // We should initialize private properties with blank value for better performance with a fixed shape.
+    this._tab = null;
     this._reservedUpdateTooltip = null;
     this.__onMouseOver = null;
+    this.__onMouseEnter = null;
+    this.__onMouseLeave = null;
     this.__onWindowResize = null;
     this.__onConfigChange = null;
   }
@@ -202,6 +208,7 @@ export class TabElement extends HTMLElement {
       this._reservedUpdateTooltip = null;
     }
     this._endListening();
+    this._tab = null;
   }
 
   get initialized() {
@@ -399,10 +406,12 @@ windowId = ${tab.windowId}
       return;
     }
 
+
     this.tooltip                = this.$TST.generateTooltipText();
     this.tooltipWithDescendants = this.$TST.generateTooltipTextWithDescendants();
 
     if (configs.showCollapsedDescendantsByTooltip &&
+        !configs.tabPreviewTooltip &&
         this.$TST.subtreeCollapsed &&
         this.$TST.hasChild) {
       this.$TST.setAttribute('title', this.tooltipWithDescendants);
@@ -418,9 +427,10 @@ windowId = ${tab.windowId}
       return;
     }
 
-    if (this.classList.contains('faviconized') ||
-        this.overflow ||
-        this.tooltip != tab.title)
+    if (!configs.tabPreviewTooltip &&
+        (this.classList.contains('faviconized') ||
+         this.overflow ||
+         this.tooltip != tab.title))
       this.$TST.setAttribute('title', this.tooltip);
     else
       this.$TST.removeAttribute('title');
@@ -428,7 +438,8 @@ windowId = ${tab.windowId}
     const lowPriorityTooltipText = this.$TST.getLowPriorityTooltipText();
     if (typeof lowPriorityTooltipText == 'string' &&
         !this.getAttribute('title')) {
-      if (lowPriorityTooltipText)
+      if (!configs.tabPreviewTooltip &&
+          lowPriorityTooltipText)
         this.$TST.setAttribute('title', lowPriorityTooltipText);
       else
         this.$TST.removeAttribute('title');
@@ -462,6 +473,8 @@ windowId = ${tab.windowId}
     if (this.__onMouseOver)
       return;
     this.addEventListener('mouseover', this.__onMouseOver = this._onMouseOver.bind(this));
+    this._substanceElement?.addEventListener('mouseenter', this.__onMouseEnter = this._onMouseEnter.bind(this));
+    this._substanceElement?.addEventListener('mouseleave', this.__onMouseLeave = this._onMouseLeave.bind(this));
     window.addEventListener('resize', this.__onWindowResize = this._onWindowResize.bind(this));
     configs.$addObserver(this.__onConfigChange = this._onConfigChange.bind(this));
   }
@@ -471,6 +484,10 @@ windowId = ${tab.windowId}
       return;
     this.removeEventListener('mouseover', this.__onMouseOver);
     this.__onMouseOver = null;
+    this._substanceElement?.removeEventListener('mouseenter', this.__onMouseEnter);
+    this.__onMouseEnter = null;
+    this._substanceElement?.removeEventListener('mouseleave', this.__onMouseLeave);
+    this.__onMouseLeave = null;
     window.removeEventListener('resize', this.__onWindowResize);
     this.__onWindowResize = null;
     configs.$removeObserver(this.__onConfigChange);
@@ -479,6 +496,28 @@ windowId = ${tab.windowId}
 
   _onMouseOver(_event) {
     this._updateTabAndAncestorsTooltip(this.$TST.tab);
+  }
+
+  _onMouseEnter(event) {
+    const tabSubstanceEnterEvent = new MouseEvent(kEVENT_TAB_SUBSTANCE_ENTER, {
+      ...event,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      screenX: event.screenX,
+      screenY: event.screenY,
+      bubbles: true,
+      composed: true,
+    });
+    this.dispatchEvent(tabSubstanceEnterEvent);
+  }
+
+  _onMouseLeave(event) {
+    const tabSubstanceLeaveEvent = new UIEvent(kEVENT_TAB_SUBSTANCE_LEAVE, {
+      ...event,
+      bubbles: true,
+      composed: true,
+    });
+    this.dispatchEvent(tabSubstanceLeaveEvent);
   }
 
   _onWindowResize(_event) {

@@ -1096,6 +1096,7 @@ async function onDblClick(event) {
 }
 
 
+
 function onNewTabActionSelect(item, event) {
   if (item.dataset.value) {
     let action;
