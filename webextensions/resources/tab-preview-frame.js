@@ -248,7 +248,7 @@ function updatePanel({ tabId, title, url, previewURL, tabRect, offsetTop, align 
   previewImage.src = previewURL;
   previewImage.classList.toggle('blank', !previewURL);
 
-  window.requestAnimationFrame(() => {
+  const completeUpdate = () => {
     if (panel.dataset.tabId != tabId)
       return;
 
@@ -270,12 +270,13 @@ function updatePanel({ tabId, title, url, previewURL, tabRect, offsetTop, align 
       // We need to shift the position with the height of the sidebar header.
       const offsetFromWindowEdge = (window.mozInnerScreenY - window.screenY) * window.devicePixelRatio;
       const sidebarContentsOffset = (offsetTop - offsetFromWindowEdge) / window.devicePixelRatio;
+      const alignToTopPosition = Math.max(0, tabRect.top / window.devicePixelRatio) + sidebarContentsOffset;
 
-      if (tabRect.top / window.devicePixelRatio + panelHeight >= maxY) {
+      if (alignToTopPosition + panelHeight >= maxY) {
         panel.style.top = `${Math.min(maxY, tabRect.bottom / window.devicePixelRatio) - panelHeight + sidebarContentsOffset}px`;
       }
       else {
-        panel.style.top = `${Math.max(0, tabRect.top / window.devicePixelRatio) + sidebarContentsOffset}px`;
+        panel.style.top = `${alignToTopPosition}px`;
       }
 
       if (align == 'left') {
@@ -289,6 +290,55 @@ function updatePanel({ tabId, title, url, previewURL, tabRect, offsetTop, align 
     }
 
     panel.classList.remove('updating');
-  });
+  };
+
+  if (!previewURL) {
+    completeUpdate();
+    return;
+  }
+
+  try {
+    const { width, height } = getPngDimensionsFromDataUri(previewURL);
+    const imageWidth = Math.min(window.innerWidth, Math.min(width, 280) / window.devicePixelRatio);
+    const imageHeight = imageWidth / width * height;
+    previewImage.style.width = previewImage.style.maxWidth = `min(100%, ${imageWidth}px)`;
+    previewImage.style.height = previewImage.style.maxHeight = `${imageHeight}px`;
+    window.requestAnimationFrame(completeUpdate);
+    return;
+  }
+  catch (_error) {
+  }
+
+  // failsafe: if it is not a png or failed to get dimensions, use image loader to determine the size.
+  previewImage.style.width =
+    previewImage.style.height =
+    previewImage.style.maxWidth =
+    previewImage.style.maxHeight = '';
+  previewImage.addEventListener('load', completeUpdate, { once: true });
 }
 
+function getPngDimensionsFromDataUri(uri) {
+  const base64Data = uri.split(',')[1];
+  const binaryData = atob(base64Data);
+  const byteArray = new Uint8Array(binaryData.length);
+  const requiredScanSize = Math.min(binaryData.length, 23);
+  for (let i = 0; i < requiredScanSize; i++) {
+    byteArray[i] = binaryData.charCodeAt(i);
+  }
+  const pngSignature = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
+  for (let i = 0; i < pngSignature.length; i++) {
+    if (byteArray[i] !== pngSignature[i])
+      throw new Error('invalid data');
+  }
+  const width =
+    (byteArray[16] << 24) |
+    (byteArray[17] << 16) |
+    (byteArray[18] << 8) |
+    byteArray[19];
+  const height =
+    (byteArray[20] << 24) |
+    (byteArray[21] << 16) |
+    (byteArray[22] << 8) |
+    byteArray[23];
+  return { width, height };
+}
