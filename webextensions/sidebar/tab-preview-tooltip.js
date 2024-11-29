@@ -173,6 +173,9 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
       type: 'treestyletab:ask-tab-preview-frame-id',
     }).catch(_error => {});
     if (!frameId) {
+      if (!message.canRetry)
+        return false;
+
       if (retrying) {
         // Retried to load tab preview frame, but failed, so
         // now we fall back to the in-sidebar tab preview.
@@ -217,6 +220,9 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
       deferredReturnedValueResolver(returnValue);
   }
   catch (_error) {
+    if (!message.canRetry)
+      return false;
+
     if (retrying) {
       // Retried to load tab preview frame, but failed, so
       // now we fall back to the in-sidebar tab preview.
@@ -315,6 +321,7 @@ async function onTabSubstanceEnter(event) {
     url,
     hasPreview,
     timestamp: startAt, // Don't call Date.now() here, because it can become larger than the timestamp on mouseleave.
+    canRetry: !!targetTabId,
   }).catch(_error => {});
 
   let previewURL = null;
