@@ -107,6 +107,7 @@ try{
       color: var(--panel-color);
       font: Message-Box;
       left: auto;
+      margin-top: 0;
       max-width: var(--panel-width);
       min-width: var(--panel-width);
       opacity: 0;
@@ -287,6 +288,10 @@ function updatePanel({ tabId, title, url, tooltipText, hasPreview, previewURL, t
   document.documentElement.style.setProperty('--scale', scale);
   panel.style.setProperty('--panel-width', `${Math.min(window.innerWidth, BASE_PANEL_WIDTH / scale)}px`);
 
+  if (tabRect) {
+    panel.style.maxHeight = `${window.innerHeight - Math.min(window.innerHeight - tabRect.bottom, tabRect.top)}px`;
+  }
+
   panel.dataset.tabId = tabId;
 
   const titleElement = panel.querySelector('.tab-preview-title');
@@ -349,10 +354,10 @@ function updatePanel({ tabId, title, url, tooltipText, hasPreview, previewURL, t
     const panelHeight = panel.getBoundingClientRect().height;
 
     if (windowId) { // in-sidebar
-      if (tabRect.top > (window.innerHeight / 2)) {
+      if (tabRect.top > (window.innerHeight / 2)) { // align to bottom edge of the tab
         panel.style.top = `${Math.min(maxY, tabRect.bottom / scale) - panelHeight - tabRect.height}px`;
       }
-      else {
+      else { // align to top edge of the tab
         panel.style.top = `${Math.max(0, tabRect.top / scale) + tabRect.height}px`;
       }
 
@@ -365,10 +370,10 @@ function updatePanel({ tabId, title, url, tooltipText, hasPreview, previewURL, t
       const sidebarContentsOffset = (offsetTop - offsetFromWindowEdge) / scale;
       const alignToTopPosition = Math.max(0, tabRect.top / scale) + sidebarContentsOffset;
 
-      if (alignToTopPosition + panelHeight >= maxY) {
+      if (alignToTopPosition + panelHeight >= maxY) { // align to bottom edge of the tab
         panel.style.top = `${Math.min(maxY, tabRect.bottom / scale) - panelHeight + sidebarContentsOffset}px`;
       }
-      else {
+      else { // align to top edge of the tab
         panel.style.top = `${alignToTopPosition}px`;
       }
 
