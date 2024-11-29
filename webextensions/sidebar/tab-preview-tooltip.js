@@ -85,7 +85,7 @@ const TAB_PREVIEW_FRAME_STYLE = `
   height: 100%;
   left: 0;
   overflow: hidden;
-  /*pointer-events: none;*//* We should not keep iframe element there with unclickable state, instead we remove it on hover for safety. */
+  pointer-events: none;
   position: fixed;
   right: 0;
   top: 0;
@@ -143,12 +143,14 @@ async function prepareFrame(tabId) {
       browser.runtime.onMessage.addListener(onMessage);
 
       const destroy = () => {
+        if (!frame.parentNode)
+          return;
         lastFrameId = null;
         windowId = null;
         frame.parentNode.removeChild(frame);
         browser.runtime.onMessage.removeListener(onMessage);
       };
-      frame.addEventListener('mouseenter', () => {
+      document.documentElement.addEventListener('mouseenter', () => {
         browser.runtime.sendMessage({
           type: 'treestyletab:hide-tab-preview',
           windowId,
