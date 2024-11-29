@@ -474,7 +474,7 @@ function getPngDimensionsFromDataUri(uri) {
   const base64Data = uri.split(',')[1];
   const binaryData = atob(base64Data);
   const byteArray = new Uint8Array(binaryData.length);
-  const requiredScanSize = Math.min(binaryData.length, 23);
+  const requiredScanSize = Math.min(binaryData.length, 24);
   for (let i = 0; i < requiredScanSize; i++) {
     byteArray[i] = binaryData.charCodeAt(i);
   }
