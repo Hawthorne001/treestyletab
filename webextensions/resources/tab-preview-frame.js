@@ -22,7 +22,7 @@ try{
   style.textContent = `
     :root {
       --show-hide-animation: opacity 0.1s ease-out;
-      --device-pixel-ratio: 1;
+      --scale: 1;
       opacity: 1;
       transition: var(--show-hide-animation);
     }
@@ -37,9 +37,9 @@ try{
 
       --panel-background: Menu;
       --panel-color: MenuText;
-      --panel-padding-block: calc(4px / var(--device-pixel-ratio));
+      --panel-padding-block: calc(4px / var(--scale));
       --panel-padding: var(--panel-padding-block) 0;
-      --panel-border-radius: calc(4px / var(--device-pixel-ratio));
+      --panel-border-radius: calc(4px / var(--scale));
       --panel-border-color: ThreeDShadow;
       --panel-width: initial;
 
@@ -53,8 +53,8 @@ try{
 
       /*@media (-moz-platform: linux) {*/
       ${isLinux ? '' : '/*'}
-        --panel-border-radius: calc(8px / var(--device-pixel-ratio));
-        --panel-padding-block: calc(3px / var(--device-pixel-ratio));
+        --panel-border-radius: calc(8px / var(--scale));
+        --panel-padding-block: calc(3px / var(--scale));
 
         @media (prefers-contrast) {
           --panel-border-color: color-mix(in srgb, currentColor 60%, transparent);
@@ -64,7 +64,7 @@ try{
 
       /*@media (-moz-platform: linux) or (-moz-platform: windows) {*/
       ${isLinux || isWindows ? '' : '/*'}
-        --panel-shadow-margin: calc(4px / var(--device-pixel-ratio));
+        --panel-shadow-margin: calc(4px / var(--scale));
       ${isLinux || isWindows ? '' : '*/'}
       /*}*/
 
@@ -83,17 +83,17 @@ try{
         background-color: Menu;
         --panel-background: none;
         --panel-border-color: transparent;
-        --panel-border-radius: calc(6px / var(--device-pixel-ratio));
+        --panel-border-radius: calc(6px / var(--scale));
       ${isMac ? '' : '*/'}
       /*}*/
 
       /* https://searchfox.org/mozilla-central/rev/dfaf02d68a7cb018b6cad7e189f450352e2cde04/browser/themes/shared/tabbrowser/tab-hover-preview.css#5 */
-      --panel-width: min(100%, calc(280px / var(--device-pixel-ratio)));
+      --panel-width: min(100%, calc(280px / var(--scale)));
       --panel-padding: 0;
 
 
       background: var(--panel-background);
-      border: var(--panel-border-color) solid calc(1px / var(--device-pixel-ratio));
+      border: var(--panel-border-color) solid calc(1px / var(--scale));
       border-radius: var(--panel-border-radius);
       box-shadow: var(--panel-shadow);
       color: var(--panel-color);
@@ -110,7 +110,7 @@ try{
     }
 
     .tab-preview-title {
-      font-size: calc(1em / var(--device-pixel-ratio));
+      font-size: calc(1em / var(--scale));
       font-weight: bold;
       line-height: 1.5; /* -webkit-line-clamp looks unavailable, so this is a workaround */
       margin: 0 var(--panel-border-radius);
@@ -121,7 +121,7 @@ try{
     }
 
     .tab-preview-url {
-      font-size: calc(1em / var(--device-pixel-ratio));
+      font-size: calc(1em / var(--scale));
       margin: 0 var(--panel-border-radius);
       opacity: 0.69; /* https://searchfox.org/mozilla-central/rev/234f91a9d3ebef0d514868701cfb022d5f199cb5/toolkit/themes/shared/design-system/tokens-shared.css#182 */
       overflow: hidden;
@@ -130,7 +130,7 @@ try{
     }
 
     .tab-preview-image-wrapper {
-      border-top: calc(1px / var(--device-pixel-ratio)) solid var(--panel-border-color);
+      border-top: calc(1px / var(--scale)) solid var(--panel-border-color);
       margin-top: 0.25em;
       max-height: calc(var(--panel-width) / 2); /* use relative value instead of 140px */
       overflow: hidden;
@@ -241,7 +241,7 @@ function createPanel() {
   return panel;
 }
 
-function updatePanel({ tabId, title, url, hasPreview, previewURL, tabRect, offsetTop, align } = {}) {
+function updatePanel({ tabId, title, url, hasPreview, previewURL, tabRect, offsetTop, align, scale } = {}) {
   if (!panel)
     return;
 
@@ -250,8 +250,9 @@ function updatePanel({ tabId, title, url, hasPreview, previewURL, tabRect, offse
 
   panel.classList.add('updating');
 
-  document.documentElement.style.setProperty('--device-pixel-ratio', window.devicePixelRatio);
-  panel.style.setProperty('--panel-width', `calc(min(${window.innerWidth}px, 280px) / var(--device-pixel-ratio))`);
+  scale = window.devicePixelRatio * (scale || 1);
+  document.documentElement.style.setProperty('--scale', scale);
+  panel.style.setProperty('--panel-width', `calc(min(${window.innerWidth}px, 280px) / var(--scale))`);
 
   panel.dataset.tabId = tabId;
 
@@ -270,15 +271,15 @@ function updatePanel({ tabId, title, url, hasPreview, previewURL, tabRect, offse
     if (panel.dataset.tabId != tabId)
       return;
 
-    const maxY = window.innerHeight / window.devicePixelRatio;
+    const maxY = window.innerHeight / scale;
     const panelHeight = panel.getBoundingClientRect().height;
 
     if (windowId) { // in-sidebar
       if (tabRect.top > (window.innerHeight / 2)) {
-        panel.style.top = `${Math.min(maxY, tabRect.bottom / window.devicePixelRatio) - panelHeight - tabRect.height}px`;
+        panel.style.top = `${Math.min(maxY, tabRect.bottom / scale) - panelHeight - tabRect.height}px`;
       }
       else {
-        panel.style.top = `${Math.max(0, tabRect.top / window.devicePixelRatio) + tabRect.height}px`;
+        panel.style.top = `${Math.max(0, tabRect.top / scale) + tabRect.height}px`;
       }
 
       panel.style.left  = 'var(--panel-shadow-margin)';
@@ -286,12 +287,12 @@ function updatePanel({ tabId, title, url, hasPreview, previewURL, tabRect, offse
     }
     else { // in-content
       // We need to shift the position with the height of the sidebar header.
-      const offsetFromWindowEdge = (window.mozInnerScreenY - window.screenY) * window.devicePixelRatio;
-      const sidebarContentsOffset = (offsetTop - offsetFromWindowEdge) / window.devicePixelRatio;
-      const alignToTopPosition = Math.max(0, tabRect.top / window.devicePixelRatio) + sidebarContentsOffset;
+      const offsetFromWindowEdge = (window.mozInnerScreenY - window.screenY) * scale;
+      const sidebarContentsOffset = (offsetTop - offsetFromWindowEdge) / scale;
+      const alignToTopPosition = Math.max(0, tabRect.top / scale) + sidebarContentsOffset;
 
       if (alignToTopPosition + panelHeight >= maxY) {
-        panel.style.top = `${Math.min(maxY, tabRect.bottom / window.devicePixelRatio) - panelHeight + sidebarContentsOffset}px`;
+        panel.style.top = `${Math.min(maxY, tabRect.bottom / scale) - panelHeight + sidebarContentsOffset}px`;
       }
       else {
         panel.style.top = `${alignToTopPosition}px`;
@@ -319,7 +320,7 @@ function updatePanel({ tabId, title, url, hasPreview, previewURL, tabRect, offse
     const { width, height } = previewURL ?
       getPngDimensionsFromDataUri(previewURL) :
       { width: 280, height: 140 };
-    const imageWidth = Math.min(window.innerWidth, Math.min(width, 280) / window.devicePixelRatio);
+    const imageWidth = Math.min(window.innerWidth, Math.min(width, 280) / scale);
     const imageHeight = imageWidth / width * height;
     previewImage.style.width = previewImage.style.maxWidth = `min(100%, ${imageWidth}px)`;
     previewImage.style.height = previewImage.style.maxHeight = `${imageHeight}px`;

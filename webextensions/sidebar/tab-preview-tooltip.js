@@ -302,6 +302,7 @@ async function onTabSubstanceEnter(event) {
     offsetTop: window.mozInnerScreenY - window.screenY,
     offsetLeft: window.mozInnerScreenX - window.screenX,
     align: mayBeRight ? 'right' : 'left',
+    scale: 1 / window.devicePixelRatio,
     active,
     title: event.target.tab.title,
     url,
