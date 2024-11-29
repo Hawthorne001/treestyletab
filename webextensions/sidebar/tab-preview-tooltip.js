@@ -406,7 +406,7 @@ async function onTabSubstanceEnter(event) {
     //console.log(event.type, event, event.target.tab, event.target, activeTab);
     succeeded = await sendTabPreviewMessage(targetTabId, {
       type: 'treestyletab:update-tab-preview',
-      tabId: event.target.tab.id,
+      previewTabId: event.target.tab.id,
       previewURL,
       timestamp: Date.now(),
     }).catch(_error => {});
@@ -433,7 +433,7 @@ function onTabSubstanceLeave(event) {
   //console.log(event.type, event.target.tab, event.target, activeTab);
   sendTabPreviewMessage(targetTabId, {
     type: 'treestyletab:hide-tab-preview',
-    tabId: event.target.tab.id,
+    previewTabId: event.target.tab.id,
     timestamp: startAt,
   });
 }
