@@ -93,7 +93,8 @@ const TAB_PREVIEW_FRAME_STYLE = `
   z-index: ${Number.MAX_SAFE_INTEGER};
 `;
 
-const CUSTOM_PANEL_AVAILABLE_URLS_MATCHER = new RegExp(`^((https?|data):|moz-extension://${location.host}\/)`);
+const CUSTOM_PANEL_AVAILABLE_URLS_MATCHER = new RegExp(`^((https?|data):|moz-extension://${location.host}/)`);
+const DIRECT_PANEL_AVAILABLE_URLS_MATCHER = new RegExp(`^moz-extension://${location.host}/`);
 const CAPTURABLE_URLS_MATCHER         = /^(https?|data):/;
 const PREVIEW_WITH_HOST_URLS_MATCHER  = /^(https?|moz-extension):/;
 const PREVIEW_WITH_TITLE_URLS_MATCHER = /^file:/;
@@ -102,6 +103,22 @@ document.addEventListener(kEVENT_TAB_SUBSTANCE_ENTER, onTabSubstanceEnter);
 document.addEventListener(kEVENT_TAB_SUBSTANCE_LEAVE, onTabSubstanceLeave);
 
 async function prepareFrame(tabId) {
+  const tab = Tab.get(tabId);
+  if (!tab)
+    return;
+
+  if (DIRECT_PANEL_AVAILABLE_URLS_MATCHER.test(tab.url)) {
+    // We must not insert iframe containing script tag with the internal URL
+    // if the tab is TST's internal page, because Firefox closes such tabs
+    // when the addon is reloaded. Instead we load tab preview frame script
+    // to the internal page directly.
+    await browser.tabs.executeScript(tabId, {
+      runAt: 'document_start',
+      file: '/resources/tab-preview-frame.js',
+    });
+    return;
+  }
+
   await browser.tabs.executeScript(tabId, {
     matchAboutBlank: true,
     runAt: 'document_start',
@@ -167,7 +184,7 @@ const hoveringTabIds = new Set();
 function shouldMessageSend(message) {
   return (
     message.type != 'treestyletab:show-tab-preview' ||
-    hoveringTabIds.has(message.tabId)
+    hoveringTabIds.has(message.previewTabId)
   );
 }
 
@@ -178,19 +195,35 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
 
   const retrying = !!deferredReturnedValueResolver;
 
+  const tab = Tab.get(tabId);
+  if (!tab)
+    return false;
+
   let frameId;
+  let loadedInfo;
   try {
-    frameId = await browser.tabs.sendMessage(tabId, {
-      type: 'treestyletab:ask-tab-preview-frame-id',
-    }).catch(_error => {});
-    if (!frameId) {
+    const [gotFrameId, gotLoadedInfo] = await Promise.all([
+      browser.tabs.sendMessage(tabId, {
+        type: 'treestyletab:ask-tab-preview-frame-id',
+      }).catch(_error => {}),
+      DIRECT_PANEL_AVAILABLE_URLS_MATCHER.test(tab.url) && browser.tabs.sendMessage(tabId, {
+        type: 'treestyletab:ask-tab-preview-frame-loaded',
+        tabId,
+      }).catch(_error => {}),
+    ]);
+    frameId = gotFrameId;
+    loadedInfo = gotLoadedInfo;
+    if (!frameId &&
+        (!loadedInfo ||
+         loadedInfo.tabId != tabId)) {
       if (!message.canRetry)
         return false;
 
       if (retrying) {
         // Retried to load tab preview frame, but failed, so
         // now we fall back to the in-sidebar tab preview.
-        if (!shouldMessageSend(message)) {
+        if (!shouldMessageSend(message) ||
+            DIRECT_PANEL_AVAILABLE_URLS_MATCHER.test(tab.url)) {
           deferredReturnedValueResolver(false);
           return false;
         }
@@ -231,9 +264,10 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
   let returnValue;
   try {
     returnValue = await browser.tabs.sendMessage(tabId, {
+      tabId,
       timestamp: Date.now(),
       ...message,
-    }, { frameId });
+    }, frameId ? { frameId } : {});
     if (deferredReturnedValueResolver)
       deferredReturnedValueResolver(returnValue);
   }
@@ -333,7 +367,7 @@ async function onTabSubstanceEnter(event) {
 
   let succeeded = await sendTabPreviewMessage(targetTabId, {
     type: 'treestyletab:show-tab-preview',
-    tabId: event.target.tab.id,
+    previewTabId: event.target.tab.id,
     tabRect: {
       bottom: tabRect?.bottom || 0,
       height: tabRect?.height || 0,
@@ -429,6 +463,16 @@ browser.runtime.onMessage.addListener((message, sender) => {
   // in-sidebar preview
   if (sender.envType == 'addon_child' &&
       !sender.frameId) {
+    return;
+  }
+
+  // in-tab previews with TST internal pages
+  if (sender.tab &&
+      DIRECT_PANEL_AVAILABLE_URLS_MATCHER.test(sender.tab.url)) {
+    browser.tabs.sendMessage(sender.tab.id, {
+      type: 'treestyletab:notify-tab-preview-owner-info',
+      tabId: sender.tab.id,
+    });
     return;
   }
 

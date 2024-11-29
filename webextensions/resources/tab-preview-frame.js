@@ -8,8 +8,19 @@
 // This is a sub part to show tab preview tooltip.
 // See also: /siedbar/tab-preview-tooltip.js
 
+// This script can be loaded in three ways:
+//  * REGULAR case:
+//    loaded into an iframe embedded to a public webpage
+//  * TAB case:
+//    loaded into an TST internal page loaded in a tab
+//  * SIDEBAR case:
+//    loaded into an iframe embedded to the TST sidebar
+
 let panel = null;
-const windowId = new URL(location.href).searchParams.get('windowId') || null;
+const parsedURL = new URL(location.href)
+const windowId = parsedURL.searchParams.get('windowId') || null; // for SIDEBAR case
+let tabId = null; // for TAB case
+document.documentElement.classList.add('tab-preview-frame'); // for REGULAR and SIDEBAR case
 
 // https://searchfox.org/mozilla-central/rev/dfaf02d68a7cb018b6cad7e189f450352e2cde04/browser/themes/shared/tabbrowser/tab-hover-preview.css#5
 const BASE_PANEL_WIDTH  = 280;
@@ -24,14 +35,14 @@ try{
   const style = document.createElement('style');
   style.setAttribute('type', 'text/css');
   style.textContent = `
-    :root {
+    :root.tab-preview-frame {
       --show-hide-animation: opacity 0.1s ease-out;
       --scale: 1; /* Web contents may be zoomed by the user, and we need to cancel the zoom effect. */
       opacity: 1;
       transition: var(--show-hide-animation);
     }
 
-    :root:hover {
+    :root.tab-preview-frame:hover {
       opacity: 0;
     }
 
@@ -210,8 +221,10 @@ try{
 
   let lastTimestamp = 0;
   const onMessage = (message, _sender) => {
-    if (windowId &&
-        message?.windowId != windowId)
+    if ((windowId &&
+         message?.windowId != windowId) ||
+        (tabId &&
+         message?.tabId != tabId))
       return;
 
     //console.log('ON MESSAGE IN IFRAME ', lastTimestamp, message);
@@ -224,7 +237,7 @@ try{
     switch (message?.type) {
       case 'treestyletab:update-tab-preview':
         if (!panel ||
-            panel.dataset.tabId != message.tabId ||
+            panel.dataset.tabId != message.previewTabId ||
             !panel.classList.contains('open')) {
           return;
         }
@@ -243,8 +256,8 @@ try{
 
       case 'treestyletab:hide-tab-preview':
         if (!panel ||
-            (message.tabId &&
-             panel.dataset.tabId != message.tabId)) {
+            (message.previewTabId &&
+             panel.dataset.tabId != message.previewTabId)) {
           return;
         }
 
@@ -260,6 +273,19 @@ try{
           panel.classList.remove('open');
         }
         break;
+
+      // for TAB case
+      case 'treestyletab:notify-tab-preview-owner-info':
+        tabId = message.tabId;
+        if (tabId) {
+          document.documentElement.style.pointerEvents = '';
+          document.documentElement.classList.remove('tab-preview-frame');
+        }
+        break;
+
+      // for TAB case
+      case 'treestyletab:ask-tab-preview-frame-loaded':
+        return Promise.resolve({ tabId, windowId });
     }
   };
   browser.runtime.onMessage.addListener(onMessage);
@@ -297,7 +323,7 @@ function createPanel() {
   return panel;
 }
 
-function updatePanel({ tabId, title, url, tooltipText, tooltipHtml, hasPreview, previewURL, tabRect, offsetTop, align, scale } = {}) {
+function updatePanel({ previewTabId, title, url, tooltipText, tooltipHtml, hasPreview, previewURL, tabRect, offsetTop, align, scale } = {}) {
   if (!panel)
     return;
 
@@ -319,7 +345,7 @@ function updatePanel({ tabId, title, url, tooltipText, tooltipHtml, hasPreview, 
     panel.style.maxHeight = `${window.innerHeight - Math.min(window.innerHeight - tabRect.bottom, tabRect.top)}px`;
   }
 
-  panel.dataset.tabId = tabId;
+  panel.dataset.tabId = previewTabId;
 
   const titleElement = panel.querySelector('.tab-preview-title');
   const urlElement = panel.querySelector('.tab-preview-url');
@@ -369,7 +395,7 @@ function updatePanel({ tabId, title, url, tooltipText, tooltipHtml, hasPreview, 
   }
 
   const completeUpdate = () => {
-    if (panel.dataset.tabId != tabId)
+    if (panel.dataset.tabId != previewTabId)
       return;
 
     if (!tabRect) {
