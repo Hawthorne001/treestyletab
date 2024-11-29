@@ -138,13 +138,19 @@ try{
 
     .tab-preview-image {
       max-width: 100%;
+      opacity: 1;
+      transition: var(--show-hide-animation);
+    }
+    .tab-preview-panel.updating .tab-preview-image {
+      transition: none;
     }
 
     .blank {
       display: none;
     }
 
-    .hidden {
+    .hidden,
+    .loading {
       opacity: 0;
     }
 
@@ -228,12 +234,19 @@ function createPanel() {
   previewWrapper.setAttribute('class', 'tab-preview-image-wrapper');
   const preview = previewWrapper.appendChild(document.createElement('img'));
   preview.setAttribute('class', 'tab-preview-image');
+  preview.addEventListener('load', () => {
+    if (preview.src)
+      preview.classList.remove('loading');
+  });
   return panel;
 }
 
-function updatePanel({ tabId, title, url, previewURL, tabRect, offsetTop, align } = {}) {
+function updatePanel({ tabId, title, url, hasPreview, previewURL, tabRect, offsetTop, align } = {}) {
   if (!panel)
     return;
+
+  if (previewURL)
+    hasPreview = true;
 
   panel.classList.add('updating');
 
@@ -249,8 +262,9 @@ function updatePanel({ tabId, title, url, previewURL, tabRect, offsetTop, align 
   urlElement.classList.toggle('blank', !url);
 
   const previewImage = panel.querySelector('.tab-preview-image');
-  previewImage.src = previewURL;
-  previewImage.classList.toggle('blank', !previewURL);
+  previewImage.classList.add('loading');
+  previewImage.src = previewURL || '';
+  previewImage.classList.toggle('blank', !hasPreview);
 
   const completeUpdate = () => {
     if (panel.dataset.tabId != tabId)
@@ -296,13 +310,15 @@ function updatePanel({ tabId, title, url, previewURL, tabRect, offsetTop, align 
     panel.classList.remove('updating');
   };
 
-  if (!previewURL) {
+  if (!hasPreview) {
     completeUpdate();
     return;
   }
 
   try {
-    const { width, height } = getPngDimensionsFromDataUri(previewURL);
+    const { width, height } = previewURL ?
+      getPngDimensionsFromDataUri(previewURL) :
+      { width: 280, height: 140 };
     const imageWidth = Math.min(window.innerWidth, Math.min(width, 280) / window.devicePixelRatio);
     const imageHeight = imageWidth / width * height;
     previewImage.style.width = previewImage.style.maxWidth = `min(100%, ${imageWidth}px)`;

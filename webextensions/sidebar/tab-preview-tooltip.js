@@ -307,16 +307,21 @@ async function onTabSubstanceEnter(event) {
     url,
   };
 
+  const hasPreview = (
+    !active &&
+    !event.target.tab.discarded &&
+    CAPTURABLE_URLS_MATCHER.test(event.target.tab.url)
+  );
+
   // First try: render title and url ASAP
   let succeeded = await sendTabPreviewMessage(targetTabId, {
     ...message,
+    hasPreview,
     timestamp: startAt, // Don't call Date.now() here, because it can become larger than the timestamp on mouseleave.
   }).catch(_error => {});
 
   let previewURL = null;
-  if (!active &&
-      !event.target.tab.discarded &&
-      CAPTURABLE_URLS_MATCHER.test(event.target.tab.url)) {
+  if (hasPreview) {
     try {
       previewURL = await browser.tabs.captureTab(event.target.tab.id);
       if (!event.target.tab) // the tab may be destroyied while capturing
