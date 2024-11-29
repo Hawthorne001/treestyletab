@@ -91,6 +91,10 @@ try{
       --panel-width: min(100%, calc(280px / var(--scale)));
       --panel-padding: 0;
 
+      /* https://searchfox.org/mozilla-central/rev/b576bae69c6f3328d2b08108538cbbf535b1b99d/toolkit/themes/shared/global-shared.css#111 */
+      /* https://searchfox.org/mozilla-central/rev/b576bae69c6f3328d2b08108538cbbf535b1b99d/browser/themes/shared/browser-colors.css#90 */
+      --panel-border-color: light-dark(rgb(240, 240, 244), rgb(82, 82, 94));
+
 
       background: var(--panel-background);
       border: var(--panel-border-color) solid calc(1px / var(--scale));
@@ -139,7 +143,7 @@ try{
     .tab-preview-image {
       max-width: 100%;
       opacity: 1;
-      transition: var(--show-hide-animation);
+      transition: opacity 0.2s ease-out;
     }
     .tab-preview-panel.updating .tab-preview-image {
       transition: none;
