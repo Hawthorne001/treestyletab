@@ -178,6 +178,12 @@ try{
     */
 
     switch (message?.type) {
+      case 'treestyletab:update-tab-preview':
+        if (!panel ||
+            (message.tabId &&
+             panel.dataset.tabId != message.tabId)) {
+          return;
+        }
       case 'treestyletab:show-tab-preview':
         if (message.timestamp < lastTimestamp) {
           return Promise.resolve(true);
@@ -260,20 +266,39 @@ function updatePanel({ tabId, title, url, hasPreview, previewURL, tabRect, offse
 
   panel.dataset.tabId = tabId;
 
-  panel.querySelector('.tab-preview-title').textContent = title;
+  if (typeof title == 'string') {
+    panel.querySelector('.tab-preview-title').textContent = title;
+  }
 
-  const urlElement = panel.querySelector('.tab-preview-url');
-  urlElement.textContent = url;
-  urlElement.classList.toggle('blank', !url);
+  if (typeof url == 'string') {
+    const urlElement = panel.querySelector('.tab-preview-url');
+    urlElement.textContent = url;
+    urlElement.classList.toggle('blank', !url);
+  }
 
   const previewImage = panel.querySelector('.tab-preview-image');
-  previewImage.classList.add('loading');
-  previewImage.src = previewURL || '';
-  previewImage.classList.toggle('blank', !hasPreview);
+  if (!hasPreview) { // hide it first
+    previewImage.classList.add('blank');
+  }
+  if (hasPreview == previewImage.classList.contains('blank')) { // mismatched state, let's start loading
+    previewImage.classList.toggle('loading', hasPreview);
+  }
+  previewURL = previewURL || 'data:image/png,';
+  if (previewURL != previewImage.src) {
+    previewImage.src = previewURL;
+  }
+  if (hasPreview) { // show it later
+    previewImage.classList.remove('blank');
+  }
 
   const completeUpdate = () => {
     if (panel.dataset.tabId != tabId)
       return;
+
+    if (!tabRect) {
+      panel.classList.remove('updating');
+      return;
+    }
 
     const maxY = window.innerHeight / scale;
     const panelHeight = panel.getBoundingClientRect().height;

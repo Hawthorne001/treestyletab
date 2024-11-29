@@ -287,7 +287,14 @@ async function onTabSubstanceEnter(event) {
   const mayBeRight = window.screenX < 0 && window.devicePixelRatio > 1 ?
     false :
     window.mozInnerScreenX - window.screenX > (window.outerWidth - window.innerWidth) / 2;
-  const message = {
+
+  const hasPreview = (
+    !active &&
+    !event.target.tab.discarded &&
+    CAPTURABLE_URLS_MATCHER.test(event.target.tab.url)
+  );
+
+  let succeeded = await sendTabPreviewMessage(targetTabId, {
     type: 'treestyletab:show-tab-preview',
     tabId: event.target.tab.id,
     tabRect: {
@@ -306,17 +313,6 @@ async function onTabSubstanceEnter(event) {
     active,
     title: event.target.tab.title,
     url,
-  };
-
-  const hasPreview = (
-    !active &&
-    !event.target.tab.discarded &&
-    CAPTURABLE_URLS_MATCHER.test(event.target.tab.url)
-  );
-
-  // First try: render title and url ASAP
-  let succeeded = await sendTabPreviewMessage(targetTabId, {
-    ...message,
     hasPreview,
     timestamp: startAt, // Don't call Date.now() here, because it can become larger than the timestamp on mouseleave.
   }).catch(_error => {});
@@ -334,9 +330,9 @@ async function onTabSubstanceEnter(event) {
 
   if (previewURL) {
     //console.log(event.type, event, event.target.tab, event.target, activeTab);
-    // Second try: inject preview image URL
     succeeded = await sendTabPreviewMessage(targetTabId, {
-      ...message,
+      type: 'treestyletab:update-tab-preview',
+      tabId: event.target.tab.id,
       previewURL,
       timestamp: Date.now(),
     }).catch(_error => {});
