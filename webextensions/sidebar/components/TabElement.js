@@ -5,7 +5,8 @@
 */
 
 import {
-  configs
+  configs,
+  sanitizeForHTMLText,
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
 import * as TabsStore from '/common/tabs-store.js';
@@ -409,6 +410,8 @@ windowId = ${tab.windowId}
 
     this.tooltip                = this.$TST.generateTooltipText();
     this.tooltipWithDescendants = this.$TST.generateTooltipTextWithDescendants();
+    this.tooltipHtml            = this.$TST.generateTooltipHtml();
+    this.tooltipHtmlWithDescendants = this.$TST.generateTooltipHtmlWithDescendants();
 
     const tooltipText = configs.tabPreviewTooltip ?
       null :
@@ -429,7 +432,7 @@ windowId = ${tab.windowId}
     const highPriorityTooltipText = this.$TST.getHighPriorityTooltipText();
     if (typeof highPriorityTooltipText == 'string') {
       if (highPriorityTooltipText)
-        return this.tooltip;
+        return highPriorityTooltipText;
 
       return null;
     }
@@ -449,6 +452,42 @@ windowId = ${tab.windowId}
         !this.getAttribute('title')) {
       if (lowPriorityTooltipText)
         tooltip = lowPriorityTooltipText;
+      else
+        tooltip = null;
+    }
+    return tooltip;
+  }
+
+  get appliedTooltipHtml() {
+    if (configs.showCollapsedDescendantsByTooltip &&
+        this.$TST.subtreeCollapsed &&
+        this.$TST.hasChild) {
+      return this.tooltipHtmlWithDescendants;
+    }
+
+    const highPriorityTooltipText = this.$TST.getHighPriorityTooltipText();
+    if (typeof highPriorityTooltipText == 'string') {
+      if (highPriorityTooltipText)
+        return sanitizeForHTMLText(highPriorityTooltipText);
+
+      return null;
+    }
+
+    let tooltip = null;
+
+    const tab = this.$TST.tab;
+    if (this.classList.contains('faviconized') ||
+        this.overflow ||
+        this.tooltip != tab.title)
+      tooltip = this.tooltipHtml;
+    else
+      tooltip = null;
+
+    const lowPriorityTooltipText = this.$TST.getLowPriorityTooltipText();
+    if (typeof lowPriorityTooltipText == 'string' &&
+        !this.getAttribute('title')) {
+      if (lowPriorityTooltipText)
+        tooltip = sanitizeForHTMLText(lowPriorityTooltipText);
       else
         tooltip = null;
     }

@@ -178,6 +178,33 @@ try{
     .updating {
       visibility: hidden;
     }
+
+
+    /* tree */
+    .tab-preview-tooltip-text ul,
+    .tab-preview-tooltip-text ul ul {
+      margin: 0 0 0 1em;
+      padding: 0;
+      list-style: disc;
+    }
+
+    .tab-preview-tooltip-text .title-line {
+      display: flex;
+      flex-direction: row;
+      max-width: 100%;
+      white-space: nowrap;
+    }
+    .tab-preview-tooltip-text .title-line .title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .tab-preview-tooltip-text .title-line .cookieStoreName {
+      display: flex;
+      margin-left: 1ch;
+    }
+    .tab-preview-tooltip-text .title-line .cookieStoreName::before {
+      content: "- ";
+    }
   `;
   document.head.appendChild(style);
 
@@ -270,7 +297,7 @@ function createPanel() {
   return panel;
 }
 
-function updatePanel({ tabId, title, url, tooltipText, hasPreview, previewURL, tabRect, offsetTop, align, scale } = {}) {
+function updatePanel({ tabId, title, url, tooltipText, tooltipHtml, hasPreview, previewURL, tabRect, offsetTop, align, scale } = {}) {
   if (!panel)
     return;
 
@@ -297,12 +324,12 @@ function updatePanel({ tabId, title, url, tooltipText, hasPreview, previewURL, t
   const titleElement = panel.querySelector('.tab-preview-title');
   const urlElement = panel.querySelector('.tab-preview-url');
   const tooltipTextElement = panel.querySelector('.tab-preview-tooltip-text');
-  if (typeof tooltipText == 'string') {
+  if (typeof tooltipHtml == 'string') {
     if (typeof title == 'string' &&
         tooltipText != title) {
       titleElement.classList.add('hidden');
       urlElement.classList.add('hidden');
-      tooltipTextElement.textContent = tooltipText;
+      tooltipTextElement.innerHTML = tooltipHtml;
       tooltipTextElement.classList.remove('hidden');
       panel.classList.add('extended');
     }

@@ -14,6 +14,7 @@ import {
   mapAndFilter,
   mapAndFilterUniq,
   toLines,
+  sanitizeForHTMLText,
   sanitizeForRegExpSource,
   isNewTabCommandTab,
   isFirefoxViewTab,
@@ -606,6 +607,34 @@ export default class Tab {
       tooltip.push(child.$TST.generateTooltipTextWithDescendants().replace(/^/gm, '  '));
     }
     return tooltip.join('\n');
+  }
+
+  generateTooltipHtml() {
+    return this.cookieStoreName ?
+      `<span class="title-line"
+            ><span class="title"
+                  >${sanitizeForHTMLText(this.tab.title)}</span
+            ><span class="cookieStoreName"
+                  >${sanitizeForHTMLText(this.cookieStoreName)}</span></span>` :
+      `<span class="title-line"
+            ><span class="title"
+                  >${sanitizeForHTMLText(this.tab.title)}</span></span>`;
+  }
+
+  generateTooltipHtmlWithDescendants() {
+    return `<ul>${this.generateTooltipHtmlWithDescendantsInternal()}</ul>`;
+  }
+  generateTooltipHtmlWithDescendantsInternal() {
+    let tooltip = `<li>${this.generateTooltipHtml()}`;
+    const children = [];
+    for (const child of this.children) {
+      if (!child)
+        continue;
+      children.push(child.$TST.generateTooltipHtmlWithDescendantsInternal());
+    }
+    if (children.length > 0)
+      tooltip += `<ul>${children.join('')}</ul>`;
+    return `${tooltip}</li>`;
   }
 
   registerTooltipText(ownerId, text, isHighPriority = false) {
