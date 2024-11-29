@@ -362,7 +362,7 @@ async function onTabSubstanceEnter(event) {
     !active &&
     !event.target.tab.discarded &&
     CAPTURABLE_URLS_MATCHER.test(event.target.tab.url) &&
-    tooltipText == event.target.tab.title
+    tooltipText == event.target.tab.$TST.defaultTooltipText
   );
 
   let succeeded = await sendTabPreviewMessage(targetTabId, {

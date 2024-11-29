@@ -595,8 +595,12 @@ export default class Tab {
     return identity ? identity.name : null;
   }
 
-  generateTooltipText() {
+  get defaultTooltipText() {
     return this.cookieStoreName ? `${this.tab.title} - ${this.cookieStoreName}` : this.tab.title;
+  }
+
+  generateTooltipText() {
+    return this.defaultTooltipText;
   }
 
   generateTooltipTextWithDescendants() {
