@@ -427,7 +427,8 @@ browser.runtime.onMessage.addListener((message, sender) => {
     return;
 
   // in-sidebar preview
-  if (sender.envType == 'addon_child') {
+  if (sender.envType == 'addon_child' &&
+      !sender.frameId) {
     return;
   }
 
