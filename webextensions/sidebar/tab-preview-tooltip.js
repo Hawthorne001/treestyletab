@@ -327,7 +327,8 @@ async function onTabSubstanceEnter(event) {
   const hasPreview = (
     !active &&
     !event.target.tab.discarded &&
-    CAPTURABLE_URLS_MATCHER.test(event.target.tab.url)
+    CAPTURABLE_URLS_MATCHER.test(event.target.tab.url) &&
+    tooltipText == event.target.tab.title
   );
 
   let succeeded = await sendTabPreviewMessage(targetTabId, {
