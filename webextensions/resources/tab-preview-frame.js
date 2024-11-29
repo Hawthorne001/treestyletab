@@ -108,13 +108,16 @@ try{
       font: Message-Box;
       left: auto;
       max-width: var(--panel-width);
-      opacity: 1;
+      opacity: 0;
       overflow: hidden; /* clip the preview with the rounded edges */
       padding: var(--panel-border-radius) 0 0;
       position: fixed;
       right: auto;
       transition: var(--show-hide-animation);
       width: var(--panel-width);
+    }
+    .tab-preview-panel.open {
+      opacity: 1;
     }
 
     .tab-preview-title {
@@ -137,6 +140,12 @@ try{
       white-space: nowrap;
     }
 
+    .tab-preview-tooltip-text {
+      font-size: calc(1em / var(--scale));
+      margin: 0 var(--panel-border-radius);
+      white-space: pre;
+    }
+
     .tab-preview-image-wrapper {
       border-top: calc(1px / var(--scale)) solid var(--panel-border-color);
       margin-top: 0.25em;
@@ -153,11 +162,11 @@ try{
       transition: none;
     }
 
-    .blank {
+    .blank,
+    .hidden {
       display: none;
     }
 
-    .hidden,
     .loading {
       opacity: 0;
     }
@@ -185,7 +194,7 @@ try{
       case 'treestyletab:update-tab-preview':
         if (!panel ||
             panel.dataset.tabId != message.tabId ||
-            panel.classList.contains('hidden')) {
+            !panel.classList.contains('open')) {
           return;
         }
       case 'treestyletab:show-tab-preview':
@@ -198,7 +207,7 @@ try{
         }
         updatePanel(message);
         document.documentElement.appendChild(panel);
-        panel.classList.remove('hidden');
+        panel.classList.add('open');
         return Promise.resolve(true);
 
       case 'treestyletab:hide-tab-preview':
@@ -212,12 +221,12 @@ try{
           return Promise.resolve(true);
         }
         lastTimestamp = message.timestamp;
-        panel.classList.add('hidden');
+        panel.classList.remove('open');
         return Promise.resolve(true);
 
       case 'treestyletab:notify-sidebar-closed':
         if (panel) {
-          panel.classList.add('hidden');
+          panel.classList.remove('open');
         }
         break;
     }
@@ -244,6 +253,8 @@ function createPanel() {
   title.setAttribute('class', 'tab-preview-title');
   const url = panel.appendChild(document.createElement('div'));
   url.setAttribute('class', 'tab-preview-url');
+  const tooltipText = panel.appendChild(document.createElement('div'));
+  tooltipText.setAttribute('class', 'tab-preview-tooltip-text');
   const previewWrapper = panel.appendChild(document.createElement('div'));
   previewWrapper.setAttribute('class', 'tab-preview-image-wrapper');
   const preview = previewWrapper.appendChild(document.createElement('img'));
@@ -255,7 +266,7 @@ function createPanel() {
   return panel;
 }
 
-function updatePanel({ tabId, title, url, hasPreview, previewURL, tabRect, offsetTop, align, scale } = {}) {
+function updatePanel({ tabId, title, url, tooltipText, hasPreview, previewURL, tabRect, offsetTop, align, scale } = {}) {
   if (!panel)
     return;
 
@@ -275,12 +286,31 @@ function updatePanel({ tabId, title, url, hasPreview, previewURL, tabRect, offse
 
   panel.dataset.tabId = tabId;
 
-  if (typeof title == 'string') {
-    panel.querySelector('.tab-preview-title').textContent = title;
+  const titleElement = panel.querySelector('.tab-preview-title');
+  const urlElement = panel.querySelector('.tab-preview-url');
+  const tooltipTextElement = panel.querySelector('.tab-preview-tooltip-text');
+  if (typeof tooltipText == 'string') {
+    if (typeof title == 'string' &&
+        tooltipText != title) {
+      titleElement.classList.add('hidden');
+      urlElement.classList.add('hidden');
+      tooltipTextElement.textContent = tooltipText;
+      tooltipTextElement.classList.remove('hidden');
+    }
+    else {
+      tooltipTextElement.classList.add('hidden');
+      titleElement.textContent = title;
+      titleElement.classList.remove('hidden');
+      urlElement.classList.remove('hidden');
+    }
+  } else if (typeof title == 'string') {
+    tooltipTextElement.classList.add('hidden');
+    titleElement.textContent = title;
+    titleElement.classList.remove('hidden');
+    urlElement.classList.remove('hidden');
   }
 
   if (typeof url == 'string') {
-    const urlElement = panel.querySelector('.tab-preview-url');
     urlElement.textContent = url;
     urlElement.classList.toggle('blank', !url);
   }

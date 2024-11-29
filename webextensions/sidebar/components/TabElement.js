@@ -410,40 +410,49 @@ windowId = ${tab.windowId}
     this.tooltip                = this.$TST.generateTooltipText();
     this.tooltipWithDescendants = this.$TST.generateTooltipTextWithDescendants();
 
+    const tooltipText = configs.tabPreviewTooltip ?
+      null :
+      this.appliedTooltipText;
+    if (typeof tooltipText == 'string')
+      this.$TST.setAttribute('title', tooltipText);
+    else
+      this.$TST.removeAttribute('title');
+  }
+
+  get appliedTooltipText() {
     if (configs.showCollapsedDescendantsByTooltip &&
-        !configs.tabPreviewTooltip &&
         this.$TST.subtreeCollapsed &&
         this.$TST.hasChild) {
-      this.$TST.setAttribute('title', this.tooltipWithDescendants);
-      return;
+      return this.tooltipWithDescendants;
     }
 
     const highPriorityTooltipText = this.$TST.getHighPriorityTooltipText();
     if (typeof highPriorityTooltipText == 'string') {
       if (highPriorityTooltipText)
-        this.$TST.setAttribute('title', this.tooltip);
-      else
-        this.$TST.removeAttribute('title');
-      return;
+        return this.tooltip;
+
+      return null;
     }
 
-    if (!configs.tabPreviewTooltip &&
-        (this.classList.contains('faviconized') ||
-         this.overflow ||
-         this.tooltip != tab.title))
-      this.$TST.setAttribute('title', this.tooltip);
+    let tooltip = null;
+
+    const tab = this.$TST.tab;
+    if (this.classList.contains('faviconized') ||
+        this.overflow ||
+        this.tooltip != tab.title)
+      tooltip = this.tooltip;
     else
-      this.$TST.removeAttribute('title');
+      tooltip = null;
 
     const lowPriorityTooltipText = this.$TST.getLowPriorityTooltipText();
     if (typeof lowPriorityTooltipText == 'string' &&
         !this.getAttribute('title')) {
-      if (!configs.tabPreviewTooltip &&
-          lowPriorityTooltipText)
-        this.$TST.setAttribute('title', lowPriorityTooltipText);
+      if (lowPriorityTooltipText)
+        tooltip = lowPriorityTooltipText;
       else
-        this.$TST.removeAttribute('title');
+        tooltip = null;
     }
+    return tooltip;
   }
 
   _initExtraItemsContainers() {

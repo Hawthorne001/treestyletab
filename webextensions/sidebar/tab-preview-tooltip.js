@@ -302,6 +302,7 @@ async function onTabSubstanceEnter(event) {
     return;
 
   hoveringTabIds.add(event.target.tab.id);
+  const tooltipText = event.target.appliedTooltipText;
 
   const targetTabId = CUSTOM_PANEL_AVAILABLE_URLS_MATCHER.test(activeTab.url) ?
     activeTab.id :
@@ -347,6 +348,7 @@ async function onTabSubstanceEnter(event) {
     active,
     title: event.target.tab.title,
     url,
+    tooltipText,
     hasPreview,
     timestamp: startAt, // Don't call Date.now() here, because it can become larger than the timestamp on mouseleave.
     canRetry: !!targetTabId,
