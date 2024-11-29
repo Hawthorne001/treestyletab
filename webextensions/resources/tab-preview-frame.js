@@ -11,18 +11,22 @@
 let panel = null;
 const windowId = new URL(location.href).searchParams.get('windowId') || null;
 
-try{
-  // -moz-platform @media rules looks unavailable on Web contents...
-  const isWindows = /^Win/i.test(navigator.platform);
-  const isLinux = /Linux/i.test(navigator.platform);
-  const isMac = /^Mac/i.test(navigator.platform);
+// https://searchfox.org/mozilla-central/rev/dfaf02d68a7cb018b6cad7e189f450352e2cde04/browser/themes/shared/tabbrowser/tab-hover-preview.css#5
+const BASE_PANEL_WIDTH  = 280;
+const BASE_PANEL_HEIGHT = 140;
 
+// -moz-platform @media rules looks unavailable on Web contents...
+const isWindows = /^Win/i.test(navigator.platform);
+const isLinux = /Linux/i.test(navigator.platform);
+const isMac = /^Mac/i.test(navigator.platform);
+
+try{
   const style = document.createElement('style');
   style.setAttribute('type', 'text/css');
   style.textContent = `
     :root {
       --show-hide-animation: opacity 0.1s ease-out;
-      --scale: 1;
+      --scale: 1; /* Web contents may be zoomed by the user, and we need to cancel the zoom effect. */
       opacity: 1;
       transition: var(--show-hide-animation);
     }
@@ -88,7 +92,7 @@ try{
       /*}*/
 
       /* https://searchfox.org/mozilla-central/rev/dfaf02d68a7cb018b6cad7e189f450352e2cde04/browser/themes/shared/tabbrowser/tab-hover-preview.css#5 */
-      --panel-width: min(100%, calc(280px / var(--scale)));
+      --panel-width: min(100%, calc(${BASE_PANEL_WIDTH}px / var(--scale)));
       --panel-padding: 0;
 
       /* https://searchfox.org/mozilla-central/rev/b576bae69c6f3328d2b08108538cbbf535b1b99d/toolkit/themes/shared/global-shared.css#111 */
@@ -136,7 +140,7 @@ try{
     .tab-preview-image-wrapper {
       border-top: calc(1px / var(--scale)) solid var(--panel-border-color);
       margin-top: 0.25em;
-      max-height: calc(var(--panel-width) / 2); /* use relative value instead of 140px */
+      max-height: calc(var(--panel-width) * ${BASE_PANEL_HEIGHT / BASE_PANEL_WIDTH}); /* use relative value instead of 140px */
       overflow: hidden;
     }
 
@@ -260,9 +264,14 @@ function updatePanel({ tabId, title, url, hasPreview, previewURL, tabRect, offse
 
   panel.classList.add('updating');
 
+  // This cancels the zoom effect by the user.
+  // We need to calculate the scale with two devicePixelRatio values
+  // from both the sidebar and the content area, because all contents
+  // of the browser window can be scaled on a high-DPI display by the
+  // platform.
   scale = window.devicePixelRatio * (scale || 1);
   document.documentElement.style.setProperty('--scale', scale);
-  panel.style.setProperty('--panel-width', `calc(min(${window.innerWidth}px, 280px) / var(--scale))`);
+  panel.style.setProperty('--panel-width', `${Math.min(window.innerWidth, BASE_PANEL_WIDTH / scale)}px`);
 
   panel.dataset.tabId = tabId;
 
@@ -348,8 +357,8 @@ function updatePanel({ tabId, title, url, hasPreview, previewURL, tabRect, offse
   try {
     const { width, height } = previewURL ?
       getPngDimensionsFromDataUri(previewURL) :
-      { width: 280, height: 140 };
-    const imageWidth = Math.min(window.innerWidth, Math.min(width, 280) / scale);
+      { width: BASE_PANEL_WIDTH, height: BASE_PANEL_HEIGHT };
+    const imageWidth = Math.min(window.innerWidth, Math.min(width, BASE_PANEL_WIDTH) / scale);
     const imageHeight = imageWidth / width * height;
     previewImage.style.width = previewImage.style.maxWidth = `min(100%, ${imageWidth}px)`;
     previewImage.style.height = previewImage.style.maxHeight = `${imageHeight}px`;
