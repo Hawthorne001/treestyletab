@@ -90,7 +90,7 @@ const TAB_PREVIEW_FRAME_STYLE = `
   right: 0;
   top: 0;
   width: 100%;
-  z-index: 65000;
+  z-index: ${Number.MAX_SAFE_INTEGER};
 `;
 
 const CUSTOM_PANEL_AVAILABLE_URLS_MATCHER = new RegExp(`^((https?|data):|moz-extension://${location.host}\/)`);
