@@ -108,13 +108,16 @@ try{
       font: Message-Box;
       left: auto;
       max-width: var(--panel-width);
+      min-width: var(--panel-width);
       opacity: 0;
       overflow: hidden; /* clip the preview with the rounded edges */
       padding: var(--panel-border-radius) 0 0;
       position: fixed;
       right: auto;
       transition: var(--show-hide-animation);
-      width: var(--panel-width);
+    }
+    .tab-preview-panel.extended {
+      max-width: min(100%, calc(var(--panel-width) * 2));
     }
     .tab-preview-panel.open {
       opacity: 1;
@@ -296,18 +299,21 @@ function updatePanel({ tabId, title, url, tooltipText, hasPreview, previewURL, t
       urlElement.classList.add('hidden');
       tooltipTextElement.textContent = tooltipText;
       tooltipTextElement.classList.remove('hidden');
+      panel.classList.add('extended');
     }
     else {
       tooltipTextElement.classList.add('hidden');
       titleElement.textContent = title;
       titleElement.classList.remove('hidden');
       urlElement.classList.remove('hidden');
+      panel.classList.remove('extended');
     }
   } else if (typeof title == 'string') {
     tooltipTextElement.classList.add('hidden');
     titleElement.textContent = title;
     titleElement.classList.remove('hidden');
     urlElement.classList.remove('hidden');
+    panel.classList.remove('extended');
   }
 
   if (typeof url == 'string') {
