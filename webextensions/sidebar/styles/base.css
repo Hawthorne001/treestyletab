@@ -93,6 +93,11 @@
   --visual-gap-hover-animation: top var(--collapse-animation) var(--visual-gap-hover-animation-delay);
 }
 
+body {
+  margin: 0;
+  padding: 0;
+}
+
 tab-item {
   --tab-current-size: var(--tab-size);
   --attention-marker-x-offset: calc(0px - ((var(--tab-current-size) - var(--favicon-size)) / 2));
