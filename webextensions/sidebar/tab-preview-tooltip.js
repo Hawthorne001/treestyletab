@@ -343,7 +343,7 @@ async function onTabSubstanceEnter(event) {
     activeTab.id :
     null;
 
-  const tabRect = event.target.tab.$TST.element?.getBoundingClientRect();
+  const tabRect = event.target.tab.$TST.element?.substanceElement?.getBoundingClientRect();
   const active = event.target.tab.id == activeTab.id;
   const url = PREVIEW_WITH_HOST_URLS_MATCHER.test(event.target.tab.url) ? new URL(event.target.tab.url).host :
     PREVIEW_WITH_TITLE_URLS_MATCHER.test(event.target.tab.url) ? null :

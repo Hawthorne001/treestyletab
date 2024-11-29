@@ -213,7 +213,7 @@ export class TabElement extends HTMLElement {
   }
 
   get initialized() {
-    return !!this._substanceElement;
+    return !!this.substanceElement;
   }
 
   initializeContents() {
@@ -264,7 +264,7 @@ export class TabElement extends HTMLElement {
     return this._$TST = value;
   }
 
-  get _substanceElement() {
+  get substanceElement() {
     return this.querySelector(kTAB_SUBSTANCE_ELEMENT_NAME);
   }
 
@@ -302,14 +302,14 @@ export class TabElement extends HTMLElement {
     this.setAttribute('aria-selected', this.classList.contains(Constants.kTAB_STATE_HIGHLIGHTED) ? 'true' : 'false');
 
     // for convenience on customization with custom user styles
-    this._substanceElement.setAttribute(Constants.kAPI_TAB_ID, this.getAttribute(Constants.kAPI_TAB_ID));
-    this._substanceElement.setAttribute(Constants.kAPI_WINDOW_ID, this.getAttribute(Constants.kAPI_WINDOW_ID));
+    this.substanceElement.setAttribute(Constants.kAPI_TAB_ID, this.getAttribute(Constants.kAPI_TAB_ID));
+    this.substanceElement.setAttribute(Constants.kAPI_WINDOW_ID, this.getAttribute(Constants.kAPI_WINDOW_ID));
     this._labelElement.setAttribute(Constants.kAPI_TAB_ID, this.getAttribute(Constants.kAPI_TAB_ID));
     this._labelElement.setAttribute(Constants.kAPI_WINDOW_ID, this.getAttribute(Constants.kAPI_WINDOW_ID));
 
     if (this.tab)
       this.dataset.index =
-        this._substanceElement.dataset.index =
+        this.substanceElement.dataset.index =
           this._labelElement.dataset.index =this.tab.index;
 
     this._labelElement.applyAttributes();
@@ -521,8 +521,8 @@ windowId = ${tab.windowId}
     if (this.__onMouseOver)
       return;
     this.addEventListener('mouseover', this.__onMouseOver = this._onMouseOver.bind(this));
-    this._substanceElement?.addEventListener('mouseenter', this.__onMouseEnter = this._onMouseEnter.bind(this));
-    this._substanceElement?.addEventListener('mouseleave', this.__onMouseLeave = this._onMouseLeave.bind(this));
+    this.substanceElement?.addEventListener('mouseenter', this.__onMouseEnter = this._onMouseEnter.bind(this));
+    this.substanceElement?.addEventListener('mouseleave', this.__onMouseLeave = this._onMouseLeave.bind(this));
     window.addEventListener('resize', this.__onWindowResize = this._onWindowResize.bind(this));
     configs.$addObserver(this.__onConfigChange = this._onConfigChange.bind(this));
   }
@@ -532,9 +532,9 @@ windowId = ${tab.windowId}
       return;
     this.removeEventListener('mouseover', this.__onMouseOver);
     this.__onMouseOver = null;
-    this._substanceElement?.removeEventListener('mouseenter', this.__onMouseEnter);
+    this.substanceElement?.removeEventListener('mouseenter', this.__onMouseEnter);
     this.__onMouseEnter = null;
-    this._substanceElement?.removeEventListener('mouseleave', this.__onMouseLeave);
+    this.substanceElement?.removeEventListener('mouseleave', this.__onMouseLeave);
     this.__onMouseLeave = null;
     window.removeEventListener('resize', this.__onWindowResize);
     this.__onWindowResize = null;
