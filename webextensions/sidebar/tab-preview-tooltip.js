@@ -162,6 +162,15 @@ async function prepareFrame(tabId) {
   });
 }
 
+const hoveringTabIds = new Set();
+
+function shouldMessageSend(message) {
+  return (
+    message.type != 'treestyletab:show-tab-preview' ||
+    hoveringTabIds.has(message.tabId)
+  );
+}
+
 async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolver) {
   if (!tabId) { // in-sidebar mode
     return sendInSidebarTabPreviewMessage(message);
@@ -181,10 +190,17 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
       if (retrying) {
         // Retried to load tab preview frame, but failed, so
         // now we fall back to the in-sidebar tab preview.
+        if (!shouldMessageSend(message)) {
+          deferredReturnedValueResolver(false);
+          return false;
+        }
         return sendInSidebarTabPreviewMessage(message)
           .then(deferredReturnedValueResolver)
           .then(() => true);
       }
+
+      if (!shouldMessageSend(message))
+        return false;
 
       // We prepare tab preview frame now, and retry sending after that.
       await prepareFrame(tabId);
@@ -228,10 +244,17 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
     if (retrying) {
       // Retried to load tab preview frame, but failed, so
       // now we fall back to the in-sidebar tab preview.
+      if (!shouldMessageSend(message)) {
+        deferredReturnedValueResolver(false);
+        return false;
+      }
       return sendInSidebarTabPreviewMessage(message)
         .then(deferredReturnedValueResolver)
         .then(() => true);
     }
+
+    if (!shouldMessageSend(message))
+      return false;
 
     // the frame was destroyed unexpectedly, so we re-prepare it.
     await prepareFrame(tabId);
@@ -245,7 +268,8 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
     return promisedReturnedValue;
   }
 
-  if (typeof returnValue != 'boolean') {
+  if (typeof returnValue != 'boolean' &&
+      shouldMessageSend(message)) {
     // Failed to send message to the in-content tab preview frame, so
     // now we fall back to the in-sidebar tab preview.
     return sendInSidebarTabPreviewMessage(message);
@@ -276,6 +300,8 @@ async function onTabSubstanceEnter(event) {
 
   if (!event.target.tab)
     return;
+
+  hoveringTabIds.add(event.target.tab.id);
 
   const targetTabId = CUSTOM_PANEL_AVAILABLE_URLS_MATCHER.test(activeTab.url) ?
     activeTab.id :
@@ -358,6 +384,8 @@ function onTabSubstanceLeave(event) {
   if (!event.target.tab)
     return;
 
+  hoveringTabIds.delete(event.target.tab.id);
+
   const activeTab = Tab.getActiveTab(TabsStore.getCurrentWindowId());
   const targetTabId = CUSTOM_PANEL_AVAILABLE_URLS_MATCHER.test(activeTab.url) ?
     activeTab.id :
@@ -377,7 +405,7 @@ browser.tabs.onActivated.addListener(activeInfo => {
   if (activeInfo.windowId != TabsStore.getCurrentWindowId())
     return;
 
-  sendTabPreviewMessage(null, {
+  sendInSidebarTabPreviewMessage({
     type: 'treestyletab:hide-tab-preview',
   });
   sendTabPreviewMessage(activeInfo.tabId, {
