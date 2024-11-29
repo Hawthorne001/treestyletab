@@ -243,8 +243,8 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
     return promisedReturnedValue;
   }
 
-  if (!returnValue) {
-    // Failed to show in-content tab preview, so
+  if (typeof returnValue != 'boolean') {
+    // Failed to send message to the in-content tab preview frame, so
     // now we fall back to the in-sidebar tab preview.
     return sendInSidebarTabPreviewMessage(message);
   }

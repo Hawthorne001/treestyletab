@@ -180,8 +180,8 @@ try{
     switch (message?.type) {
       case 'treestyletab:update-tab-preview':
         if (!panel ||
-            (message.tabId &&
-             panel.dataset.tabId != message.tabId)) {
+            panel.dataset.tabId != message.tabId ||
+            panel.classList.contains('hidden')) {
           return;
         }
       case 'treestyletab:show-tab-preview':
