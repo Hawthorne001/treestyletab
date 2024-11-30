@@ -234,22 +234,22 @@ try{
          message?.tabId != tabId))
       return;
 
-    //console.log('ON MESSAGE IN IFRAME ', lastTimestamp, message);
-    /*
-    const pre = document.createElement('pre');
-    pre.textContent = JSON.stringify(message);
-    document.body.appendChild(pre);
-    */
+    if (message?.logging)
+      console.log('on message: ', message);
 
     switch (message?.type) {
       case 'treestyletab:update-tab-preview':
         if (!panel ||
             panel.dataset.tabId != message.previewTabId ||
             !panel.classList.contains('open')) {
+          if (message?.logging)
+            console.log(' => already hidden, give up to update preview');
           return;
         }
       case 'treestyletab:show-tab-preview':
         if (message.timestamp < lastTimestamp) {
+          if (message?.logging)
+            console.log(' => expired, give up to show/update preview');
           return Promise.resolve(true);
         }
         lastTimestamp = message.timestamp;
@@ -265,10 +265,14 @@ try{
         if (!panel ||
             (message.previewTabId &&
              panel.dataset.tabId != message.previewTabId)) {
+          if (message?.logging)
+            console.log(' => already hidden, nothing to do');
           return;
         }
 
         if (message.timestamp < lastTimestamp) {
+          if (message?.logging)
+            console.log(' => expired, give up to hide preview');
           return Promise.resolve(true);
         }
         lastTimestamp = message.timestamp;
@@ -288,6 +292,8 @@ try{
           document.documentElement.style.pointerEvents = '';
           document.documentElement.classList.remove('tab-preview-frame');
         }
+        if (message?.logging)
+          console.log(' => now I am loaded in the tab ${tabId}');
         break;
 
       // for TAB case
@@ -330,12 +336,15 @@ function createPanel() {
   return panel;
 }
 
-function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previewURL, tabRect, offsetTop, align, scale } = {}) {
+function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previewURL, tabRect, offsetTop, align, scale, logging } = {}) {
   if (!panel)
     return;
 
   if (previewURL)
     hasPreview = true;
+
+  if (logging)
+    console.log('updatePanel ', { previewTabId, title, url, tooltipHtml, hasPreview, previewURL, tabRect, offsetTop, align, scale });
 
   panel.classList.add('updating');
 
@@ -391,6 +400,8 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
 
     if (!tabRect) {
       panel.classList.remove('updating');
+      if (logging)
+        console.log('updatePanel/completeUpdate: no tab rect, no need to update the position');
       return;
     }
 
@@ -407,6 +418,9 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
 
       panel.style.left  = 'var(--panel-shadow-margin)';
       panel.style.right = 'var(--panel-shadow-margin)';
+
+      if (logging)
+        console.log('updatePanel/completeUpdate: in-sidebar, top=', panel.style.top);
     }
     else { // in-content
       // We need to shift the position with the height of the sidebar header.
@@ -429,6 +443,9 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
         panel.style.left  = '';
         panel.style.right = 'var(--panel-shadow-margin)';
       }
+
+      if (logging)
+        console.log('updatePanel/completeUpdate: in-content, top=', panel.style.top);
     }
 
     panel.classList.remove('updating');
@@ -443,6 +460,8 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
     const { width, height } = previewURL ?
       getPngDimensionsFromDataUri(previewURL) :
       { width: BASE_PANEL_WIDTH, height: BASE_PANEL_HEIGHT };
+    if (logging)
+      console.log('updatePanel: determined preview size: ', { width, height });
     const imageWidth = Math.min(window.innerWidth, Math.min(width, BASE_PANEL_WIDTH) / scale);
     const imageHeight = imageWidth / width * height;
     previewImage.style.width = previewImage.style.maxWidth = `min(100%, ${imageWidth}px)`;

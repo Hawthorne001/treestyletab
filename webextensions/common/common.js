@@ -582,6 +582,7 @@ export const configs = new Configs({
     'sidebar/size': false,
     'sidebar/subpanel': false,
     'sidebar/tab-context-menu': false,
+    'sidebar/tab-preview-tooltip': false,
     'sidebar/tst-api-frontend': false,
   },
   loggingConnectionMessages: false,
