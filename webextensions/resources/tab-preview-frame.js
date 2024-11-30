@@ -407,8 +407,18 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
       return;
     }
 
+    const panelBox = panel.getBoundingClientRect();
+    if (!panelBox.width &&
+        !panelBox.height &&
+        completeUpdate.retryCount++ < 10) {
+      if (logging)
+        console.log('updatePanel/completeUpdate: panel size is zero, retrying ', completeUpdate.retryCount);
+      window.requestAnimationFrame(completeUpdate);
+      return;
+    }
+
     const maxY = window.innerHeight / scale;
-    const panelHeight = panel.getBoundingClientRect().height;
+    const panelHeight = panelBox.height;
 
     if (windowId) { // in-sidebar
       if (logging)
@@ -461,6 +471,7 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
 
     panel.classList.remove('updating');
   };
+  completeUpdate.retryCount = 0;
 
   if (!hasPreview) {
     completeUpdate();
