@@ -358,7 +358,10 @@ async function onTabSubstanceEnter(event) {
     false :
     window.mozInnerScreenX - window.screenX > (window.outerWidth - window.innerWidth) / 2;
 
-  const hasCustomTooltip = tooltipText != event.target.tab.$TST.defaultTooltipText;
+  const hasCustomTooltip = (
+    tooltipText !== null &&
+    tooltipText != event.target.tab.$TST.defaultTooltipText
+  );
   const hasPreview = (
     !active &&
     !event.target.tab.discarded &&

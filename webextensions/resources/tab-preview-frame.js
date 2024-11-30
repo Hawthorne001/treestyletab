@@ -354,24 +354,20 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
 
   panel.dataset.tabId = previewTabId;
 
-  if (typeof tooltipHtml == 'string') {
+  if (tooltipHtml) {
     const extendedContent = panel.querySelector('.tab-preview-extended-content');
     extendedContent.innerHTML = tooltipHtml;
     panel.classList.add('extended');
   }
-  else {
-    panel.classList.remove('extended');
-  }
 
-  if (typeof title == 'string') {
+  if (typeof title == 'string' ||
+      typeof url == 'string') {
     const titleElement = panel.querySelector('.tab-preview-title');
     titleElement.textContent = title;
-  }
-
-  if (typeof url == 'string') {
     const urlElement = panel.querySelector('.tab-preview-url');
     urlElement.textContent = url;
     urlElement.classList.toggle('blank', !url);
+    panel.classList.remove('extended');
   }
 
   const previewImage = panel.querySelector('.tab-preview-image');

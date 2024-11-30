@@ -407,7 +407,6 @@ windowId = ${tab.windowId}
       return;
     }
 
-
     this.tooltip                = this.$TST.generateTooltipText();
     this.tooltipWithDescendants = this.$TST.generateTooltipTextWithDescendants();
     this.tooltipHtml            = this.$TST.generateTooltipHtml();
