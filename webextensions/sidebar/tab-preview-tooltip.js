@@ -384,7 +384,6 @@ async function onTabSubstanceEnter(event) {
     scale: 1 / window.devicePixelRatio,
     ...(hasCustomTooltip ?
       {
-        tooltipText,
         tooltipHtml,
       } :
       {
