@@ -412,7 +412,7 @@ async function onTabSubstanceEnter(event) {
     !hasCustomTooltip
   );
 
-  log(`onTabSubstanceEnter(${event.target.tab.id}}) first try: show tab preview in ${targetTabId || 'sidebar'} `, { hasCustomTooltip, hasPreview });
+  log(`onTabSubstanceEnter(${event.target.tab.id}}) first try: show tab preview in ${targetTabId || 'sidebar'} `, { hasCustomTooltip, tooltipText, hasPreview });
   let succeeded = await sendTabPreviewMessage(targetTabId, {
     type: 'treestyletab:show-tab-preview',
     previewTabId: event.target.tab.id,

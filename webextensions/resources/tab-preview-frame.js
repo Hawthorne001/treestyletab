@@ -359,6 +359,8 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
 
   if (tabRect) {
     panel.style.maxHeight = `${window.innerHeight - Math.min(window.innerHeight - tabRect.bottom, tabRect.top)}px`;
+    if (logging)
+      console.log('updatePanel: limit panel height to ', panel.style.maxHeight, ', tabRect = ', tabRect, ', max height = ', window.innerHeight);
   }
 
   panel.dataset.tabId = previewTabId;
