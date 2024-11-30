@@ -135,6 +135,13 @@ try{
       opacity: 1;
     }
 
+    .tab-preview-panel.extended .tab-preview-title,
+    .tab-preview-panel.extended .tab-preview-url,
+    .tab-preview-panel.extended .tab-preview-image-container,
+    .tab-preview-panel:not(.extended) .tab-preview-tooltip-text {
+      display: none;
+    }
+
     .tab-preview-title {
       font-size: calc(1em / var(--scale));
       font-weight: bold;
@@ -161,7 +168,7 @@ try{
       white-space: pre;
     }
 
-    .tab-preview-image-wrapper {
+    .tab-preview-image-container {
       border-top: calc(1px / var(--scale)) solid var(--panel-border-color);
       margin-top: 0.25em;
       max-height: calc(var(--panel-width) * ${BASE_PANEL_HEIGHT / BASE_PANEL_WIDTH}); /* use relative value instead of 140px */
@@ -312,9 +319,9 @@ function createPanel() {
   url.setAttribute('class', 'tab-preview-url');
   const tooltipText = panel.appendChild(document.createElement('div'));
   tooltipText.setAttribute('class', 'tab-preview-tooltip-text');
-  const previewWrapper = panel.appendChild(document.createElement('div'));
-  previewWrapper.setAttribute('class', 'tab-preview-image-wrapper');
-  const preview = previewWrapper.appendChild(document.createElement('img'));
+  const previewContainer = panel.appendChild(document.createElement('div'));
+  previewContainer.setAttribute('class', 'tab-preview-image-container');
+  const preview = previewContainer.appendChild(document.createElement('img'));
   preview.setAttribute('class', 'tab-preview-image');
   preview.addEventListener('load', () => {
     if (preview.src)
@@ -347,34 +354,22 @@ function updatePanel({ previewTabId, title, url, tooltipText, tooltipHtml, hasPr
 
   panel.dataset.tabId = previewTabId;
 
-  const titleElement = panel.querySelector('.tab-preview-title');
-  const urlElement = panel.querySelector('.tab-preview-url');
-  const tooltipTextElement = panel.querySelector('.tab-preview-tooltip-text');
   if (typeof tooltipHtml == 'string') {
-    if (typeof title == 'string' &&
-        tooltipText != title) {
-      titleElement.classList.add('hidden');
-      urlElement.classList.add('hidden');
-      tooltipTextElement.innerHTML = tooltipHtml;
-      tooltipTextElement.classList.remove('hidden');
-      panel.classList.add('extended');
-    }
-    else {
-      tooltipTextElement.classList.add('hidden');
-      titleElement.textContent = title;
-      titleElement.classList.remove('hidden');
-      urlElement.classList.remove('hidden');
-      panel.classList.remove('extended');
-    }
-  } else if (typeof title == 'string') {
-    tooltipTextElement.classList.add('hidden');
-    titleElement.textContent = title;
-    titleElement.classList.remove('hidden');
-    urlElement.classList.remove('hidden');
+    const tooltipTextElement = panel.querySelector('.tab-preview-tooltip-text');
+    tooltipTextElement.innerHTML = tooltipHtml;
+    panel.classList.add('extended');
+  }
+  else {
     panel.classList.remove('extended');
   }
 
+  if (typeof title == 'string') {
+    const titleElement = panel.querySelector('.tab-preview-title');
+    titleElement.textContent = title;
+  }
+
   if (typeof url == 'string') {
+    const urlElement = panel.querySelector('.tab-preview-url');
     urlElement.textContent = url;
     urlElement.classList.toggle('blank', !url);
   }
