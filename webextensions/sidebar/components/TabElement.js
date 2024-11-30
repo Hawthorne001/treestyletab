@@ -392,8 +392,9 @@ export class TabElement extends HTMLElement {
     if (!tabElement)
       return;
 
+    let debugTooltip;
     if (configs.debug) {
-      this.tooltip = `
+      debugTooltip = `
 ${tab.title}
 #${tab.id}
 (${tabElement.className})
@@ -403,8 +404,12 @@ restored = <${!!this.$TST.uniqueId.restored}>
 tabId = ${tab.id}
 windowId = ${tab.windowId}
 `.trim();
-      this.$TST.setAttribute('title', this.tooltip);
-      return;
+      this.$TST.setAttribute('title', debugTooltip);
+      if (!configs.tabPreviewTooltip) {
+        this.tooltip = debugTooltip;
+        this.tooltipHtml = `<pre>${sanitizeForHTMLText(debugTooltip)}</pre>`;
+        return;
+      }
     }
 
     this.tooltip                = this.$TST.generateTooltipText();
@@ -412,9 +417,11 @@ windowId = ${tab.windowId}
     this.tooltipHtml            = this.$TST.generateTooltipHtml();
     this.tooltipHtmlWithDescendants = this.$TST.generateTooltipHtmlWithDescendants();
 
-    const tooltipText = configs.tabPreviewTooltip ?
-      null :
-      this.appliedTooltipText;
+    const tooltipText = configs.debug ?
+      debugTooltip :
+      configs.tabPreviewTooltip ?
+        null :
+        this.appliedTooltipText;
     if (typeof tooltipText == 'string')
       this.$TST.setAttribute('title', tooltipText);
     else
