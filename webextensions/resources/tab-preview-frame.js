@@ -118,12 +118,13 @@ try{
       color: var(--panel-color);
       font: Message-Box;
       left: auto;
+      line-height: 1.5;
       margin-top: 0;
       max-width: var(--panel-width);
       min-width: var(--panel-width);
       opacity: 0;
       overflow: hidden; /* clip the preview with the rounded edges */
-      padding: var(--panel-border-radius) 0 0;
+      padding: 0;
       position: fixed;
       right: auto;
       transition: var(--show-hide-animation);
@@ -145,8 +146,7 @@ try{
     .tab-preview-title {
       font-size: calc(1em / var(--scale));
       font-weight: bold;
-      line-height: 1.5; /* -webkit-line-clamp looks unavailable, so this is a workaround */
-      margin: 0 var(--panel-border-radius);
+      margin: var(--panel-border-radius) var(--panel-border-radius) 0;
       max-height: 3em; /* -webkit-line-clamp looks unavailable, so this is a workaround */
       overflow: hidden;
       /* text-overflow: ellipsis; */
@@ -164,7 +164,7 @@ try{
 
     .tab-preview-extended-content {
       font-size: calc(1em / var(--scale));
-      margin: 0 var(--panel-border-radius);
+      margin: var(--panel-border-radius);
       white-space: pre;
     }
 
