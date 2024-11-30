@@ -76,12 +76,12 @@
     padding: 0 1em 0 0;
   }
 
-  ul {
+  #tabs ul {
     margin: 0 0 0 20px;
     padding: 0;
   }
 
-  li {
+  #tabs li {
     display: flex;
     flex-direction: row;
     flex-grow: 1;
@@ -91,16 +91,16 @@
     white-space: pre;
   }
 
-  li ul {
+  #tabs li ul {
     width: 100%;
   }
 
-  li img,
-  li.use-default-favicon .default-favicon,
-  li.favicon-loading .default-favicon,
-  li .closebox,
-  li .closebox::before,
-  li .closebox::after {
+  #tabs li img,
+  #tabs li.use-default-favicon .default-favicon,
+  #tabs li.favicon-loading .default-favicon,
+  #tabs li .closebox,
+  #tabs li .closebox::before,
+  #tabs li .closebox::after {
     height: var(--favicon-size);
     max-width: var(--favicon-size);
     max-height: var(--favicon-size);
@@ -108,20 +108,20 @@
     width: var(--favicon-size);
   }
 
-  li.use-default-favicon img,
-  li.favicon-loading img {
+  #tabs li.use-default-favicon img,
+  #tabs li.favicon-loading img {
     display: none;
   }
 
-  li.use-default-favicon .default-favicon,
-  li.favicon-loading .default-favicon {
+  #tabs li.use-default-favicon .default-favicon,
+  #tabs li.favicon-loading .default-favicon {
     background: var(--text-color);
     break-inside: avoid; /* This is required to avoid unexpected slicing. See also: https://github.com/piroor/treestyletab/issues/3361 */
     display: inline-block;
     mask: url("./icons/defaultFavicon.svg") no-repeat center / 100%;
   }
 
-  li.use-default-favicon.group-tab .default-favicon {
+  #tabs li.use-default-favicon.group-tab .default-favicon {
     mask-image: url("./icons/folder.svg");
   }
 
@@ -130,7 +130,7 @@
     opacity: 0;
   }
 
-  li:hover > .closebox {
+  #tabs li:hover > .closebox {
     opacity: 1;
   }
 
