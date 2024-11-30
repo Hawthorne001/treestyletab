@@ -411,18 +411,24 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
     const panelHeight = panel.getBoundingClientRect().height;
 
     if (windowId) { // in-sidebar
+      if (logging)
+        console.log('updatePanel/completeUpdate: in-sidebar, alignment calculating: ', { half: window.innerHeight, maxY, scale, tabRect });
       if (tabRect.top > (window.innerHeight / 2)) { // align to bottom edge of the tab
         panel.style.top = `${Math.min(maxY, tabRect.bottom / scale) - panelHeight - tabRect.height}px`;
+        if (logging)
+          console.log(' => align to bottom edge of the tab, top=', panel.style.top);
       }
       else { // align to top edge of the tab
         panel.style.top = `${Math.max(0, tabRect.top / scale) + tabRect.height}px`;
+        if (logging)
+          console.log(' => align to top edge of the tab, top=', panel.style.top);
       }
 
       panel.style.left  = 'var(--panel-shadow-margin)';
       panel.style.right = 'var(--panel-shadow-margin)';
 
       if (logging)
-        console.log('updatePanel/completeUpdate: in-sidebar, top=', panel.style.top);
+        console.log(' => top=', panel.style.top);
     }
     else { // in-content
       // We need to shift the position with the height of the sidebar header.
@@ -430,11 +436,17 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
       const sidebarContentsOffset = (offsetTop - offsetFromWindowEdge) / scale;
       const alignToTopPosition = Math.max(0, tabRect.top / scale) + sidebarContentsOffset;
 
+      if (logging)
+        console.log('updatePanel/completeUpdate: in-content, alignment calculating: ', { offsetFromWindowEdge, sidebarContentsOffset, alignToTopPosition, panelHeight, maxY, scale });
       if (alignToTopPosition + panelHeight >= maxY) { // align to bottom edge of the tab
         panel.style.top = `${Math.min(maxY, tabRect.bottom / scale) - panelHeight + sidebarContentsOffset}px`;
+        if (logging)
+          console.log(' => align to bottom edge of the tab, top=', panel.style.top);
       }
       else { // align to top edge of the tab
         panel.style.top = `${alignToTopPosition}px`;
+        if (logging)
+          console.log(' => align to top edge of the tab, top=', panel.style.top);
       }
 
       if (align == 'left') {
@@ -445,9 +457,6 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
         panel.style.left  = '';
         panel.style.right = 'var(--panel-shadow-margin)';
       }
-
-      if (logging)
-        console.log('updatePanel/completeUpdate: in-content, top=', panel.style.top);
     }
 
     panel.classList.remove('updating');
