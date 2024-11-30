@@ -358,11 +358,12 @@ async function onTabSubstanceEnter(event) {
     false :
     window.mozInnerScreenX - window.screenX > (window.outerWidth - window.innerWidth) / 2;
 
+  const hasCustomTooltip = tooltipText != event.target.tab.$TST.defaultTooltipText;
   const hasPreview = (
     !active &&
     !event.target.tab.discarded &&
     CAPTURABLE_URLS_MATCHER.test(event.target.tab.url) &&
-    tooltipText == event.target.tab.$TST.defaultTooltipText
+    !hasCustomTooltip
   );
 
   let succeeded = await sendTabPreviewMessage(targetTabId, {
@@ -381,11 +382,16 @@ async function onTabSubstanceEnter(event) {
     offsetLeft: window.mozInnerScreenX - window.screenX,
     align: mayBeRight ? 'right' : 'left',
     scale: 1 / window.devicePixelRatio,
-    active,
-    title: event.target.tab.title,
-    url,
-    tooltipText,
-    tooltipHtml,
+    ...(hasCustomTooltip ?
+      {
+        tooltipText,
+        tooltipHtml,
+      } :
+      {
+        title: event.target.tab.title,
+        url,
+      }
+    ),
     hasPreview,
     timestamp: startAt, // Don't call Date.now() here, because it can become larger than the timestamp on mouseleave.
     canRetry: !!targetTabId,
