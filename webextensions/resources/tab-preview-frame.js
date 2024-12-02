@@ -336,7 +336,7 @@ function createPanel() {
   return panel;
 }
 
-function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previewURL, tabRect, offsetTop, align, scale, logging } = {}) {
+function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, scale, logging } = {}) {
   if (!panel)
     return;
 
@@ -345,7 +345,7 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
     hasPreview = true;
 
   if (logging)
-    console.log('updatePanel ', { previewTabId, title, url, tooltipHtml, hasPreview, previewURL, tabRect, offsetTop, align, scale });
+    console.log('updatePanel ', { previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, scale });
 
   panel.classList.add('updating');
 
@@ -358,10 +358,10 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   document.documentElement.style.setProperty('--scale', scale);
   panel.style.setProperty('--panel-width', `${Math.min(window.innerWidth, BASE_PANEL_WIDTH / scale)}px`);
 
-  if (tabRect) {
-    panel.style.maxHeight = `${window.innerHeight - Math.min(window.innerHeight - tabRect.bottom, tabRect.top)}px`;
+  if (previewTabRect) {
+    panel.style.maxHeight = `${window.innerHeight - Math.min(window.innerHeight - previewTabRect.bottom, previewTabRect.top)}px`;
     if (logging)
-      console.log('updatePanel: limit panel height to ', panel.style.maxHeight, ', tabRect = ', tabRect, ', max height = ', window.innerHeight);
+      console.log('updatePanel: limit panel height to ', panel.style.maxHeight, ', previewTabRect = ', previewTabRect, ', max height = ', window.innerHeight);
   }
 
   panel.dataset.tabId = previewTabId;
@@ -402,7 +402,7 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
         updatePanel.lastStartedAt != startAt)
       return;
 
-    if (!tabRect) {
+    if (!previewTabRect) {
       panel.classList.remove('updating');
       if (logging)
         console.log('updatePanel/completeUpdate: no tab rect, no need to update the position');
@@ -424,14 +424,14 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
 
     if (windowId) { // in-sidebar
       if (logging)
-        console.log('updatePanel/completeUpdate: in-sidebar, alignment calculating: ', { half: window.innerHeight, maxY, scale, tabRect });
-      if (tabRect.top > (window.innerHeight / 2)) { // align to bottom edge of the tab
-        panel.style.top = `${Math.min(maxY, tabRect.bottom / scale) - panelHeight - tabRect.height}px`;
+        console.log('updatePanel/completeUpdate: in-sidebar, alignment calculating: ', { half: window.innerHeight, maxY, scale, previewTabRect });
+      if (previewTabRect.top > (window.innerHeight / 2)) { // align to bottom edge of the tab
+        panel.style.top = `${Math.min(maxY, previewTabRect.bottom / scale) - panelHeight - previewTabRect.height}px`;
         if (logging)
           console.log(' => align to bottom edge of the tab, top=', panel.style.top);
       }
       else { // align to top edge of the tab
-        panel.style.top = `${Math.max(0, tabRect.top / scale) + tabRect.height}px`;
+        panel.style.top = `${Math.max(0, previewTabRect.top / scale) + previewTabRect.height}px`;
         if (logging)
           console.log(' => align to top edge of the tab, top=', panel.style.top);
       }
@@ -446,12 +446,12 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
       // We need to shift the position with the height of the sidebar header.
       const offsetFromWindowEdge = (window.mozInnerScreenY - window.screenY) * scale;
       const sidebarContentsOffset = (offsetTop - offsetFromWindowEdge) / scale;
-      const alignToTopPosition = Math.max(0, tabRect.top / scale) + sidebarContentsOffset;
+      const alignToTopPosition = Math.max(0, previewTabRect.top / scale) + sidebarContentsOffset;
 
       if (logging)
         console.log('updatePanel/completeUpdate: in-content, alignment calculating: ', { offsetFromWindowEdge, sidebarContentsOffset, alignToTopPosition, panelHeight, maxY, scale });
       if (alignToTopPosition + panelHeight >= maxY) { // align to bottom edge of the tab
-        panel.style.top = `${Math.min(maxY, tabRect.bottom / scale) - panelHeight + sidebarContentsOffset}px`;
+        panel.style.top = `${Math.min(maxY, previewTabRect.bottom / scale) - panelHeight + sidebarContentsOffset}px`;
         if (logging)
           console.log(' => align to bottom edge of the tab, top=', panel.style.top);
       }

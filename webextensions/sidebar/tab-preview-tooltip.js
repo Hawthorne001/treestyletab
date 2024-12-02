@@ -386,7 +386,15 @@ async function onTabSubstanceEnter(event) {
     activeTab.id :
     null;
 
-  const tabRect = event.target.tab.$TST.element?.substanceElement?.getBoundingClientRect();
+  const previewTabRawRect = event.target.tab.$TST.element?.substanceElement?.getBoundingClientRect();
+  const previewTabRect = {
+    bottom: previewTabRawRect?.bottom || 0,
+    height: previewTabRawRect?.height || 0,
+    left:   previewTabRawRect?.left || 0,
+    right:  previewTabRawRect?.right || 0,
+    top:    previewTabRawRect?.top || 0,
+    width:  previewTabRawRect?.width || 0,
+  };
   const active = event.target.tab.id == activeTab.id;
   const url = PREVIEW_WITH_HOST_URLS_MATCHER.test(event.target.tab.url) ? new URL(event.target.tab.url).host :
     PREVIEW_WITH_TITLE_URLS_MATCHER.test(event.target.tab.url) ? null :
@@ -416,14 +424,7 @@ async function onTabSubstanceEnter(event) {
   let succeeded = await sendTabPreviewMessage(targetTabId, {
     type: 'treestyletab:show-tab-preview',
     previewTabId: event.target.tab.id,
-    tabRect: {
-      bottom: tabRect?.bottom || 0,
-      height: tabRect?.height || 0,
-      left:   tabRect?.left || 0,
-      right:  tabRect?.right || 0,
-      top:    tabRect?.top || 0,
-      width:  tabRect?.width || 0,
-    },
+    previewTabRect,
     /* These information is used to calculate offset of the sidebar header */
     offsetTop: window.mozInnerScreenY - window.screenY,
     offsetLeft: window.mozInnerScreenX - window.screenX,
@@ -460,6 +461,7 @@ async function onTabSubstanceEnter(event) {
     succeeded = await sendTabPreviewMessage(targetTabId, {
       type: 'treestyletab:update-tab-preview',
       previewTabId: event.target.tab.id,
+      previewTabRect,
       previewURL,
       timestamp: Date.now(),
     }).catch(_error => {});
