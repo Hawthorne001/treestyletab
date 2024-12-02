@@ -340,6 +340,7 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   if (!panel)
     return;
 
+  const startAt = updatePanel.lastStartedAt = Date.now();
   if (previewURL)
     hasPreview = true;
 
@@ -397,7 +398,8 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   }
 
   const completeUpdate = () => {
-    if (panel.dataset.tabId != previewTabId)
+    if (panel.dataset.tabId != previewTabId ||
+        updatePanel.lastStartedAt != startAt)
       return;
 
     if (!tabRect) {
