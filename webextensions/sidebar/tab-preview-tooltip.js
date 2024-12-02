@@ -68,6 +68,7 @@
 
 import {
   configs,
+  shouldApplyAnimation,
   log as internalLogger,
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
@@ -295,6 +296,7 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
       tabId,
       timestamp: Date.now(),
       ...message,
+      animation: shouldApplyAnimation(),
       logging: configs.logFor['sidebar/tab-preview-tooltip'] && configs.debug,
     }, frameId ? { frameId } : {});
     log(`sendTabPreviewMessage(${message.type}${retrying ? ', retrying' : ''}): message was sent to the frame, returnValue=`, returnValue);
@@ -358,6 +360,7 @@ async function sendInSidebarTabPreviewMessage(message) {
     ...message,
     timestamp: Date.now(),
     windowId: TabsStore.getCurrentWindowId(),
+    animation: shouldApplyAnimation(),
     logging: configs.logFor['sidebar/tab-preview-tooltip'] && configs.debug,
   });
   return true;

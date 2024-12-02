@@ -127,13 +127,25 @@ try{
       padding: 0;
       position: fixed;
       right: auto;
-      transition: var(--show-hide-animation);
+    }
+    .tab-preview-panel.animation {
+      transition: var(--show-hide-animation),
+                  left 0.1s ease-out,
+                  right 0.1s ease-out;
     }
     .tab-preview-panel.extended {
       max-width: min(100%, calc(var(--panel-width) * 2));
     }
     .tab-preview-panel.open {
       opacity: 1;
+    }
+    .tab-preview-panel[data-align="left"].updating,
+    .tab-preview-panel[data-align="left"]:not(.open) {
+      left: -1ch !important;
+    }
+    .tab-preview-panel[data-align="right"].updating,
+    .tab-preview-panel[data-align="right"]:not(.open) {
+      right: -1ch !important;
     }
 
     .tab-preview-panel.extended .tab-preview-title,
@@ -178,10 +190,9 @@ try{
     .tab-preview-image {
       max-width: 100%;
       opacity: 1;
-      transition: opacity 0.2s ease-out;
     }
-    .tab-preview-panel.updating .tab-preview-image {
-      transition: none;
+    .tab-preview-panel.animation:not(.updating) .tab-preview-image {
+      transition: opacity 0.2s ease-out;
     }
 
     .blank,
@@ -336,7 +347,7 @@ function createPanel() {
   return panel;
 }
 
-function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, scale, logging } = {}) {
+function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, scale, logging, animation } = {}) {
   if (!panel)
     return;
 
@@ -347,7 +358,10 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   if (logging)
     console.log('updatePanel ', { previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, scale });
 
-  panel.classList.add('updating');
+  if (!previewURL) // when just updating, we don't need to hide the panel
+    panel.classList.add('updating');
+
+  panel.classList.toggle('animation', animation);
 
   // This cancels the zoom effect by the user.
   // We need to calculate the scale with two devicePixelRatio values
@@ -356,7 +370,8 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   // platform.
   scale = window.devicePixelRatio * (scale || 1);
   document.documentElement.style.setProperty('--scale', scale);
-  panel.style.setProperty('--panel-width', `${Math.min(window.innerWidth, BASE_PANEL_WIDTH / scale)}px`);
+  const panelWidth = Math.min(window.innerWidth, BASE_PANEL_WIDTH / scale);
+  panel.style.setProperty('--panel-width', `${panelWidth}px`);
 
   if (previewTabRect) {
     panel.style.maxHeight = `${window.innerHeight - Math.min(window.innerHeight - previewTabRect.bottom, previewTabRect.top)}px`;
@@ -365,6 +380,8 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   }
 
   panel.dataset.tabId = previewTabId;
+  if (align)
+    panel.dataset.align = align;
 
   if (tooltipHtml) {
     const extendedContent = panel.querySelector('.tab-preview-extended-content');
@@ -410,8 +427,7 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
     }
 
     const panelBox = panel.getBoundingClientRect();
-    if (!panelBox.width &&
-        !panelBox.height &&
+    if (!panelBox.height &&
         completeUpdate.retryCount++ < 10) {
       if (logging)
         console.log('updatePanel/completeUpdate: panel size is zero, retrying ', completeUpdate.retryCount);
@@ -436,9 +452,6 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
           console.log(' => align to top edge of the tab, top=', panel.style.top);
       }
 
-      panel.style.left  = 'var(--panel-shadow-margin)';
-      panel.style.right = 'var(--panel-shadow-margin)';
-
       if (logging)
         console.log(' => top=', panel.style.top);
     }
@@ -460,15 +473,14 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
         if (logging)
           console.log(' => align to top edge of the tab, top=', panel.style.top);
       }
-
-      if (align == 'left') {
-        panel.style.left  = 'var(--panel-shadow-margin)';
-        panel.style.right = '';
-      }
-      else {
-        panel.style.left  = '';
-        panel.style.right = 'var(--panel-shadow-margin)';
-      }
+    }
+    if (align == 'left') {
+      panel.style.left  = 'var(--panel-shadow-margin)';
+      panel.style.right = '';
+    }
+    else {
+      panel.style.left  = '';
+      panel.style.right = 'var(--panel-shadow-margin)';
     }
 
     panel.classList.remove('updating');
