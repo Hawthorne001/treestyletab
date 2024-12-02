@@ -505,6 +505,9 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
 }
 
 function getPngDimensionsFromDataUri(uri) {
+  if (!/^data:image\/png;base64,/i.test(uri))
+    throw new Error('impossible to parse as PNG image data');
+
   const base64Data = uri.split(',')[1];
   const binaryData = atob(base64Data);
   const byteArray = new Uint8Array(binaryData.length);
@@ -515,7 +518,7 @@ function getPngDimensionsFromDataUri(uri) {
   const pngSignature = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
   for (let i = 0; i < pngSignature.length; i++) {
     if (byteArray[i] !== pngSignature[i])
-      throw new Error('invalid data');
+      throw new Error('invalid PNG header');
   }
   const width =
     (byteArray[16] << 24) |
