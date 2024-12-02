@@ -419,10 +419,7 @@ async function onTabSubstanceEnter(event) {
     CAPTURABLE_URLS_MATCHER.test(event.target.tab.url) &&
     !hasCustomTooltip
   );
-
-  log(`onTabSubstanceEnter(${event.target.tab.id}}) first try: show tab preview in ${targetTabId || 'sidebar'} `, { hasCustomTooltip, tooltipText, hasPreview });
-  let succeeded = await sendTabPreviewMessage(targetTabId, {
-    type: 'treestyletab:show-tab-preview',
+  const previewParams = {
     previewTabId: event.target.tab.id,
     previewTabRect,
     /* These information is used to calculate offset of the sidebar header */
@@ -430,6 +427,12 @@ async function onTabSubstanceEnter(event) {
     offsetLeft: window.mozInnerScreenX - window.screenX,
     align: mayBeRight ? 'right' : 'left',
     scale: 1 / window.devicePixelRatio,
+  };
+
+  log(`onTabSubstanceEnter(${event.target.tab.id}}) first try: show tab preview in ${targetTabId || 'sidebar'} `, { hasCustomTooltip, tooltipText, hasPreview });
+  let succeeded = await sendTabPreviewMessage(targetTabId, {
+    type: 'treestyletab:show-tab-preview',
+    ...previewParams,
     ...(hasCustomTooltip ?
       {
         tooltipHtml,
@@ -460,8 +463,7 @@ async function onTabSubstanceEnter(event) {
     log(`onTabSubstanceEnter(${event.target.tab.id}}) second try: render preview image in ${targetTabId || 'sidebar'}`);
     succeeded = await sendTabPreviewMessage(targetTabId, {
       type: 'treestyletab:update-tab-preview',
-      previewTabId: event.target.tab.id,
-      previewTabRect,
+      ...previewParams,
       previewURL,
       timestamp: Date.now(),
     }).catch(_error => {});
