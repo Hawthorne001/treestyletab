@@ -115,6 +115,7 @@ try{
       border: var(--panel-border-color) solid calc(1px / var(--scale));
       border-radius: var(--panel-border-radius);
       box-shadow: var(--panel-shadow);
+      box-sizing: border-box;
       color: var(--panel-color);
       font: Message-Box;
       left: auto;
@@ -373,10 +374,13 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   const panelWidth = Math.min(window.innerWidth, BASE_PANEL_WIDTH / scale);
   panel.style.setProperty('--panel-width', `${panelWidth}px`);
 
+  const offsetFromWindowEdge = (window.mozInnerScreenY - window.screenY) * scale;
+  const sidebarContentsOffset = (offsetTop - offsetFromWindowEdge) / scale;
+
   if (previewTabRect) {
-    panel.style.maxHeight = `${window.innerHeight - Math.min(window.innerHeight - previewTabRect.bottom, previewTabRect.top)}px`;
+    panel.style.maxHeight = `${Math.max(window.innerHeight - previewTabRect.top - sidebarContentsOffset, previewTabRect.bottom)}px`;
     if (logging)
-      console.log('updatePanel: limit panel height to ', panel.style.maxHeight, ', previewTabRect = ', previewTabRect, ', max height = ', window.innerHeight);
+      console.log('updatePanel: limit panel height to ', panel.style.maxHeight, { previewTabRect, maxHeight: window.innerHeight, sidebarContentsOffset, offsetFromWindowEdge });
   }
 
   panel.dataset.tabId = previewTabId;
@@ -457,14 +461,14 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
     }
     else { // in-content
       // We need to shift the position with the height of the sidebar header.
-      const offsetFromWindowEdge = (window.mozInnerScreenY - window.screenY) * scale;
-      const sidebarContentsOffset = (offsetTop - offsetFromWindowEdge) / scale;
       const alignToTopPosition = Math.max(0, previewTabRect.top / scale) + sidebarContentsOffset;
+      const alignToBottomPosition = Math.min(maxY, previewTabRect.bottom / scale) - panelHeight + sidebarContentsOffset;
 
       if (logging)
         console.log('updatePanel/completeUpdate: in-content, alignment calculating: ', { offsetFromWindowEdge, sidebarContentsOffset, alignToTopPosition, panelHeight, maxY, scale });
-      if (alignToTopPosition + panelHeight >= maxY) { // align to bottom edge of the tab
-        panel.style.top = `${Math.min(maxY, previewTabRect.bottom / scale) - panelHeight + sidebarContentsOffset}px`;
+      if (alignToTopPosition + panelHeight >= maxY &&
+          alignToBottomPosition >= 0) { // align to bottom edge of the tab
+        panel.style.top = `${alignToBottomPosition}px`;
         if (logging)
           console.log(' => align to bottom edge of the tab, top=', panel.style.top);
       }
