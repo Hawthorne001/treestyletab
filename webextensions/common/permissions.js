@@ -148,6 +148,12 @@ export function bindToCheckbox(permissions, checkbox, options = {}) {
     const checkboxes = checkboxesForPermission.get(permissions);
     try {
       if (!checkbox.checked) {
+        const revoked = (
+          typeof options.canRevoke != 'function' ||
+          options.canRevoke()
+        );
+        if (!revoked)
+          return;
         await browser.permissions.remove(permissions).catch(ApiTabs.createErrorSuppressor());
         for (const checkbox of checkboxes) {
           checkbox.checked = false;

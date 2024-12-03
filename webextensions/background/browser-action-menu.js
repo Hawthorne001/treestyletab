@@ -129,7 +129,10 @@ const mItems = [
         title: browser.i18n.getMessage('config_tabPreviewTooltip_label'),
         key:   'tabPreviewTooltip',
         type:  'checkbox',
-        permissions: Permissions.ALL_URLS
+        permissions: Permissions.ALL_URLS,
+        get canRevoke() {
+          return !configs.tabPreviewTooltip && !configs.skipCollapsedTabsForTabSwitchingShortcuts;
+        },
       },
       {
         title: browser.i18n.getMessage('config_showCollapsedDescendantsByTooltip_label'),
@@ -1380,7 +1383,10 @@ const mItems = [
         title:       browser.i18n.getMessage('config_requestPermissions_allUrls_ctrlTabTracking'),
         key:         'skipCollapsedTabsForTabSwitchingShortcuts',
         type:        'checkbox',
-        permissions: Permissions.ALL_URLS
+        permissions: Permissions.ALL_URLS,
+        get canRevoke() {
+          return !configs.tabPreviewTooltip && !configs.skipCollapsedTabsForTabSwitchingShortcuts;
+        },
       },
       {
         dynamicTitle: true,
@@ -2367,6 +2373,8 @@ if (browser.action/* Manifest V2 */ || browser.browserAction/* Manifest V3 */) {
     }
     if (item.permissions) {
       if (item.checked) {
+        if (item.canRevoke === false)
+          return;
         browser.permissions.remove(item.permissions).catch(ApiTabs.createErrorSuppressor());
         if (item.key && !('value' in item))
           configs[item.key] = false;
