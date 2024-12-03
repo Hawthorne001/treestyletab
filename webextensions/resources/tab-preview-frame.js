@@ -375,8 +375,10 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
     return;
 
   const startAt = updatePanel.lastStartedAt = Date.now();
+
+  const hasLoadablePreviewURL = previewURL && /^((https?|moz-extension):|data:image\/[^,]+,.+)/.test(previewURL);
   if (previewURL)
-    hasPreview = true;
+    hasPreview = hasLoadablePreviewURL;
 
   if (logging)
     console.log('updatePanel ', { previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, scale });
@@ -430,21 +432,24 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   }
 
   const previewImage = panel.querySelector('.tab-preview-image');
-  if (!hasPreview) { // hide it first
+  if (!hasPreview && !hasLoadablePreviewURL) { // hide it first
     previewImage.classList.add('blank');
   }
   if (hasPreview == previewImage.classList.contains('blank')) { // mismatched state, let's start loading
     previewImage.classList.toggle('loading', hasPreview);
   }
-  previewURL = previewURL || 'data:image/png,';
-  if (previewURL != previewImage.src) {
-    previewImage.src = previewURL;
+  if (previewURL &&
+      previewURL != previewImage.src) {
+    previewImage.src = previewURL || 'data:image/png,';
   }
-  if (hasPreview) { // show it later
+  if (hasPreview && hasLoadablePreviewURL) { // show it later
     previewImage.classList.remove('blank');
   }
 
   const completeUpdate = () => {
+    previewImage.removeEventListener('load', completeUpdate);
+    previewImage.removeEventListener('error', completeUpdate);
+
     if (panel.dataset.tabId != previewTabId ||
         updatePanel.lastStartedAt != startAt)
       return;
@@ -523,6 +528,8 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   completeUpdate.retryCount = 0;
 
   if (!hasPreview) {
+    if (logging)
+      console.log('updatePanel: no preview, complete now');
     completeUpdate();
     return;
   }
@@ -540,20 +547,23 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
     window.requestAnimationFrame(completeUpdate);
     return;
   }
-  catch (_error) {
+  catch (error) {
+    if (logging)
+      console.log('updatePanel: could not detemine preview size ', error, previewURL);
   }
 
-  // failsafe: if it is not a png or failed to get dimensions, use image loader to determine the size.
+  // failsafe: if it is not a png or failed to get dimensions, give up to determine the image size before loading.
   previewImage.style.width =
     previewImage.style.height =
     previewImage.style.maxWidth =
     previewImage.style.maxHeight = '';
   previewImage.addEventListener('load', completeUpdate, { once: true });
+  previewImage.addEventListener('error', completeUpdate, { once: true });
 }
 
 function getPngDimensionsFromDataUri(uri) {
   if (!/^data:image\/png;base64,/i.test(uri))
-    throw new Error('impossible to parse as PNG image data');
+    throw new Error('impossible to parse as PNG image data ', uri);
 
   const base64Data = uri.split(',')[1];
   const binaryData = atob(base64Data);
