@@ -69,6 +69,7 @@
 import {
   configs,
   shouldApplyAnimation,
+  canInjectScript,
   log as internalLogger,
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
@@ -95,7 +96,6 @@ const TAB_PREVIEW_FRAME_STYLE = `
   z-index: ${Number.MAX_SAFE_INTEGER};
 `;
 
-const CUSTOM_PANEL_AVAILABLE_URLS_MATCHER = new RegExp(`^((https?|data):|moz-extension://${location.host}/)`);
 const DIRECT_PANEL_AVAILABLE_URLS_MATCHER = new RegExp(`^moz-extension://${location.host}/`);
 const CAPTURABLE_URLS_MATCHER         = /^(https?|data):/;
 const PREVIEW_WITH_HOST_URLS_MATCHER  = /^(https?|moz-extension):/;
@@ -209,8 +209,14 @@ function shouldMessageSend(message) {
 
 async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolver) {
   if (!tabId) { // in-sidebar mode
-    log(`sendTabPreviewMessage(${message.type}): no tab specified, fallback to in-sidebar preview`);
-    return sendInSidebarTabPreviewMessage(message);
+    if (configs.tabPreviewTooltipInSidebar) {
+      log(`sendTabPreviewMessage(${message.type}): no tab specified, fallback to in-sidebar preview`);
+      return sendInSidebarTabPreviewMessage(message);
+    }
+    else {
+      log(`sendTabPreviewMessage(${message.type}): no tab specified, cancel`);
+      return false;
+    }
   }
 
   const retrying = !!deferredReturnedValueResolver;
@@ -385,7 +391,7 @@ async function onTabSubstanceEnter(event) {
   const tooltipText = event.target.appliedTooltipText;
   const tooltipHtml = event.target.appliedTooltipHtml;
 
-  const targetTabId = CUSTOM_PANEL_AVAILABLE_URLS_MATCHER.test(activeTab.url) ?
+  const targetTabId = canInjectScript(activeTab) ?
     activeTab.id :
     null;
 
@@ -486,7 +492,7 @@ function onTabSubstanceLeave(event) {
   hoveringTabIds.delete(event.target.tab.id);
 
   const activeTab = Tab.getActiveTab(TabsStore.getCurrentWindowId());
-  const targetTabId = CUSTOM_PANEL_AVAILABLE_URLS_MATCHER.test(activeTab.url) ?
+  const targetTabId = canInjectScript(activeTab) ?
     activeTab.id :
     null;
 

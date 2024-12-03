@@ -6,6 +6,7 @@
 
 import {
   configs,
+  canInjectScript,
   sanitizeForHTMLText,
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
@@ -392,6 +393,12 @@ export class TabElement extends HTMLElement {
     if (!tabElement)
       return;
 
+    const useTabPreviewTooltip = (
+      configs.tabPreviewTooltip &&
+      (canInjectScript(Tab.getActiveTab(TabsStore.getCurrentWindowId())) ||
+       configs.tabPreviewTooltipInSidebar)
+    );
+
     let debugTooltip;
     if (configs.debug) {
       debugTooltip = `
@@ -405,7 +412,7 @@ tabId = ${tab.id}
 windowId = ${tab.windowId}
 `.trim();
       this.$TST.setAttribute('title', debugTooltip);
-      if (!configs.tabPreviewTooltip) {
+      if (!useTabPreviewTooltip) {
         this.tooltip = debugTooltip;
         this.tooltipHtml = `<pre>${sanitizeForHTMLText(debugTooltip)}</pre>`;
         return;
@@ -419,7 +426,7 @@ windowId = ${tab.windowId}
 
     const tooltipText = configs.debug ?
       debugTooltip :
-      configs.tabPreviewTooltip ?
+      useTabPreviewTooltip ?
         null :
         this.appliedTooltipText;
     if (typeof tooltipText == 'string')

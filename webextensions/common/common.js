@@ -172,6 +172,7 @@ export const configs = new Configs({
   longPressOnNewTabButton: Constants.kCONTEXTUAL_IDENTITY_SELECTOR,
   zoomable: false,
   tabPreviewTooltip: false,
+  tabPreviewTooltipInSidebar: true,
   showOverflowTitleByTooltip: true,
   showCollapsedDescendantsByTooltip: true,
 
@@ -708,6 +709,12 @@ export function shouldApplyAnimation(configOnly = false) {
   if (!configs.animation)
     return false;
   return configOnly || configs.animationForce || !shouldApplyAnimation.prefersReducedMotion.matches;
+}
+
+const CUSTOM_PANEL_AVAILABLE_URLS_MATCHER = new RegExp(`^((https?|data):|moz-extension://${location.host}/)`);
+
+export function canInjectScript(tab) {
+  return tab && CUSTOM_PANEL_AVAILABLE_URLS_MATCHER.test(tab.url);
 }
 
 
