@@ -37,6 +37,16 @@ export function isGranted(permissions) {
   }
 }
 
+const CUSTOM_PANEL_AVAILABLE_URLS_MATCHER = new RegExp(`^((https?|data):|moz-extension://${location.host}/)`);
+
+export async function canInjectScriptToTab(tab) {
+  if (!tab ||
+      !CUSTOM_PANEL_AVAILABLE_URLS_MATCHER.test(tab.url))
+    return false;
+
+  return isGranted(ALL_URLS);
+}
+
 
 const mRequests = new Map();
 

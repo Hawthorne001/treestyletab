@@ -69,10 +69,10 @@
 import {
   configs,
   shouldApplyAnimation,
-  canInjectScript,
   log as internalLogger,
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
+import * as Permissions from '/common/permissions.js';
 import * as TabsStore from '/common/tabs-store.js';
 import Tab from '/common/Tab.js';
 
@@ -375,6 +375,14 @@ async function sendInSidebarTabPreviewMessage(message) {
 async function onTabSubstanceEnter(event) {
   const startAt = Date.now();
   const activeTab = Tab.getActiveTab(TabsStore.getCurrentWindowId());
+
+  const [canRunScript, canInjectScriptToTab] = await Promise.all([
+    Permissions.isGranted(Permissions.ALL_URLS),
+    Permissions.canInjectScriptToTab(activeTab),
+  ]);
+  if (!canRunScript)
+    return;
+
   if (!configs.tabPreviewTooltip) {;
     sendTabPreviewMessage(activeTab.id, {
       type: 'treestyletab:hide-tab-preview',
@@ -390,8 +398,7 @@ async function onTabSubstanceEnter(event) {
   hoveringTabIds.add(event.target.tab.id);
   const tooltipText = event.target.appliedTooltipText;
   const tooltipHtml = event.target.appliedTooltipHtml;
-
-  const targetTabId = canInjectScript(activeTab) ?
+  const targetTabId = canInjectScriptToTab ?
     activeTab.id :
     null;
 
@@ -484,7 +491,7 @@ async function onTabSubstanceEnter(event) {
 }
 onTabSubstanceEnter = EventUtils.wrapWithErrorHandler(onTabSubstanceEnter);
 
-function onTabSubstanceLeave(event) {
+async function onTabSubstanceLeave(event) {
   const startAt = Date.now();
   if (!event.target.tab)
     return;
@@ -492,7 +499,7 @@ function onTabSubstanceLeave(event) {
   hoveringTabIds.delete(event.target.tab.id);
 
   const activeTab = Tab.getActiveTab(TabsStore.getCurrentWindowId());
-  const targetTabId = canInjectScript(activeTab) ?
+  const targetTabId = await Permissions.canInjectScriptToTab(activeTab) ?
     activeTab.id :
     null;
 

@@ -6,10 +6,10 @@
 
 import {
   configs,
-  canInjectScript,
   sanitizeForHTMLText,
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
+import * as Permissions from '/common/permissions.js';
 import * as TabsStore from '/common/tabs-store.js';
 import Tab from '/common/Tab.js';
 
@@ -384,7 +384,7 @@ export class TabElement extends HTMLElement {
     this._labelElement?.updateOverflow();
   }
 
-  _updateTooltip() {
+  async _updateTooltip() {
     if (!this.$TST) // called before binding on restoration from cache
       return;
 
@@ -393,9 +393,14 @@ export class TabElement extends HTMLElement {
     if (!tabElement)
       return;
 
+    const [canRunScript, canInjectScriptToTab] = await Promise.all([
+      Permissions.isGranted(Permissions.ALL_URLS),
+      Permissions.canInjectScriptToTab(Tab.getActiveTab(TabsStore.getCurrentWindowId())),
+    ]);
     const useTabPreviewTooltip = (
       configs.tabPreviewTooltip &&
-      (canInjectScript(Tab.getActiveTab(TabsStore.getCurrentWindowId())) ||
+      canRunScript &&
+      (canInjectScriptToTab ||
        configs.tabPreviewTooltipInSidebar)
     );
 

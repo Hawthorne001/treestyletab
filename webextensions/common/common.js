@@ -711,12 +711,6 @@ export function shouldApplyAnimation(configOnly = false) {
   return configOnly || configs.animationForce || !shouldApplyAnimation.prefersReducedMotion.matches;
 }
 
-const CUSTOM_PANEL_AVAILABLE_URLS_MATCHER = new RegExp(`^((https?|data):|moz-extension://${location.host}/)`);
-
-export function canInjectScript(tab) {
-  return tab && CUSTOM_PANEL_AVAILABLE_URLS_MATCHER.test(tab.url);
-}
-
 
 export function log(module, ...args)
 {
