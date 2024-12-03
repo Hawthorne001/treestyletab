@@ -134,7 +134,8 @@ try{
                   left 0.1s ease-out,
                   right 0.1s ease-out;
     }
-    .tab-preview-panel.extended {
+    .tab-preview-panel.extended,
+    .tab-preview-panel.extended .tab-preview-panel-contents {
       max-width: min(100%, calc(var(--panel-width) * 2));
     }
     .tab-preview-panel.open {
@@ -154,6 +155,20 @@ try{
     .tab-preview-panel.extended .tab-preview-image-container,
     .tab-preview-panel:not(.extended) .tab-preview-extended-content {
       display: none;
+    }
+
+    .tab-preview-panel-contents,
+    .tab-preview-panel-contents-inner-box {
+      max-width: var(--panel-width);
+      min-width: var(--panel-width);
+    }
+
+    .tab-preview-panel-contents {
+      max-height: var(--panel-max-width);
+    }
+
+    .tab-preview-panel.overflow .tab-preview-panel-contents {
+      mask-image: linear-gradient(to top, transparent 0, black 2em);
     }
 
     .tab-preview-title {
@@ -331,13 +346,17 @@ catch (error) {
 function createPanel() {
   const panel = document.createElement('div');
   panel.setAttribute('class', 'tab-preview-panel');
-  const title = panel.appendChild(document.createElement('div'));
+  const contents = panel.appendChild(document.createElement('div'));
+  contents.setAttribute('class', 'tab-preview-panel-contents');
+  const innerBox = contents.appendChild(document.createElement('div'));
+  innerBox.setAttribute('class', 'tab-preview-panel-contents-inner-box');
+  const title = innerBox.appendChild(document.createElement('div'));
   title.setAttribute('class', 'tab-preview-title');
-  const url = panel.appendChild(document.createElement('div'));
+  const url = innerBox.appendChild(document.createElement('div'));
   url.setAttribute('class', 'tab-preview-url');
-  const extendedContent = panel.appendChild(document.createElement('div'));
+  const extendedContent = innerBox.appendChild(document.createElement('div'));
   extendedContent.setAttribute('class', 'tab-preview-extended-content');
-  const previewContainer = panel.appendChild(document.createElement('div'));
+  const previewContainer = innerBox.appendChild(document.createElement('div'));
   previewContainer.setAttribute('class', 'tab-preview-image-container');
   const preview = previewContainer.appendChild(document.createElement('img'));
   preview.setAttribute('class', 'tab-preview-image');
@@ -378,7 +397,9 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   const sidebarContentsOffset = (offsetTop - offsetFromWindowEdge) / scale;
 
   if (previewTabRect) {
-    panel.style.maxHeight = `${Math.max(window.innerHeight - previewTabRect.top - sidebarContentsOffset, previewTabRect.bottom)}px`;
+    const panelMaxHeight = Math.max(window.innerHeight - previewTabRect.top - sidebarContentsOffset, previewTabRect.bottom);
+    panel.style.maxHeight = `${panelMaxHeight}px`;
+    panel.style.setProperty('--panel-max-width', `${panelMaxHeight}px`);
     if (logging)
       console.log('updatePanel: limit panel height to ', panel.style.maxHeight, { previewTabRect, maxHeight: window.innerHeight, sidebarContentsOffset, offsetFromWindowEdge });
   }
@@ -441,6 +462,11 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
 
     const maxY = window.innerHeight / scale;
     const panelHeight = panelBox.height;
+
+    const contentsHeight = panel.querySelector('.tab-preview-panel-contents-inner-box').getBoundingClientRect().height;
+    panel.classList.toggle('overflow', contentsHeight > panelHeight);
+    if (logging)
+      console.log('updatePanel/completeUpdate: overflow: ', contentsHeight, '>', panelHeight);
 
     if (windowId) { // in-sidebar
       if (logging)
