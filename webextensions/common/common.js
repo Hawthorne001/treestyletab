@@ -172,7 +172,7 @@ export const configs = new Configs({
   longPressOnNewTabButton: Constants.kCONTEXTUAL_IDENTITY_SELECTOR,
   zoomable: false,
   tabPreviewTooltip: false,
-  tabPreviewTooltipInSidebar: true,
+  tabPreviewTooltipInSidebar: false,
   showOverflowTitleByTooltip: true,
   showCollapsedDescendantsByTooltip: true,
 
