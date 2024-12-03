@@ -783,26 +783,14 @@ function initPermissionOptions() {
 
   Permissions.bindToCheckbox(
     Permissions.ALL_URLS,
-    document.querySelector('#allUrlsPermissionGranted_tabPreviewTooltip'),
-    {
-      onChanged(granted) {
-        configs.tabPreviewTooltip = granted;
-      },
-      canRevoke() {
-        return !configs.tabPreviewTooltip && !configs.skipCollapsedTabsForTabSwitchingShortcuts;
-      },
-    }
+    document.querySelector('#allUrlsPermissionGranted_tabPreviewTooltip')
   );
   Permissions.bindToCheckbox(
     Permissions.ALL_URLS,
     document.querySelector('#allUrlsPermissionGranted_ctrlTabTracking'),
     {
       onChanged(granted) {
-        configs.skipCollapsedTabsForTabSwitchingShortcuts = granted;
         updateCtrlTabSubItems(granted);
-      },
-      canRevoke() {
-        return !configs.tabPreviewTooltip && !configs.skipCollapsedTabsForTabSwitchingShortcuts;
       },
     }
   );

@@ -158,23 +158,28 @@ export function bindToCheckbox(permissions, checkbox, options = {}) {
     const checkboxes = checkboxesForPermission.get(permissions);
     try {
       if (!checkbox.checked) {
-        const revoked = (
-          typeof options.canRevoke != 'function' ||
-          options.canRevoke()
-        );
-        if (!revoked)
-          return;
-        await browser.permissions.remove(permissions).catch(ApiTabs.createErrorSuppressor());
-        for (const checkbox of checkboxes) {
-          checkbox.checked = false;
-        }
+        if (checkbox.dataset.relatedConfigKey)
+          configs[checkbox.dataset.relatedConfigKey] = false;
         if (options.onChanged)
           options.onChanged(false);
+        const canRevoke = Array.from(checkboxes, checkbox => checkbox.dataset.relatedConfigKey ? configs[checkbox.dataset.relatedConfigKey] : null).filter(state => state !== null).every(state => !state);
+        if (!canRevoke)
+          return;
+        await browser.permissions.remove(permissions).catch(ApiTabs.createErrorSuppressor());
+        for (const otherCheckbox of checkboxes) {
+          if (otherCheckbox != checkbox &&
+              otherCheckbox.dataset.relatedConfigKey)
+            continue;
+          otherCheckbox.checked = false;
+        }
         return;
       }
 
-      for (const checkbox of checkboxes) {
-        checkbox.checked = false;
+      for (const otherCheckbox of checkboxes) {
+        if (otherCheckbox != checkbox &&
+            otherCheckbox.dataset.relatedConfigKey)
+          continue;
+        otherCheckbox.checked = false;
       }
 
       if (configs.requestingPermissionsNatively)
@@ -190,11 +195,19 @@ export function bindToCheckbox(permissions, checkbox, options = {}) {
         return;
 
       if (granted) {
-        const checked = options.onChanged ?
-          options.onChanged(true) :
-          undefined;
-        for (const checkbox of checkboxes) {
-          checkbox.checked = checked !== undefined ? !!checked : true;
+        if (checkbox.dataset.relatedConfigKey)
+          configs[checkbox.dataset.relatedConfigKey] = true;
+        const configValue = !!checkbox.dataset.relatedConfigKey;
+        const onChangedResult = options.onChanged && options.onChanged(true);
+        const checked = configValue !== null ? configValue :
+          options.onChanged ?
+            onChangedResult :
+            undefined;
+        for (const otherCheckbox of checkboxes) {
+          if (otherCheckbox != checkbox &&
+              otherCheckbox.dataset.relatedConfigKey)
+            continue;
+          otherCheckbox.checked = checked !== undefined ? !!checked : true;
         }
         browser.runtime.sendMessage({
           type: Constants.kCOMMAND_NOTIFY_PERMISSIONS_GRANTED,
