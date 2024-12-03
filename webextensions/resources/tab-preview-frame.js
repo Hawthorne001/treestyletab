@@ -134,8 +134,7 @@ try{
                   left 0.1s ease-out,
                   right 0.1s ease-out;
     }
-    .tab-preview-panel.extended,
-    .tab-preview-panel.extended .tab-preview-panel-contents {
+    .tab-preview-panel.extended {
       max-width: min(100%, calc(var(--panel-width) * 2));
     }
     .tab-preview-panel.open {
@@ -159,12 +158,16 @@ try{
 
     .tab-preview-panel-contents,
     .tab-preview-panel-contents-inner-box {
-      max-width: var(--panel-width);
-      min-width: var(--panel-width);
+      max-width: calc(var(--panel-width) - (2px / var(--scale)));
+      min-width: calc(var(--panel-width) - (2px / var(--scale)));
+    }
+    .tab-preview-panel.extended .tab-preview-panel-contents,
+    .tab-preview-panel.extended .tab-preview-panel-contents-inner-box {
+      max-width: calc(min(100%, calc(var(--panel-width) * 2)) - (2px / var(--scale)));
     }
 
     .tab-preview-panel-contents {
-      max-height: var(--panel-max-width);
+      max-height: calc(var(--panel-max-height) - (2px / var(--scale)));
     }
 
     .tab-preview-panel.overflow .tab-preview-panel-contents {
@@ -397,9 +400,11 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   const sidebarContentsOffset = (offsetTop - offsetFromWindowEdge) / scale;
 
   if (previewTabRect) {
-    const panelMaxHeight = Math.max(window.innerHeight - previewTabRect.top - sidebarContentsOffset, previewTabRect.bottom);
+    const panelTopEdge = windowId ? previewTabRect.bottom : previewTabRect.top;
+    const panelBottomEdge = windowId ? previewTabRect.bottom : previewTabRect.top;
+    const panelMaxHeight = Math.max(window.innerHeight - panelTopEdge - sidebarContentsOffset, panelBottomEdge);
     panel.style.maxHeight = `${panelMaxHeight}px`;
-    panel.style.setProperty('--panel-max-width', `${panelMaxHeight}px`);
+    panel.style.setProperty('--panel-max-height', `${panelMaxHeight}px`);
     if (logging)
       console.log('updatePanel: limit panel height to ', panel.style.maxHeight, { previewTabRect, maxHeight: window.innerHeight, sidebarContentsOffset, offsetFromWindowEdge });
   }
@@ -488,7 +493,7 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
     else { // in-content
       // We need to shift the position with the height of the sidebar header.
       const alignToTopPosition = Math.max(0, previewTabRect.top / scale) + sidebarContentsOffset;
-      const alignToBottomPosition = Math.min(maxY, previewTabRect.bottom / scale) - panelHeight + sidebarContentsOffset;
+      const alignToBottomPosition = Math.min(maxY, previewTabRect.bottom + sidebarContentsOffset / scale) - panelHeight;
 
       if (logging)
         console.log('updatePanel/completeUpdate: in-content, alignment calculating: ', { offsetFromWindowEdge, sidebarContentsOffset, alignToTopPosition, panelHeight, maxY, scale });
