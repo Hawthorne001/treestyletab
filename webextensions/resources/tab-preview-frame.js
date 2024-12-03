@@ -307,11 +307,13 @@ try{
         }
         lastTimestamp = message.timestamp;
         panel.classList.remove('open');
+        panel.querySelector('.tab-preview-image').src = ''; // this is require to load the same preview image again
         return Promise.resolve(true);
 
       case 'treestyletab:notify-sidebar-closed':
         if (panel) {
           panel.classList.remove('open');
+          panel.querySelector('.tab-preview-image').src = ''; // this is require to load the same preview image again
         }
         break;
 
