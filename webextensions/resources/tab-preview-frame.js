@@ -25,6 +25,7 @@ document.documentElement.classList.add('tab-preview-frame'); // for REGULAR and 
 // https://searchfox.org/mozilla-central/rev/dfaf02d68a7cb018b6cad7e189f450352e2cde04/browser/themes/shared/tabbrowser/tab-hover-preview.css#5
 const BASE_PANEL_WIDTH  = 280;
 const BASE_PANEL_HEIGHT = 140;
+const DATA_URI_BLANK_PNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIAAAUAAeImBZsAAAAASUVORK5CYII=';
 
 // -moz-platform @media rules looks unavailable on Web contents...
 const isWindows = /^Win/i.test(navigator.platform);
@@ -307,13 +308,11 @@ try{
         }
         lastTimestamp = message.timestamp;
         panel.classList.remove('open');
-        panel.querySelector('.tab-preview-image').src = ''; // this is require to load the same preview image again
         return Promise.resolve(true);
 
       case 'treestyletab:notify-sidebar-closed':
         if (panel) {
           panel.classList.remove('open');
-          panel.querySelector('.tab-preview-image').src = ''; // this is require to load the same preview image again
         }
         break;
 
@@ -440,9 +439,10 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   if (hasPreview == previewImage.classList.contains('blank')) { // mismatched state, let's start loading
     previewImage.classList.toggle('loading', hasPreview);
   }
-  if (previewURL &&
-      previewURL != previewImage.src) {
-    previewImage.src = previewURL || 'data:image/png,';
+  if (!previewURL ||
+      (previewURL &&
+       previewURL != previewImage.src)) {
+    previewImage.src = previewURL || DATA_URI_BLANK_PNG;
   }
   if (hasPreview && hasLoadablePreviewURL) { // show it later
     previewImage.classList.remove('blank');
