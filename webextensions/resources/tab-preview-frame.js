@@ -214,6 +214,9 @@ try{
     .tab-preview-panel.animation:not(.updating) .tab-preview-image {
       transition: opacity 0.2s ease-out;
     }
+    .tab-preview-image.loading {
+      min-height: ${BASE_PANEL_HEIGHT}px;
+    }
 
     .blank,
     .hidden {
@@ -416,6 +419,15 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   if (align)
     panel.dataset.align = align;
 
+  const previewImage = panel.querySelector('.tab-preview-image');
+  previewImage.classList.toggle('blank', !hasPreview && !hasLoadablePreviewURL);
+  if (!previewURL ||
+      (previewURL &&
+       previewURL != previewImage.src)) {
+    previewImage.classList.add('loading');
+    previewImage.src = previewURL || DATA_URI_BLANK_PNG;
+  }
+
   if (tooltipHtml) {
     const extendedContent = panel.querySelector('.tab-preview-extended-content');
     extendedContent.innerHTML = tooltipHtml;
@@ -430,22 +442,6 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
     urlElement.textContent = url;
     urlElement.classList.toggle('blank', !url);
     panel.classList.remove('extended');
-  }
-
-  const previewImage = panel.querySelector('.tab-preview-image');
-  if (!hasPreview && !hasLoadablePreviewURL) { // hide it first
-    previewImage.classList.add('blank');
-  }
-  if (hasPreview == previewImage.classList.contains('blank')) { // mismatched state, let's start loading
-    previewImage.classList.toggle('loading', hasPreview);
-  }
-  if (!previewURL ||
-      (previewURL &&
-       previewURL != previewImage.src)) {
-    previewImage.src = previewURL || DATA_URI_BLANK_PNG;
-  }
-  if (hasPreview && hasLoadablePreviewURL) { // show it later
-    previewImage.classList.remove('blank');
   }
 
   const completeUpdate = () => {
@@ -537,9 +533,9 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   }
 
   try {
-    const { width, height } = previewURL ?
-      getPngDimensionsFromDataUri(previewURL) :
-      { width: BASE_PANEL_WIDTH, height: BASE_PANEL_HEIGHT };
+    const { width, height } = !previewImage.src || previewImage.src == DATA_URI_BLANK_PNG ?
+      { width: BASE_PANEL_WIDTH, height: BASE_PANEL_HEIGHT } :
+      getPngDimensionsFromDataUri(previewURL);
     if (logging)
       console.log('updatePanel: determined preview size: ', { width, height });
     const imageWidth = Math.min(window.innerWidth, Math.min(width, BASE_PANEL_WIDTH) / scale);
