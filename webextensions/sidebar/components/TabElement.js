@@ -206,7 +206,7 @@ export class TabElement extends HTMLElement {
 
   disconnectedCallback() {
     if (this._reservedUpdateTooltip) {
-      this.addEventListener('mouseover', this._reservedUpdateTooltip);
+      this.removeEventListener('mouseover', this._reservedUpdateTooltip);
       this._reservedUpdateTooltip = null;
     }
     this._endListening();
@@ -345,6 +345,9 @@ export class TabElement extends HTMLElement {
     if (this._reservedUpdateTooltip)
       return;
 
+    this.useTabPreviewTooltip = false;
+    this.hasCustomTooltip = false;
+    Permissions.isGranted(Permissions.ALL_URLS); // cache last state for the _updateTooltip()
     this._reservedUpdateTooltip = () => {
       this._reservedUpdateTooltip = null;
       this._updateTooltip();
@@ -384,7 +387,7 @@ export class TabElement extends HTMLElement {
     this._labelElement?.updateOverflow();
   }
 
-  async _updateTooltip() {
+  _updateTooltip() {
     if (!this.$TST) // called before binding on restoration from cache
       return;
 
@@ -393,11 +396,9 @@ export class TabElement extends HTMLElement {
     if (!tabElement)
       return;
 
-    const [canRunScript, canInjectScriptToTab] = await Promise.all([
-      Permissions.isGranted(Permissions.ALL_URLS),
-      Permissions.canInjectScriptToTab(Tab.getActiveTab(TabsStore.getCurrentWindowId())),
-    ]);
-    const useTabPreviewTooltip = (
+    const canRunScript = Permissions.isGrantedSync(Permissions.ALL_URLS);
+    const canInjectScriptToTab = Permissions.canInjectScriptToTabSync(Tab.getActiveTab(TabsStore.getCurrentWindowId()));
+    this.useTabPreviewTooltip = (
       configs.tabPreviewTooltip &&
       canRunScript &&
       (canInjectScriptToTab ||
@@ -417,7 +418,7 @@ tabId = ${tab.id}
 windowId = ${tab.windowId}
 `.trim();
       this.$TST.setAttribute('title', debugTooltip);
-      if (!useTabPreviewTooltip) {
+      if (!this.useTabPreviewTooltip) {
         this.tooltip = debugTooltip;
         this.tooltipHtml = `<pre>${sanitizeForHTMLText(debugTooltip)}</pre>`;
         return;
@@ -429,11 +430,20 @@ windowId = ${tab.windowId}
     this.tooltipHtml            = this.$TST.generateTooltipHtml();
     this.tooltipHtmlWithDescendants = this.$TST.generateTooltipHtmlWithDescendants();
 
+    const appliedTooltipText = this.appliedTooltipText;
+    this.hasCustomTooltip = (
+      appliedTooltipText !== null &&
+      appliedTooltipText != this.$TST.defaultTooltipText
+    );
+    //console.log('this.useTabPreviewTooltip ', { useTabPreviewTooltip: this.useTabPreviewTooltip, canRunScript, canInjectScriptToTab, hasCustomTooltip: this.hasCustomTooltip });
+
     const tooltipText = configs.debug ?
       debugTooltip :
-      useTabPreviewTooltip ?
+      (this.useTabPreviewTooltip &&
+       (canInjectScriptToTab ||
+        !this.hasCustomTooltip)) ?
         null :
-        this.appliedTooltipText;
+        appliedTooltipText;
     if (typeof tooltipText == 'string')
       this.$TST.setAttribute('title', tooltipText);
     else
@@ -565,6 +575,10 @@ windowId = ${tab.windowId}
   }
 
   _onMouseEnter(event) {
+    if (this._reservedUpdateTooltip) {
+      this.removeEventListener('mouseover', this._reservedUpdateTooltip);
+      this._updateTooltip();
+    }
     const tabSubstanceEnterEvent = new MouseEvent(kEVENT_TAB_SUBSTANCE_ENTER, {
       ...event,
       clientX: event.clientX,

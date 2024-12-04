@@ -208,8 +208,9 @@ function shouldMessageSend(message) {
 }
 
 async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolver) {
+  const shouldFallbackToSidebar = configs.tabPreviewTooltipInSidebar && !message.hasCustomTooltip;
   if (!tabId) { // in-sidebar mode
-    if (configs.tabPreviewTooltipInSidebar) {
+    if (shouldFallbackToSidebar) {
       log(`sendTabPreviewMessage(${message.type}): no tab specified, fallback to in-sidebar preview`);
       return sendInSidebarTabPreviewMessage(message);
     }
@@ -251,7 +252,7 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
       if (retrying) {
         // Retried to load tab preview frame, but failed, so
         // now we fall back to the in-sidebar tab preview.
-        if (!configs.tabPreviewTooltipInSidebar ||
+        if (!shouldFallbackToSidebar ||
             !shouldMessageSend(message) ||
             DIRECT_PANEL_AVAILABLE_URLS_MATCHER.test(tab.url)) {
           log(` => no response after retrying, give up to send`);
@@ -320,7 +321,7 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
     if (retrying) {
       // Retried to load tab preview frame, but failed, so
       // now we fall back to the in-sidebar tab preview.
-      if (!configs.tabPreviewTooltipInSidebar ||
+      if (!shouldFallbackToSidebar ||
           !shouldMessageSend(message)) {
         log(` => no response after retrying, give up to send`);
         deferredReturnedValueResolver(false);
@@ -427,10 +428,7 @@ async function onTabSubstanceEnter(event) {
     false :
     window.mozInnerScreenX - window.screenX > (window.outerWidth - window.innerWidth) / 2;
 
-  const hasCustomTooltip = (
-    tooltipText !== null &&
-    tooltipText != event.target.tab.$TST.defaultTooltipText
-  );
+  const hasCustomTooltip = !!event.target.hasCustomTooltip;
   const hasPreview = (
     !active &&
     !event.target.tab.discarded &&
@@ -445,6 +443,7 @@ async function onTabSubstanceEnter(event) {
     offsetLeft: window.mozInnerScreenX - window.screenX,
     align: mayBeRight ? 'right' : 'left',
     scale: 1 / window.devicePixelRatio,
+    hasCustomTooltip,
   };
 
   log(`onTabSubstanceEnter(${event.target.tab.id}}) first try: show tab preview in ${targetTabId || 'sidebar'} `, { hasCustomTooltip, tooltipText, hasPreview });

@@ -28,14 +28,29 @@ export function clearRequest() {
   configs.requestingPermissions = null;
 }
 
-export function isGranted(permissions) {
+
+const cachedGranted = new Map();
+
+export async function isGranted(permissions) {
   try {
-    return browser.permissions.contains(permissions).catch(ApiTabs.createErrorHandler());
+    const granted = await browser.permissions.contains(permissions).catch(ApiTabs.createErrorHandler());
+    cachedGranted.set(JSON.stringify(permissions), granted);
+    return granted;
   }
   catch(_e) {
     return Promise.reject(new Error('unsupported permission'));
   }
 }
+
+export function isGrantedSync(permissions) {
+  return cachedGranted.get(JSON.stringify(permissions));
+}
+
+// cache last state
+for (const permissions of [ALL_URLS, BOOKMARKS, CLIPBOARD_READ, TAB_HIDE]) {
+  isGranted(permissions);
+}
+
 
 const CUSTOM_PANEL_AVAILABLE_URLS_MATCHER = new RegExp(`^((https?|data):|moz-extension://${location.host}/)`);
 
@@ -45,6 +60,14 @@ export async function canInjectScriptToTab(tab) {
     return false;
 
   return isGranted(ALL_URLS);
+}
+
+export function canInjectScriptToTabSync(tab) {
+  if (!tab ||
+      !CUSTOM_PANEL_AVAILABLE_URLS_MATCHER.test(tab.url))
+    return false;
+
+  return isGrantedSync(ALL_URLS);
 }
 
 
@@ -73,6 +96,9 @@ browser.runtime.onMessage.addListener((message, _sender) => {
     return;
 
   const permissions = JSON.stringify(message.permissions);
+
+  isGranted(permissions); // to cache latest state
+
   const requests = mRequests.get(permissions);
   if (!requests)
     return;
