@@ -251,7 +251,8 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
       if (retrying) {
         // Retried to load tab preview frame, but failed, so
         // now we fall back to the in-sidebar tab preview.
-        if (!shouldMessageSend(message) ||
+        if (!configs.tabPreviewTooltipInSidebar ||
+            !shouldMessageSend(message) ||
             DIRECT_PANEL_AVAILABLE_URLS_MATCHER.test(tab.url)) {
           log(` => no response after retrying, give up to send`);
           deferredReturnedValueResolver(false);
@@ -319,7 +320,8 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
     if (retrying) {
       // Retried to load tab preview frame, but failed, so
       // now we fall back to the in-sidebar tab preview.
-      if (!shouldMessageSend(message)) {
+      if (!configs.tabPreviewTooltipInSidebar ||
+          !shouldMessageSend(message)) {
         log(` => no response after retrying, give up to send`);
         deferredReturnedValueResolver(false);
         return false;
