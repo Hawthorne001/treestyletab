@@ -396,6 +396,26 @@ export class TabElement extends HTMLElement {
     if (!tabElement)
       return;
 
+    // Priority of tooltip contents and methods
+    // 1. Is the tab preview panel activated by the user? (option)
+    //    * NO => Use legacy tooltip anyway.
+    //      - Set "title" attribute for the legacy tooltip, if the tab is faviconized,
+    //        or the tab has long title with overflow state, or custom tooltip.
+    //      - Otherwise remove "title" attribute to suppress the legacy tooltip.
+    //    * YES => Go ahead.
+    // 2. Can we show tab preview panel in the active tab? (permission)
+    //    * YES => Remove "title" attribute to suppress the legacy tooltip.
+    //             Tooltip will be shown with tab preview panel in the active tab.
+    //    * NO => Go ahead.
+    // 3. Do we have custom tooltip? (for collapsed tree, specified via API, etc.)
+    //    * YES => Set "title" attribute for the legacy tooltip with custom contents.
+    //    * NO => Go ahead for the default tooltip.
+    // 4. Can we show tab preview panel in the sidebar for the default tooltip? (option)
+    //    * YES => Remove "title" attribute to suppress the legacy tooltip.
+    //             The default tooltip will be shown with tab preview panel in the sidebar.
+    //    * NO => Set "title" attribute for the legacy tooltip, if the tab is faviconized,
+    //            or the tab has long title with overflow state.
+
     const canRunScript = Permissions.isGrantedSync(Permissions.ALL_URLS);
     const canInjectScriptToTab = Permissions.canInjectScriptToTabSync(Tab.getActiveTab(TabsStore.getCurrentWindowId()));
     this.useTabPreviewTooltip = (
