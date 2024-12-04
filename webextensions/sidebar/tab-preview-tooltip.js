@@ -272,14 +272,14 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
 
       // We prepare tab preview frame now, and retry sending after that.
       log(` => no response, retry`);
-      await prepareFrame(tabId);
       let returnedValueResolver;
       const promisedReturnedValue = new Promise((resolve, _reject) => {
         returnedValueResolver = resolve;
       });
-      setTimeout(() => {
+      waitUntilPreviewFrameLoadedIntoTab(tabId).then(() => {
         sendTabPreviewMessage(tabId, message, returnedValueResolver);
-      }, 100);
+      });
+      await prepareFrame(tabId);
       return promisedReturnedValue;
     }
   }
@@ -340,14 +340,14 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
 
     // the frame was destroyed unexpectedly, so we re-prepare it.
     log(` => no response, retry`);
-    await prepareFrame(tabId);
     let returnedValueResolver;
     const promisedReturnedValue = new Promise((resolve, _reject) => {
       returnedValueResolver = resolve;
     });
-    setTimeout(() => {
+    waitUntilPreviewFrameLoadedIntoTab(tabId).then(() => {
       sendTabPreviewMessage(tabId, message, returnedValueResolver);
-    }, 100);
+    });
+    await prepareFrame(tabId);
     return promisedReturnedValue;
   }
 
@@ -362,6 +362,36 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
   // Everything is OK!
   return returnValue;
 }
+
+async function waitUntilPreviewFrameLoadedIntoTab(tabId) {
+  let resolver;
+  const promisedLoaded = new Promise((resolve, _reject) => {
+    resolver = resolve;
+  });
+  let timeout;
+  const onMessage = (message, sender) => {
+    if (message?.type != 'treestyletab:tab-preview-frame-loaded' ||
+        sender.tab?.id != tabId)
+      return;
+    log('waitUntilPreviewFrameLoadedIntoTab: loaded in the tab ', tabId);
+    if (timeout) {
+      clearTimeout(timeout);
+      timeout = null;
+    }
+    resolver();
+  };
+  browser.runtime.onMessage.addListener(onMessage);
+  timeout = setTimeout(() => {
+    if (!timeout)
+      return;
+    log('waitUntilPreviewFrameLoadedIntoTab: timeout for the tab ', tabId);
+    timeout = null;
+    browser.runtime.onMessage.removeListener(onMessage);
+    resolver();
+  }, 1000);
+  return promisedLoaded;
+}
+
 
 async function sendInSidebarTabPreviewMessage(message) {
   log(`sendInSidebarTabPreviewMessage(${message.type}})`);
