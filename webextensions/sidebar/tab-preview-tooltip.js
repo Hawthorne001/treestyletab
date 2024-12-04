@@ -207,24 +207,31 @@ function shouldMessageSend(message) {
   );
 }
 
-async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolver) {
+async function sendTabPreviewMessage(tabId, message, deferredResultResolver) {
+  const result = {
+    succeeded: false,
+    sentTo: tabId,
+  };
+
   const shouldFallbackToSidebar = configs.tabPreviewTooltipInSidebar && !message.hasCustomTooltip;
   if (!tabId) { // in-sidebar mode
     if (shouldFallbackToSidebar) {
       log(`sendTabPreviewMessage(${message.type}): no tab specified, fallback to in-sidebar preview`);
-      return sendInSidebarTabPreviewMessage(message);
+      result.sentTo = 'sidebar';
+      result.succeeded = await sendInSidebarTabPreviewMessage(message);
+      return result;
     }
     else {
       log(`sendTabPreviewMessage(${message.type}): no tab specified, cancel`);
-      return false;
+      return result;
     }
   }
 
-  const retrying = !!deferredReturnedValueResolver;
+  const retrying = !!deferredResultResolver;
 
   const tab = Tab.get(tabId);
   if (!tab)
-    return false;
+    return result;
 
   let frameId;
   let loadedInfo;
@@ -246,7 +253,7 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
          loadedInfo.tabId != tabId)) {
       if (!message.canRetry) {
         log(` => no response, give up to send`);
-        return false;
+        return result;
       }
 
       if (retrying) {
@@ -256,31 +263,35 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
             !shouldMessageSend(message) ||
             DIRECT_PANEL_AVAILABLE_URLS_MATCHER.test(tab.url)) {
           log(` => no response after retrying, give up to send`);
-          deferredReturnedValueResolver(false);
-          return false;
+          deferredResultResolver(result);
+          return result;
         }
         log(` => no response after retrying, fall back to in-sidebar previes`);
         return sendInSidebarTabPreviewMessage(message)
-          .then(deferredReturnedValueResolver)
-          .then(() => true);
+          .then(() => {
+            result.sentTo = 'sidebar';
+            result.succeeded = true;
+            deferredResultResolver(result);
+            return result;
+          });
       }
 
       if (!shouldMessageSend(message)) {
         log(` => no response, already canceled, give up to send`);
-        return false;
+        return result;
       }
 
       // We prepare tab preview frame now, and retry sending after that.
       log(` => no response, retry`);
-      let returnedValueResolver;
-      const promisedReturnedValue = new Promise((resolve, _reject) => {
-        returnedValueResolver = resolve;
+      let resultResolver;
+      const promisedResult = new Promise((resolve, _reject) => {
+        resultResolver = resolve;
       });
       waitUntilPreviewFrameLoadedIntoTab(tabId).then(() => {
-        sendTabPreviewMessage(tabId, message, returnedValueResolver);
+        sendTabPreviewMessage(tabId, message, resultResolver);
       });
       await prepareFrame(tabId);
-      return promisedReturnedValue;
+      return promisedResult;
     }
   }
   catch (error) {
@@ -288,9 +299,11 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
     // We cannot show tab preview tooltip in a tab with privileged contents.
     // Let's fall back to the in-sidebar tab preview.
     await sendInSidebarTabPreviewMessage(message);
-    if (deferredReturnedValueResolver)
-      deferredReturnedValueResolver(true);
-    return true;
+    result.sentTo = 'sidebar';
+    result.succeeded = true;
+    if (deferredResultResolver)
+      deferredResultResolver(result);
+    return result;
   }
 
   // hide in-sidebar tab preview if in-content tab preview is available
@@ -298,24 +311,25 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
     type: 'treestyletab:hide-tab-preview',
   });
 
-  let returnValue;
+  let response;
   try {
-    returnValue = await browser.tabs.sendMessage(tabId, {
+    response = await browser.tabs.sendMessage(tabId, {
       tabId,
       timestamp: Date.now(),
       ...message,
       animation: shouldApplyAnimation(),
       logging: configs.logFor['sidebar/tab-preview-tooltip'] && configs.debug,
     }, frameId ? { frameId } : {});
-    log(`sendTabPreviewMessage(${message.type}${retrying ? ', retrying' : ''}): message was sent to the frame, returnValue=`, returnValue);
-    if (deferredReturnedValueResolver)
-      deferredReturnedValueResolver(returnValue);
+    log(`sendTabPreviewMessage(${message.type}${retrying ? ', retrying' : ''}): message was sent to the frame, response=`, response);
+    result.succeeded = response;
+    if (deferredResultResolver)
+      deferredResultResolver(result);
   }
   catch (error) {
     log(`sendTabPreviewMessage(${message.type}${retrying ? ', retrying' : ''}): failed to send message to the frame `, error);
     if (!message.canRetry) {
       log(` => no response, give up to send`);
-      return false;
+      return result;
     }
 
     if (retrying) {
@@ -324,43 +338,49 @@ async function sendTabPreviewMessage(tabId, message, deferredReturnedValueResolv
       if (!shouldFallbackToSidebar ||
           !shouldMessageSend(message)) {
         log(` => no response after retrying, give up to send`);
-        deferredReturnedValueResolver(false);
-        return false;
+        deferredResultResolver(result);
+        return result;
       }
       log(` => no response after retrying, fall back to in-sidebar previes`);
       return sendInSidebarTabPreviewMessage(message)
-        .then(deferredReturnedValueResolver)
-        .then(() => true);
+        .then(() => {
+          result.sentTo = 'sidebar';
+          result.succeeded = true;
+          deferredResultResolver(result);
+          return result;
+        });
     }
 
     if (!shouldMessageSend(message)) {
       log(` => no response, already canceled, give up to send`);
-      return false;
+      return result;
     }
 
     // the frame was destroyed unexpectedly, so we re-prepare it.
     log(` => no response, retry`);
-    let returnedValueResolver;
-    const promisedReturnedValue = new Promise((resolve, _reject) => {
-      returnedValueResolver = resolve;
+    let resultResolver;
+    const promisedResult = new Promise((resolve, _reject) => {
+      resultResolver = resolve;
     });
     waitUntilPreviewFrameLoadedIntoTab(tabId).then(() => {
-      sendTabPreviewMessage(tabId, message, returnedValueResolver);
+      sendTabPreviewMessage(tabId, message, resultResolver);
     });
     await prepareFrame(tabId);
-    return promisedReturnedValue;
+    return promisedResult;
   }
 
-  if (typeof returnValue != 'boolean' &&
+  if (typeof response != 'boolean' &&
       shouldMessageSend(message)) {
     log(`sendTabPreviewMessage(${message.type}${retrying ? ', retrying' : ''}): got invalid response, fallback to in-sidebar preview`);
     // Failed to send message to the in-content tab preview frame, so
     // now we fall back to the in-sidebar tab preview.
-    return sendInSidebarTabPreviewMessage(message);
+    result.sentTo = 'sidebar';
+    result.succeeded = await sendInSidebarTabPreviewMessage(message);
+    return result;
   }
 
   // Everything is OK!
-  return returnValue;
+  return result;
 }
 
 async function waitUntilPreviewFrameLoadedIntoTab(tabId) {
@@ -477,7 +497,7 @@ async function onTabSubstanceEnter(event) {
   };
 
   log(`onTabSubstanceEnter(${event.target.tab.id}}) first try: show tab preview in ${targetTabId || 'sidebar'} `, { hasCustomTooltip, tooltipText, hasPreview });
-  let succeeded = await sendTabPreviewMessage(targetTabId, {
+  let result = await sendTabPreviewMessage(targetTabId, {
     type: 'treestyletab:show-tab-preview',
     ...previewParams,
     ...(hasCustomTooltip ?
@@ -493,7 +513,7 @@ async function onTabSubstanceEnter(event) {
     timestamp: startAt, // Don't call Date.now() here, because it can become larger than the timestamp on mouseleave.
     canRetry: !!targetTabId,
   }).catch(_error => {});
-  log(` => ${succeeded ? 'succeeded' : 'failed'}`);
+  log(` => ${result.succeeded ? 'succeeded' : 'failed'}, sent to ${result.sentTo}`);
 
   let previewURL = null;
   if (hasPreview) {
@@ -508,16 +528,16 @@ async function onTabSubstanceEnter(event) {
 
   if (previewURL) {
     log(`onTabSubstanceEnter(${event.target.tab.id}}) second try: render preview image in ${targetTabId || 'sidebar'}`);
-    succeeded = await sendTabPreviewMessage(targetTabId, {
+    result = await sendTabPreviewMessage(result.sentTo == targetTabId ? targetTabId : null, {
       type: 'treestyletab:update-tab-preview',
       ...previewParams,
       previewURL,
       timestamp: Date.now(),
     }).catch(_error => {});
-    log(` => ${succeeded ? 'succeeded' : 'failed'}`);
+    log(` => ${result.succeeded ? 'succeeded' : 'failed'}, sent to ${result.sentTo}`);
   }
   if (event.target.tab.$TST.element &&
-      succeeded)
+      result.succeeded)
     event.target.tab.$TST.element.invalidateTooltip();
 }
 onTabSubstanceEnter = EventUtils.wrapWithErrorHandler(onTabSubstanceEnter);
