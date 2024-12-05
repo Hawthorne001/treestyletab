@@ -496,38 +496,41 @@ async function onTabSubstanceEnter(event) {
     hasCustomTooltip,
   };
 
-  log(`onTabSubstanceEnter(${event.target.tab.id}}) first try: show tab preview in ${targetTabId || 'sidebar'} `, { hasCustomTooltip, tooltipText, hasPreview });
-  let result = await sendTabPreviewMessage(targetTabId, {
-    type: 'treestyletab:show-tab-preview',
-    ...previewParams,
-    ...(hasCustomTooltip ?
-      {
-        tooltipHtml,
-      } :
-      {
-        title: event.target.tab.title,
-        url,
+  let previewURL = null;
+
+  log(`onTabSubstanceEnter(${event.target.tab.id}}) first try [${Date.now() - startAt}msec from start]: show tab preview in ${targetTabId || 'sidebar'} `, { hasCustomTooltip, tooltipText, hasPreview });
+  let [result] = await Promise.all([
+    sendTabPreviewMessage(targetTabId, {
+      type: 'treestyletab:show-tab-preview',
+      ...previewParams,
+      ...(hasCustomTooltip ?
+        {
+          tooltipHtml,
+        } :
+        {
+          title: event.target.tab.title,
+          url,
+        }
+      ),
+      hasPreview,
+      timestamp: startAt, // Don't call Date.now() here, because it can become larger than the timestamp on mouseleave.
+      canRetry: !!targetTabId,
+    }).catch(_error => {}),
+    hasPreview && (async () => {
+      try {
+        previewURL = await browser.tabs.captureTab(event.target.tab.id);
       }
-    ),
-    hasPreview,
-    timestamp: startAt, // Don't call Date.now() here, because it can become larger than the timestamp on mouseleave.
-    canRetry: !!targetTabId,
-  }).catch(_error => {});
+      catch (_error) {
+      }
+    })(),
+  ]);
   log(` => ${result.succeeded ? 'succeeded' : 'failed'}, sent to ${result.sentTo}`);
 
-  let previewURL = null;
-  if (hasPreview) {
-    try {
-      previewURL = await browser.tabs.captureTab(event.target.tab.id);
-      if (!event.target.tab) // the tab may be destroyied while capturing
-        return;
-    }
-    catch (_error) {
-    }
-  }
+  if (hasPreview && !event.target.tab) // the tab may be destroyied while we capturing tab preview
+    return;
 
   if (previewURL) {
-    log(`onTabSubstanceEnter(${event.target.tab.id}}) second try: render preview image in ${targetTabId || 'sidebar'}`);
+    log(`onTabSubstanceEnter(${event.target.tab.id}} ${Date.now() - startAt}) second try [${Date.now() - startAt}msec from start]: render preview image in ${targetTabId || 'sidebar'}`);
     result = await sendTabPreviewMessage(result.sentTo == targetTabId ? targetTabId : null, {
       type: 'treestyletab:update-tab-preview',
       ...previewParams,
