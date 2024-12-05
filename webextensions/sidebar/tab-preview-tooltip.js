@@ -446,7 +446,7 @@ async function onTabSubstanceEnter(event) {
     hasPreview &&
     canRunScript &&
     configs.tabPreviewTooltip &&
-    (async () => { // We just define a getter function for now, because further operations may contain 
+    (async () => { // We just define a getter function for now, because further operations may contain async operations and we can call this at there for more optimization.
       try {
         return await browser.tabs.captureTab(event.target.tab.id);
       }
