@@ -238,6 +238,9 @@ async function sendTabPreviewMessage(tabId, message, deferredResultResolver) {
         type: 'treestyletab:ask-tab-preview-frame-loaded',
         tabId,
       }).catch(_error => {}),
+      typeof message.previewURL == 'function' && (async () => {
+        message.previewURL = await message.previewURL();
+      })(),
     ]);
     frameId = gotFrameId;
     loadedInfo = gotLoadedInfo;
@@ -400,6 +403,8 @@ async function waitUntilPreviewFrameLoadedIntoTab(tabId) {
 
 async function sendInSidebarTabPreviewMessage(message) {
   log(`sendInSidebarTabPreviewMessage(${message.type}})`);
+  if (typeof message.previewURL == 'function')
+    message.previewURL = await message.previewURL();
   await browser.runtime.sendMessage({
     ...message,
     timestamp: Date.now(),
@@ -441,16 +446,15 @@ async function onTabSubstanceEnter(event) {
     hasPreview &&
     canRunScript &&
     configs.tabPreviewTooltip &&
-    await (async () => {
+    (async () => { // We just define a getter function for now, because further operations may contain 
       try {
-        const previewURL = await browser.tabs.captureTab(event.target.tab.id);
-        return previewURL;
+        return await browser.tabs.captureTab(event.target.tab.id);
       }
       catch (_error) {
       }
       return null;
-    })()
-  );
+    })
+  ) || null;
 
   if (!event.target.tab)
     return;
