@@ -272,14 +272,6 @@ try{
       console.log('on message: ', message);
 
     switch (message?.type) {
-      case 'treestyletab:update-tab-preview':
-        if (!panel ||
-            panel.dataset.tabId != message.previewTabId ||
-            !panel.classList.contains('open')) {
-          if (message?.logging)
-            console.log(' => already hidden, give up to update preview');
-          return;
-        }
       case 'treestyletab:show-tab-preview':
         if (message.timestamp < lastTimestamp) {
           if (message?.logging)
@@ -387,9 +379,7 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   if (logging)
     console.log('updatePanel ', { previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, scale });
 
-  if (!previewURL) // when just updating, we don't need to hide the panel
-    panel.classList.add('updating');
-
+  panel.classList.add('updating');
   panel.classList.toggle('animation', animation);
 
   // This cancels the zoom effect by the user.

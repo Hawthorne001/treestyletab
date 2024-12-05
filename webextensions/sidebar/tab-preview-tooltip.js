@@ -219,12 +219,11 @@ async function sendTabPreviewMessage(tabId, message, deferredResultResolver) {
       log(`sendTabPreviewMessage(${message.type}): no tab specified, fallback to in-sidebar preview`);
       result.sentTo = 'sidebar';
       result.succeeded = await sendInSidebarTabPreviewMessage(message);
-      return result;
     }
     else {
       log(`sendTabPreviewMessage(${message.type}): no tab specified, cancel`);
-      return result;
     }
+    return result;
   }
 
   const retrying = !!deferredResultResolver;
@@ -427,14 +426,12 @@ async function sendInSidebarTabPreviewMessage(message) {
 
 async function onTabSubstanceEnter(event) {
   const startAt = Date.now();
-  const activeTab = Tab.getActiveTab(TabsStore.getCurrentWindowId());
 
-  const [canRunScript, canInjectScriptToTab] = await Promise.all([
-    Permissions.isGranted(Permissions.ALL_URLS),
-    Permissions.canInjectScriptToTab(activeTab),
-  ]);
+  const canRunScript = Permissions.isGrantedSync(Permissions.ALL_URLS);
   if (!canRunScript)
     return;
+
+  const activeTab = Tab.getActiveTab(TabsStore.getCurrentWindowId());
 
   if (!configs.tabPreviewTooltip) {;
     sendTabPreviewMessage(activeTab.id, {
@@ -442,6 +439,32 @@ async function onTabSubstanceEnter(event) {
     });
     return;
   }
+
+  const active = event.target.tab.id == activeTab.id;
+  const url = PREVIEW_WITH_HOST_URLS_MATCHER.test(event.target.tab.url) ? new URL(event.target.tab.url).host :
+    PREVIEW_WITH_TITLE_URLS_MATCHER.test(event.target.tab.url) ? null :
+      event.target.tab.url;
+  const hasCustomTooltip = !!event.target.hasCustomTooltip;
+  const hasPreview = (
+    !active &&
+    !event.target.tab.discarded &&
+    CAPTURABLE_URLS_MATCHER.test(event.target.tab.url) &&
+    !hasCustomTooltip
+  );
+  const previewURL = (
+    hasPreview &&
+    canRunScript &&
+    configs.tabPreviewTooltip &&
+    await (async () => {
+      try {
+        const previewURL = await browser.tabs.captureTab(event.target.tab.id);
+        return previewURL;
+      }
+      catch (_error) {
+      }
+      return null;
+    })()
+  );
 
   if (!event.target.tab)
     return;
@@ -451,7 +474,7 @@ async function onTabSubstanceEnter(event) {
   hoveringTabIds.add(event.target.tab.id);
   const tooltipText = event.target.appliedTooltipText;
   const tooltipHtml = event.target.appliedTooltipHtml;
-  const targetTabId = canInjectScriptToTab ?
+  const targetTabId = Permissions.canInjectScriptToTabSync(activeTab) ?
     activeTab.id :
     null;
 
@@ -464,10 +487,6 @@ async function onTabSubstanceEnter(event) {
     top:    previewTabRawRect?.top || 0,
     width:  previewTabRawRect?.width || 0,
   };
-  const active = event.target.tab.id == activeTab.id;
-  const url = PREVIEW_WITH_HOST_URLS_MATCHER.test(event.target.tab.url) ? new URL(event.target.tab.url).host :
-    PREVIEW_WITH_TITLE_URLS_MATCHER.test(event.target.tab.url) ? null :
-      event.target.tab.url;
 
   // This calculation logic is buggy for a window in a screen placed at
   // left of the primary display and scaled. As the result, a sidebar
@@ -478,13 +497,6 @@ async function onTabSubstanceEnter(event) {
     false :
     window.mozInnerScreenX - window.screenX > (window.outerWidth - window.innerWidth) / 2;
 
-  const hasCustomTooltip = !!event.target.hasCustomTooltip;
-  const hasPreview = (
-    !active &&
-    !event.target.tab.discarded &&
-    CAPTURABLE_URLS_MATCHER.test(event.target.tab.url) &&
-    !hasCustomTooltip
-  );
   const previewParams = {
     previewTabId: event.target.tab.id,
     previewTabRect,
@@ -496,49 +508,31 @@ async function onTabSubstanceEnter(event) {
     hasCustomTooltip,
   };
 
-  let previewURL = null;
-
-  log(`onTabSubstanceEnter(${event.target.tab.id}}) first try [${Date.now() - startAt}msec from start]: show tab preview in ${targetTabId || 'sidebar'} `, { hasCustomTooltip, tooltipText, hasPreview });
-  let [result] = await Promise.all([
-    sendTabPreviewMessage(targetTabId, {
-      type: 'treestyletab:show-tab-preview',
-      ...previewParams,
-      ...(hasCustomTooltip ?
-        {
-          tooltipHtml,
-        } :
-        {
-          title: event.target.tab.title,
-          url,
-        }
-      ),
-      hasPreview,
-      timestamp: startAt, // Don't call Date.now() here, because it can become larger than the timestamp on mouseleave.
-      canRetry: !!targetTabId,
-    }).catch(_error => {}),
-    hasPreview && (async () => {
-      try {
-        previewURL = await browser.tabs.captureTab(event.target.tab.id);
+  log(`onTabSubstanceEnter(${event.target.tab.id}}) [${Date.now() - startAt}msec from start]: show tab preview in ${targetTabId || 'sidebar'} `, { hasCustomTooltip, tooltipText, hasPreview });
+  const result = await sendTabPreviewMessage(targetTabId, {
+    type: 'treestyletab:show-tab-preview',
+    ...previewParams,
+    ...(hasCustomTooltip ?
+      {
+        tooltipHtml,
+      } :
+      {
+        title: event.target.tab.title,
+        url,
       }
-      catch (_error) {
-      }
-    })(),
-  ]);
+    ),
+    hasPreview,
+    previewURL,
+    timestamp: startAt, // Don't call Date.now() here, because it can become larger than the timestamp on mouseleave.
+    canRetry: !!targetTabId,
+  }).catch(error => {
+    log(`onTabSubstanceEnter(${event.target.tab.id}}) failed: `, error);
+  });
   log(` => ${result.succeeded ? 'succeeded' : 'failed'}, sent to ${result.sentTo}`);
 
-  if (hasPreview && !event.target.tab) // the tab may be destroyied while we capturing tab preview
+  if (!event.target.tab) // the tab may be destroyied while we capturing tab preview
     return;
 
-  if (previewURL) {
-    log(`onTabSubstanceEnter(${event.target.tab.id}} ${Date.now() - startAt}) second try [${Date.now() - startAt}msec from start]: render preview image in ${targetTabId || 'sidebar'}`);
-    result = await sendTabPreviewMessage(result.sentTo == targetTabId ? targetTabId : null, {
-      type: 'treestyletab:update-tab-preview',
-      ...previewParams,
-      previewURL,
-      timestamp: Date.now(),
-    }).catch(_error => {});
-    log(` => ${result.succeeded ? 'succeeded' : 'failed'}, sent to ${result.sentTo}`);
-  }
   if (event.target.tab.$TST.element &&
       result.succeeded)
     event.target.tab.$TST.element.invalidateTooltip();
