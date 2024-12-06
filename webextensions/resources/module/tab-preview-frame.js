@@ -132,9 +132,10 @@ try{
       opacity: 0;
       overflow: hidden; /* clip the preview with the rounded edges */
       padding: 0;
+      pointer-events: none; /* for SIDEBAR and TAB case */
       position: fixed;
       right: auto;
-      z-index: ${Number.MAX_SAFE_INTEGER};
+      z-index: ${Number.MAX_SAFE_INTEGER}; /* for SIDEBAR and TAB case */
     }
     .tab-preview-panel.animation {
       transition: var(--show-hide-animation),
