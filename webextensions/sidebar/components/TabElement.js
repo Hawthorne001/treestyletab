@@ -569,8 +569,10 @@ windowId = ${tab.windowId}
     if (this.__onMouseOver)
       return;
     this.addEventListener('mouseover', this.__onMouseOver = this._onMouseOver.bind(this));
-    this.substanceElement?.addEventListener('mouseenter', this.__onMouseEnter = this._onMouseEnter.bind(this));
-    this.substanceElement?.addEventListener('mouseleave', this.__onMouseLeave = this._onMouseLeave.bind(this));
+    this.addEventListener('mouseenter', this.__onMouseEnter = this._onMouseEnter.bind(this));
+    this.substanceElement?.addEventListener('mouseenter', this.__onMouseEnter);
+    this.addEventListener('mouseleave', this.__onMouseLeave = this._onMouseLeave.bind(this));
+    this.substanceElement?.addEventListener('mouseleave', this.__onMouseLeave);
     window.addEventListener('resize', this.__onWindowResize = this._onWindowResize.bind(this));
     configs.$addObserver(this.__onConfigChange = this._onConfigChange.bind(this));
   }
@@ -580,8 +582,10 @@ windowId = ${tab.windowId}
       return;
     this.removeEventListener('mouseover', this.__onMouseOver);
     this.__onMouseOver = null;
+    this.removeEventListener('mouseenter', this.__onMouseEnter);
     this.substanceElement?.removeEventListener('mouseenter', this.__onMouseEnter);
     this.__onMouseEnter = null;
+    this.removeEventListener('mouseleave', this.__onMouseLeave);
     this.substanceElement?.removeEventListener('mouseleave', this.__onMouseLeave);
     this.__onMouseLeave = null;
     window.removeEventListener('resize', this.__onWindowResize);
@@ -595,6 +599,8 @@ windowId = ${tab.windowId}
   }
 
   _onMouseEnter(event) {
+    if (this.classList.contains('faviconized') != (event.target == this))
+      return;
     if (this._reservedUpdateTooltip) {
       this.removeEventListener('mouseover', this._reservedUpdateTooltip);
       this._updateTooltip();
@@ -612,6 +618,8 @@ windowId = ${tab.windowId}
   }
 
   _onMouseLeave(event) {
+    if (this.classList.contains('faviconized') != (event.target == this))
+      return;
     const tabSubstanceLeaveEvent = new UIEvent(kEVENT_TAB_SUBSTANCE_LEAVE, {
       ...event,
       bubbles: true,
