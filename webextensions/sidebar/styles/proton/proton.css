@@ -369,8 +369,7 @@ tab-item tab-closebox {
   padding: var(--tab-closebox-offset) 0.25em;
 }
 
-tab-item tab-closebox::before,
-tab-item:not(.faviconized) tab-sound-button::before {
+tab-item tab-closebox::before {
   border-radius: 10%;
   content: "";
   display: inline-block;
@@ -381,26 +380,25 @@ tab-item:not(.faviconized) tab-sound-button::before {
   position: absolute;
 }
 
-tab-item tab-closebox:hover::before,
-tab-item:not(.faviconized) tab-sound-button:hover::before {
+tab-item tab-closebox:hover::before {
   background: var(--tab-text);
   box-shadow: 0 0 0.1em rgba(255, 255, 255, 0.3);
   opacity: 0.1;
 }
 
-tab-item tab-closebox:active::before,
-tab-item:not(.faviconized) tab-sound-button:active::before {
+tab-item tab-closebox:active::before {
   opacity: 0.2;
 }
 
-tab-item.active tab-closebox:hover::before,
-tab-item:not(.faviconized).active tab-sound-button:hover::before {
+tab-item.active tab-closebox:hover::before {
   background: var(--tab-text);
 }
 
 tab-item tab-closebox::after {
   position: relative;
 }
+
+
 
 tab-item .burster {
   --throbber-color: var(--tab-loading-fill);
