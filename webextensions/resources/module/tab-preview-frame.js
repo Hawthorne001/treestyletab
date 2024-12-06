@@ -325,7 +325,6 @@ try{
               console.log(' => expired, give up to hide preview');
             return true;
           }
-          console.log('hide');
           lastTimestamp = message.timestamp;
           panel.classList.remove('open');
           return true;
