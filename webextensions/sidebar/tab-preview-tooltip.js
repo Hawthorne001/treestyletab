@@ -487,7 +487,9 @@ async function onTabSubstanceEnter(event) {
     false :
     window.mozInnerScreenX - window.screenX > (window.outerWidth - window.innerWidth) / 2;
 
-  const previewParams = {
+  log(`onTabSubstanceEnter(${event.target.tab.id}}) [${Date.now() - startAt}msec from start]: show tab preview in ${targetTabId || 'sidebar'} `, { hasCustomTooltip, tooltipText, hasPreview });
+  const succeeded = await sendTabPreviewMessage(targetTabId, {
+    type: 'treestyletab:show-tab-preview',
     previewTabId: event.target.tab.id,
     previewTabRect,
     /* These information is used to calculate offset of the sidebar header */
@@ -496,12 +498,6 @@ async function onTabSubstanceEnter(event) {
     align: mayBeRight ? 'right' : 'left',
     scale: 1 / window.devicePixelRatio,
     hasCustomTooltip,
-  };
-
-  log(`onTabSubstanceEnter(${event.target.tab.id}}) [${Date.now() - startAt}msec from start]: show tab preview in ${targetTabId || 'sidebar'} `, { hasCustomTooltip, tooltipText, hasPreview });
-  const succeeded = await sendTabPreviewMessage(targetTabId, {
-    type: 'treestyletab:show-tab-preview',
-    ...previewParams,
     ...(hasCustomTooltip ?
       {
         tooltipHtml,
@@ -513,7 +509,12 @@ async function onTabSubstanceEnter(event) {
     ),
     hasPreview,
     previewURL,
-    timestamp: startAt, // Don't call Date.now() here, because it can become larger than the timestamp on mouseleave.
+    // This is required to simulate the behavior:
+    // show tab preview panel with delay only when the panel is not shown yet.
+    waitInitialShowUntil: startAt + Math.max(configs.tabPreviewTooltipDelayMsec, 0),
+    // Don't call Date.now() here, because it can become larger than
+    // the timestamp on mouseleave.
+    timestamp: startAt,
     canRetry: !!targetTabId,
   }).catch(error => {
     log(`onTabSubstanceEnter(${event.target.tab.id}}) failed: `, error);

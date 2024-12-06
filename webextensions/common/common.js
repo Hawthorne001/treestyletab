@@ -173,6 +173,7 @@ export const configs = new Configs({
   zoomable: false,
   tabPreviewTooltip: false,
   tabPreviewTooltipInSidebar: false,
+  tabPreviewTooltipDelayMsec: 500, // same as "ui.tooltip.delay_ms"
   showOverflowTitleByTooltip: true,
   showCollapsedDescendantsByTooltip: true,
 

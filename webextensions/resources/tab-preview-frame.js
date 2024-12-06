@@ -273,37 +273,56 @@ try{
 
     switch (message?.type) {
       case 'treestyletab:show-tab-preview':
-        if (message.timestamp < lastTimestamp) {
-          if (message?.logging)
-            console.log(' => expired, give up to show/update preview');
-          return Promise.resolve(true);
-        }
-        lastTimestamp = message.timestamp;
-        if (!panel) {
-          panel = createPanel();
-        }
-        updatePanel(message);
-        document.documentElement.appendChild(panel);
-        panel.classList.add('open');
-        return Promise.resolve(true);
+        return (async () => {
+          // Simulate the behavior: show tab preview panel with delay
+          // only when the panel is not shown yet.
+          if (typeof message.waitInitialShowUntil == 'number' &&
+              (!panel ||
+               !panel.classList.contains('open'))) {
+            const delay = Math.max(0, message.waitInitialShowUntil - Date.now());
+            if (delay > 0) {
+              await new Promise((resolve, _reject) => {
+                setTimeout(resolve, delay);
+              });
+            }
+          }
+          if (message.timestamp < lastTimestamp) {
+            if (message?.logging)
+              console.log(' => expired, give up to show/update preview');
+            return true;
+          }
+          lastTimestamp = message.timestamp;
+          if (!panel) {
+            panel = createPanel();
+          }
+          updatePanel(message);
+          document.documentElement.appendChild(panel);
+          panel.classList.add('open');
+          return true;
+        })();
 
       case 'treestyletab:hide-tab-preview':
-        if (!panel ||
-            (message.previewTabId &&
-             panel.dataset.tabId != message.previewTabId)) {
-          if (message?.logging)
-            console.log(' => already hidden, nothing to do');
-          return;
-        }
-
-        if (message.timestamp < lastTimestamp) {
-          if (message?.logging)
-            console.log(' => expired, give up to hide preview');
-          return Promise.resolve(true);
-        }
-        lastTimestamp = message.timestamp;
-        panel.classList.remove('open');
-        return Promise.resolve(true);
+        return (async () => {
+          // Ensure the order of messages: "show" for newly hovered tab =>
+          // "hide" for previously hovered tab.
+          await new Promise(window.requestAnimationFrame);
+          if (!panel ||
+              (message.previewTabId &&
+               panel.dataset.tabId != message.previewTabId)) {
+            if (message?.logging)
+              console.log(' => already hidden, nothing to do');
+            return;
+          }
+          if (message.timestamp < lastTimestamp) {
+            if (message?.logging)
+              console.log(' => expired, give up to hide preview');
+            return true;
+          }
+          console.log('hide');
+          lastTimestamp = message.timestamp;
+          panel.classList.remove('open');
+          return true;
+        })();
 
       case 'treestyletab:notify-sidebar-closed':
         if (panel) {
