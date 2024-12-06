@@ -312,6 +312,7 @@ async function sendTabPreviewMessage(tabId, message, deferredResultResolver) {
       tabId,
       timestamp: Date.now(),
       ...message,
+      ...TabPreviewFrame.getColors(),
       animation: shouldApplyAnimation(),
       logging: configs.logFor['sidebar/tab-preview-tooltip'] && configs.debug,
     }, frameId ? { frameId } : {});

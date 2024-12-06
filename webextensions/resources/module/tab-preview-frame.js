@@ -299,11 +299,8 @@ try{
             return true;
           }
           lastTimestamp = message.timestamp;
-          if (!panel) {
-            panel = createPanel();
-          }
+          preparePanel();
           updatePanel(message);
-          document.documentElement.appendChild(panel);
           panel.classList.add('open');
           return true;
         })();
@@ -365,10 +362,13 @@ catch (error) {
   console.log('TST Tab Preview Frame fatal error: ', error);
 }
 
-function createPanel() {
-  const panel = document.createElement('div');
-  panel.setAttribute('class', 'tab-preview-panel');
-  const contents = panel.appendChild(document.createElement('div'));
+function preparePanel() {
+  if (panel)
+    return;
+
+  const createdPanel = document.createElement('div');
+  createdPanel.setAttribute('class', 'tab-preview-panel');
+  const contents = createdPanel.appendChild(document.createElement('div'));
   contents.setAttribute('class', 'tab-preview-panel-contents');
   const innerBox = contents.appendChild(document.createElement('div'));
   innerBox.setAttribute('class', 'tab-preview-panel-contents-inner-box');
@@ -386,10 +386,12 @@ function createPanel() {
     if (preview.src)
       preview.classList.remove('loading');
   });
-  return panel;
+  document.documentElement.appendChild(createdPanel);
+
+  panel = createdPanel;
 }
 
-function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, scale, logging, animation } = {}) {
+function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, scale, logging, animation, backgroundColor, borderColor, color } = {}) {
   if (!panel)
     return;
 
@@ -404,6 +406,16 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
 
   panel.classList.add('updating');
   panel.classList.toggle('animation', animation);
+
+  if (backgroundColor) {
+    panel.style.setProperty('--panel-background', backgroundColor);
+  }
+  if (borderColor) {
+    panel.style.setProperty('--panel-border-color', borderColor);
+  }
+  if (color) {
+    panel.style.setProperty('--panel-color', color);
+  }
 
   // This cancels the zoom effect by the user.
   // We need to calculate the scale with two devicePixelRatio values
@@ -610,4 +622,15 @@ export function setWindowId(id) {
 // for SIDEBAR case
 export async function handleMessage(message) {
   return onMessage(message);
+}
+
+export function getColors() {
+  preparePanel();
+
+  const style = window.getComputedStyle(panel, null);
+  return {
+    backgroundColor: style.backgroundColor,
+    borderColor: style.borderColor,
+    color: style.color,
+  };
 }
