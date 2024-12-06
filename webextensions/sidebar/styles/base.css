@@ -1289,23 +1289,6 @@ iframe#subpanel {
 }
 
 
-/* tab preview tooltip */
-#tab-preview-tooltip-frame {
-  background: transparent;
-  border: 0 none;
-  bottom: 0;
-  height: 100%;
-  left: 0;
-  overflow: hidden;
-  pointer-events: none;
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 100%;
-  z-index: var(--tooltip-ui-z-index);
-}
-
-
 /* blocking UI */
 
 #blocking-screen {

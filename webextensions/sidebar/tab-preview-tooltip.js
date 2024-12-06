@@ -76,6 +76,8 @@ import * as Permissions from '/common/permissions.js';
 import * as TabsStore from '/common/tabs-store.js';
 import Tab from '/common/Tab.js';
 
+import * as TabPreviewFrame from '/resources/module/tab-preview-frame.js';
+
 import * as EventUtils from './event-utils.js';
 import * as Sidebar from './sidebar.js';
 
@@ -121,7 +123,7 @@ async function prepareFrame(tabId) {
     // to the internal page directly.
     await browser.tabs.executeScript(tabId, {
       runAt: 'document_start',
-      file: '/resources/tab-preview-frame.js',
+      file: '/resources/module/tab-preview-frame.js',
     });
     return;
   }
@@ -405,7 +407,7 @@ async function sendInSidebarTabPreviewMessage(message) {
   log(`sendInSidebarTabPreviewMessage(${message.type}})`);
   if (typeof message.previewURL == 'function')
     message.previewURL = await message.previewURL();
-  await browser.runtime.sendMessage({
+  await TabPreviewFrame.handleMessage({
     ...message,
     timestamp: Date.now(),
     windowId: TabsStore.getCurrentWindowId(),
@@ -605,7 +607,7 @@ browser.runtime.onMessage.addListener((message, sender) => {
 
 Sidebar.onReady.addListener(() => {
   const windowId = TabsStore.getCurrentWindowId();
-  document.querySelector('#tab-preview-tooltip-frame').src = `/resources/tab-preview-frame.html?windowId=${windowId}`;
+  TabPreviewFrame.setWindowId(windowId);
 });
 
 document.querySelector('#tabbar').addEventListener('mouseleave', async () => {

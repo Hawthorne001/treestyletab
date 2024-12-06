@@ -14,13 +14,16 @@
 //  * TAB case:
 //    loaded into an TST internal page loaded in a tab
 //  * SIDEBAR case:
-//    loaded into an iframe embedded to the TST sidebar
+//    loaded into the TST sidebar
 
 let panel = null;
-const parsedURL = new URL(location.href)
-const windowId = parsedURL.searchParams.get('windowId') || null; // for SIDEBAR case
+
+let windowId = null; // for SIDEBAR case
 let tabId = null; // for TAB case
-document.documentElement.classList.add('tab-preview-frame'); // for REGULAR and SIDEBAR case
+if (!location.href.startsWith('moz-extension://')) { // for REGULAR case
+  document.documentElement.style.pointerEvents = 'none';
+  document.documentElement.classList.add('tab-preview-frame');
+}
 
 // https://searchfox.org/mozilla-central/rev/dfaf02d68a7cb018b6cad7e189f450352e2cde04/browser/themes/shared/tabbrowser/tab-hover-preview.css#5
 const BASE_PANEL_WIDTH  = 280;
@@ -31,6 +34,8 @@ const DATA_URI_BLANK_PNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAA
 const isWindows = /^Win/i.test(navigator.platform);
 const isLinux = /Linux/i.test(navigator.platform);
 const isMac = /^Mac/i.test(navigator.platform);
+
+let onMessage;
 
 try{
   const style = document.createElement('style');
@@ -129,6 +134,7 @@ try{
       padding: 0;
       position: fixed;
       right: auto;
+      z-index: ${Number.MAX_SAFE_INTEGER};
     }
     .tab-preview-panel.animation {
       transition: var(--show-hide-animation),
@@ -261,7 +267,7 @@ try{
   document.head.appendChild(style);
 
   let lastTimestamp = 0;
-  const onMessage = (message, _sender) => {
+  onMessage = (message, _sender) => {
     if ((windowId &&
          message?.windowId != windowId) ||
         (tabId &&
@@ -350,8 +356,6 @@ try{
   window.addEventListener('unload', () => {
     browser.runtime.onMessage.removeListener(onMessage);
   }, { once: true });
-
-  document.documentElement.style.pointerEvents = 'none';
 
   browser.runtime.sendMessage({
     type: 'treestyletab:tab-preview-frame-loaded',
@@ -595,4 +599,15 @@ function getPngDimensionsFromDataUri(uri) {
     (byteArray[22] << 8) |
     byteArray[23];
   return { width, height };
+}
+
+
+// for SIDEBAR case
+export function setWindowId(id) {
+  windowId = id;
+}
+
+// for SIDEBAR case
+export async function handleMessage(message) {
+  return onMessage(message);
 }
