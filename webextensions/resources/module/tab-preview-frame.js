@@ -117,6 +117,12 @@ try{
       --panel-border-color: light-dark(rgb(240, 240, 244), rgb(82, 82, 94));
 
 
+      @media (prefers-color-scheme: dark) {
+        --panel-background: var(--dark-popup);
+        --panel-color: var(--dark-popup-text);
+        --panel-border-color: var(--dark-popup-border);
+      }
+
       background: var(--panel-background);
       border: var(--panel-border-color) solid calc(1px / var(--scale));
       border-radius: var(--panel-border-radius);
