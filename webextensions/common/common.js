@@ -172,7 +172,7 @@ export const configs = new Configs({
   longPressOnNewTabButton: Constants.kCONTEXTUAL_IDENTITY_SELECTOR,
   zoomable: false,
   tabPreviewTooltip: false,
-  tabPreviewTooltipInSidebar: false,
+  tabPreviewTooltipInSidebar: true,
   tabPreviewTooltipDelayMsec: 500, // same as "ui.tooltip.delay_ms"
   showOverflowTitleByTooltip: true,
   showCollapsedDescendantsByTooltip: true,
