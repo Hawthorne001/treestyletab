@@ -231,16 +231,20 @@ try{
       min-height: ${BASE_PANEL_HEIGHT}px;
     }
 
-    .blank,
-    .hidden {
+    .tab-preview-panel.blank,
+    .tab-preview-panel .blank,
+    .tab-preview-panel.hidden,
+    .tab-preview-panel .hidden {
       display: none;
     }
 
-    .loading {
+    .tab-preview-panel.loading,
+    .tab-preview-panel .loading {
       opacity: 0;
     }
 
-    .updating {
+    .tab-preview-panel.updating,
+    .tab-preview-panel .updating {
       visibility: hidden;
     }
 
