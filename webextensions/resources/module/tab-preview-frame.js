@@ -159,7 +159,7 @@ try{
     }
     .tab-preview-panel.animation.updating,
     .tab-preview-panel.animation:not(.open) {
-      margin-top: -1ch;
+      margin-top: 1ch; /* The native tab preview panel "popups up" on the vertical tab bar. */
     }
     /*
     .tab-preview-panel[data-align="left"].updating,
