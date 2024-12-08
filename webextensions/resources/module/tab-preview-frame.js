@@ -638,9 +638,71 @@ export function getColors() {
   preparePanel();
 
   const style = window.getComputedStyle(panel, null);
+  try {
+    // Computed style's colors may be unexpected value if the element
+    // is not rendered on the screen yet and it has colors for light
+    // and dark schemes. So we need to get preferred colors manually.
+    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return {
+      backgroundColor: getPreferredColor(style.getPropertyValue('--panel-background'), { isDark }),
+      borderColor: getPreferredColor(style.getPropertyValue('--panel-border-color'), { isDark }),
+      color: getPreferredColor(style.getPropertyValue('--panel-color'), { isDark }),
+    };
+  }
+  catch(_error) {
+  }
   return {
     backgroundColor: style.backgroundColor,
     borderColor: style.borderColor,
     color: style.color,
   };
+}
+
+// Parse light-dark(<light color>, <dark color>) and return preferred color
+function getPreferredColor(color, { isDark } = {}) {
+  if (!color.startsWith('light-dark('))
+    return color;
+
+  const values = [];
+  let buffer = '';
+  let inParenCount = 0;
+  color = color.substring(11); // remove "light-dark(" prefix
+  ColorParse:
+  for (let i = 0, maxi = color.length; i < maxi; i++) {
+    const character = color.charAt(i);
+    switch (character) {
+      case '(':
+        inParenCount++;
+        buffer += character;
+        break;
+
+      case ')':
+        inParenCount--;
+        if (inParenCount < 0) {
+          values.push(buffer);
+          buffer = '';
+          break ColorParse;
+        }
+        buffer += character;
+        break;
+
+      case ',':
+        if (inParenCount > 0) {
+          buffer += character;
+        }
+        else {
+          values.push(buffer);
+          buffer = '';
+        }
+        break;
+
+      default:
+        buffer += character;
+        break;
+    }
+  }
+
+  if (typeof isDark != 'boolean')
+    isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return isDark ? values[1] : values[0];
 }
