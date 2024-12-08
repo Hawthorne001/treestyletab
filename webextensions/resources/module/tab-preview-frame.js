@@ -41,11 +41,13 @@ try{
   const style = document.createElement('style');
   style.setAttribute('type', 'text/css');
   style.textContent = `
+    :root {
+      --tab-preview-panel-show-hide-animation: opacity 0.1s ease-out;
+      --tab-preview-panel-scale: 1; /* Web contents may be zoomed by the user, and we need to cancel the zoom effect. */
+    }
     :root.tab-preview-frame {
-      --show-hide-animation: opacity 0.1s ease-out;
-      --scale: 1; /* Web contents may be zoomed by the user, and we need to cancel the zoom effect. */
       opacity: 1;
-      transition: var(--show-hide-animation);
+      transition: var(--tab-preview-panel-show-hide-animation);
     }
 
     :root.tab-preview-frame:hover {
@@ -58,9 +60,9 @@ try{
 
       --panel-background: Menu;
       --panel-color: MenuText;
-      --panel-padding-block: calc(4px / var(--scale));
+      --panel-padding-block: calc(4px / var(--tab-preview-panel-scale));
       --panel-padding: var(--panel-padding-block) 0;
-      --panel-border-radius: calc(4px / var(--scale));
+      --panel-border-radius: calc(4px / var(--tab-preview-panel-scale));
       --panel-border-color: ThreeDShadow;
       --panel-width: initial;
 
@@ -74,8 +76,8 @@ try{
 
       /*@media (-moz-platform: linux) {*/
       ${isLinux ? '' : '/*'}
-        --panel-border-radius: calc(8px / var(--scale));
-        --panel-padding-block: calc(3px / var(--scale));
+        --panel-border-radius: calc(8px / var(--tab-preview-panel-scale));
+        --panel-padding-block: calc(3px / var(--tab-preview-panel-scale));
 
         @media (prefers-contrast) {
           --panel-border-color: color-mix(in srgb, currentColor 60%, transparent);
@@ -85,7 +87,7 @@ try{
 
       /*@media (-moz-platform: linux) or (-moz-platform: windows) {*/
       ${isLinux || isWindows ? '' : '/*'}
-        --panel-shadow-margin: calc(4px / var(--scale));
+        --panel-shadow-margin: calc(4px / var(--tab-preview-panel-scale));
       ${isLinux || isWindows ? '' : '*/'}
       /*}*/
 
@@ -104,12 +106,12 @@ try{
         background-color: Menu;
         --panel-background: none;
         --panel-border-color: transparent;
-        --panel-border-radius: calc(6px / var(--scale));
+        --panel-border-radius: calc(6px / var(--tab-preview-panel-scale));
       ${isMac ? '' : '*/'}
       /*}*/
 
       /* https://searchfox.org/mozilla-central/rev/dfaf02d68a7cb018b6cad7e189f450352e2cde04/browser/themes/shared/tabbrowser/tab-hover-preview.css#5 */
-      --panel-width: min(100%, calc(${BASE_PANEL_WIDTH}px / var(--scale)));
+      --panel-width: min(100%, calc(${BASE_PANEL_WIDTH}px / var(--tab-preview-panel-scale)));
       --panel-padding: 0;
 
       /* https://searchfox.org/mozilla-central/rev/b576bae69c6f3328d2b08108538cbbf535b1b99d/toolkit/themes/shared/global-shared.css#111 */
@@ -124,7 +126,7 @@ try{
       }
 
       background: var(--panel-background);
-      border: var(--panel-border-color) solid calc(1px / var(--scale));
+      border: var(--panel-border-color) solid calc(1px / var(--tab-preview-panel-scale));
       border-radius: var(--panel-border-radius);
       box-shadow: var(--panel-shadow);
       box-sizing: border-box;
@@ -132,7 +134,7 @@ try{
       font: Message-Box;
       left: auto;
       line-height: 1.5;
-      margin-top: 0;
+      margin-top: 0px;
       max-width: var(--panel-width);
       min-width: var(--panel-width);
       opacity: 0;
@@ -144,8 +146,9 @@ try{
       z-index: ${Number.MAX_SAFE_INTEGER}; /* for SIDEBAR and TAB case */
     }
     .tab-preview-panel.animation {
-      transition: var(--show-hide-animation),
+      transition: var(--tab-preview-panel-show-hide-animation),
                   left 0.1s ease-out,
+                  margin-top 0.1s ease-out,
                   right 0.1s ease-out;
     }
     .tab-preview-panel.extended {
@@ -154,6 +157,11 @@ try{
     .tab-preview-panel.open {
       opacity: 1;
     }
+    .tab-preview-panel.animation.updating,
+    .tab-preview-panel.animation:not(.open) {
+      margin-top: -1ch;
+    }
+    /*
     .tab-preview-panel[data-align="left"].updating,
     .tab-preview-panel[data-align="left"]:not(.open) {
       left: -1ch !important;
@@ -162,6 +170,7 @@ try{
     .tab-preview-panel[data-align="right"]:not(.open) {
       right: -1ch !important;
     }
+    */
 
     .tab-preview-panel.extended .tab-preview-title,
     .tab-preview-panel.extended .tab-preview-url,
@@ -172,16 +181,16 @@ try{
 
     .tab-preview-panel-contents,
     .tab-preview-panel-contents-inner-box {
-      max-width: calc(var(--panel-width) - (2px / var(--scale)));
-      min-width: calc(var(--panel-width) - (2px / var(--scale)));
+      max-width: calc(var(--panel-width) - (2px / var(--tab-preview-panel-scale)));
+      min-width: calc(var(--panel-width) - (2px / var(--tab-preview-panel-scale)));
     }
     .tab-preview-panel.extended .tab-preview-panel-contents,
     .tab-preview-panel.extended .tab-preview-panel-contents-inner-box {
-      max-width: calc(min(100%, calc(var(--panel-width) * 2)) - (2px / var(--scale)));
+      max-width: calc(min(100%, calc(var(--panel-width) * 2)) - (2px / var(--tab-preview-panel-scale)));
     }
 
     .tab-preview-panel-contents {
-      max-height: calc(var(--panel-max-height) - (2px / var(--scale)));
+      max-height: calc(var(--panel-max-height) - (2px / var(--tab-preview-panel-scale)));
     }
 
     .tab-preview-panel.overflow .tab-preview-panel-contents {
@@ -189,7 +198,7 @@ try{
     }
 
     .tab-preview-title {
-      font-size: calc(1em / var(--scale));
+      font-size: calc(1em / var(--tab-preview-panel-scale));
       font-weight: bold;
       margin: var(--panel-border-radius) var(--panel-border-radius) 0;
       max-height: 3em; /* -webkit-line-clamp looks unavailable, so this is a workaround */
@@ -199,7 +208,7 @@ try{
     }
 
     .tab-preview-url {
-      font-size: calc(1em / var(--scale));
+      font-size: calc(1em / var(--tab-preview-panel-scale));
       margin: 0 var(--panel-border-radius);
       opacity: 0.69; /* https://searchfox.org/mozilla-central/rev/234f91a9d3ebef0d514868701cfb022d5f199cb5/toolkit/themes/shared/design-system/tokens-shared.css#182 */
       overflow: hidden;
@@ -208,13 +217,13 @@ try{
     }
 
     .tab-preview-extended-content {
-      font-size: calc(1em / var(--scale));
+      font-size: calc(1em / var(--tab-preview-panel-scale));
       margin: var(--panel-border-radius);
       white-space: pre;
     }
 
     .tab-preview-image-container {
-      border-top: calc(1px / var(--scale)) solid var(--panel-border-color);
+      border-top: calc(1px / var(--tab-preview-panel-scale)) solid var(--panel-border-color);
       margin-top: 0.25em;
       max-height: calc(var(--panel-width) * ${BASE_PANEL_HEIGHT / BASE_PANEL_WIDTH}); /* use relative value instead of 140px */
       overflow: hidden;
@@ -433,7 +442,7 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   // of the browser window can be scaled on a high-DPI display by the
   // platform.
   scale = window.devicePixelRatio * (scale || 1);
-  document.documentElement.style.setProperty('--scale', scale);
+  document.documentElement.style.setProperty('--tab-preview-panel-scale', scale);
   const panelWidth = Math.min(window.innerWidth, BASE_PANEL_WIDTH / scale);
   panel.style.setProperty('--panel-width', `${panelWidth}px`);
 
