@@ -545,6 +545,9 @@ async function onTabSubstanceLeave(event) {
     activeTab.id :
     null;
 
+  if (!event.target.tab) // the tab was closed while waiting
+    return;
+
   log(`onTabSubstanceLeave(${event.target.tab.id}}) hide tab preview in ${targetTabId || 'sidebar'}`);
   sendTabPreviewMessage(targetTabId, {
     type: 'treestyletab:hide-tab-preview',
