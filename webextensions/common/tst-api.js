@@ -327,14 +327,19 @@ function registerAddon(id, addon) {
   // inherit properties from last effective value
   const oldAddon = getAddon(id);
   if (oldAddon) {
-    if (!('listeningTypes' in addon) && 'listeningTypes' in oldAddon)
-      addon.listeningTypes = oldAddon.listeningTypes;
-    if (!('style' in addon) && 'style' in oldAddon)
-      addon.style = oldAddon.style;
-    if (!('allowBulkMessaging' in addon) && 'allowBulkMessaging' in oldAddon)
-      addon.allowBulkMessaging = oldAddon.allowBulkMessaging;
-    if (!('lightTree' in addon) && 'lightTree' in oldAddon)
-      addon.lightTree = oldAddon.lightTree;
+    for (const param of [
+           'name',
+           'icons',
+           'listeningTypes',
+           'allowBulkMessaging',
+           'lightTree',
+           'style',
+           'permissions',
+         ]) {
+      if (!(param in addon) && param in oldAddon) {
+        addon[param] = oldAddon[param];
+      }
+    }
   }
 
   if (!addon.listeningTypes) {
