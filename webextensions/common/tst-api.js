@@ -328,14 +328,14 @@ function registerAddon(id, addon) {
   const oldAddon = getAddon(id);
   if (oldAddon) {
     for (const param of [
-           'name',
-           'icons',
-           'listeningTypes',
-           'allowBulkMessaging',
-           'lightTree',
-           'style',
-           'permissions',
-         ]) {
+      'name',
+      'icons',
+      'listeningTypes',
+      'allowBulkMessaging',
+      'lightTree',
+      'style',
+      'permissions',
+    ]) {
       if (!(param in addon) && param in oldAddon) {
         addon[param] = oldAddon[param];
       }
