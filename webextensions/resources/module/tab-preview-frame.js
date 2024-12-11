@@ -314,9 +314,11 @@ try{
           }
           if (message.timestamp < lastTimestamp) {
             if (message?.logging)
-              console.log(' => expired, give up to show/update preview');
+              console.log(`show tab preview(${message.previewTabId}): expired, give up to show/update preview `, message.timestamp);
             return true;
           }
+          if (message?.logging)
+            console.log(`show tab preview(${message.previewTabId}): invoked, let's show/update preview `, message.timestamp);
           lastTimestamp = message.timestamp;
           preparePanel();
           updatePanel(message);
@@ -333,14 +335,16 @@ try{
               (message.previewTabId &&
                panel.dataset.tabId != message.previewTabId)) {
             if (message?.logging)
-              console.log(' => already hidden, nothing to do');
+              console.log(`hide tab preview(${message.previewTabId}): already hidden, nothing to do `, message.timestamp);
             return;
           }
           if (message.timestamp < lastTimestamp) {
             if (message?.logging)
-              console.log(' => expired, give up to hide preview');
+              console.log(`hide tab preview(${message.previewTabId}): expired, give up to hide preview `, message.timestamp);
             return true;
           }
+          if (message?.logging)
+            console.log(`hide tab preview(${message.previewTabId}): invoked, let's hide preview `, message.timestamp);
           lastTimestamp = message.timestamp;
           panel.classList.remove('open');
           return true;

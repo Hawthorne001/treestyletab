@@ -462,7 +462,7 @@ async function onTabSubstanceEnter(event) {
   if (!event.target.tab)
     return;
 
-  log(`onTabSubstanceEnter(${event.target.tab.id}}) start`);
+  log(`onTabSubstanceEnter(${event.target.tab.id}}) start `, startAt);
 
   hoveringTabIds.add(event.target.tab.id);
   const tooltipText = event.target.appliedTooltipText;
@@ -548,7 +548,7 @@ async function onTabSubstanceLeave(event) {
   if (!event.target.tab) // the tab was closed while waiting
     return;
 
-  log(`onTabSubstanceLeave(${event.target.tab.id}}) hide tab preview in ${targetTabId || 'sidebar'}`);
+  log(`onTabSubstanceLeave(${event.target.tab.id}}) hide tab preview in ${targetTabId || 'sidebar'} `, startAt);
   sendTabPreviewMessage(targetTabId, {
     type: 'treestyletab:hide-tab-preview',
     previewTabId: event.target.tab.id,
