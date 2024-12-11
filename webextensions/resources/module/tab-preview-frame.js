@@ -336,6 +336,8 @@ try{
                panel.dataset.tabId != message.previewTabId)) {
             if (message?.logging)
               console.log(`hide tab preview(${message.previewTabId}): already hidden, nothing to do `, message.timestamp);
+            if (!panel && !message.previewTabId) // on initial case
+              lastTimestamp = message.timestamp;
             return;
           }
           if (message.timestamp < lastTimestamp) {

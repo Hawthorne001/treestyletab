@@ -405,12 +405,13 @@ async function waitUntilPreviewFrameLoadedIntoTab(tabId) {
 
 
 async function sendInSidebarTabPreviewMessage(message) {
+  const startAt = message.startAt || Date.now();
   log(`sendInSidebarTabPreviewMessage(${message.type}})`);
   if (typeof message.previewURL == 'function')
     message.previewURL = await message.previewURL();
   await TabPreviewFrame.handleMessage({
+    timestamp: startAt,
     ...message,
-    timestamp: Date.now(),
     windowId: TabsStore.getCurrentWindowId(),
     animation: shouldApplyAnimation(),
     logging: configs.logFor['sidebar/tab-preview-tooltip'] && configs.debug,
@@ -559,17 +560,22 @@ onTabSubstanceLeave = EventUtils.wrapWithErrorHandler(onTabSubstanceLeave);
 
 
 browser.tabs.onActivated.addListener(activeInfo => {
+  const startAt = Date.now();
+
   if (activeInfo.windowId != TabsStore.getCurrentWindowId())
     return;
 
   sendInSidebarTabPreviewMessage({
     type: 'treestyletab:hide-tab-preview',
+    timestamp: startAt,
   });
   sendTabPreviewMessage(activeInfo.tabId, {
     type: 'treestyletab:hide-tab-preview',
+    timestamp: startAt,
   });
   sendTabPreviewMessage(activeInfo.previousTabId, {
     type: 'treestyletab:hide-tab-preview',
+    timestamp: startAt,
   });
 });
 
@@ -615,14 +621,19 @@ Sidebar.onReady.addListener(() => {
 });
 
 document.querySelector('#tabbar').addEventListener('mouseleave', async () => {
-  log('mouse is left from the tab bar');
+  const startAt = Date.now();
+  log('mouse is left from the tab bar ', startAt);
+
+  hoveringTabIds.clear();
 
   sendInSidebarTabPreviewMessage({
     type: 'treestyletab:hide-tab-preview',
+    timestamp: startAt,
   });
 
   const activeTab = Tab.getActiveTab(TabsStore.getCurrentWindowId());
   sendTabPreviewMessage(activeTab.id, {
     type: 'treestyletab:hide-tab-preview',
+    timestamp: startAt,
   });
 });
