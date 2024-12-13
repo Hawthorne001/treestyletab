@@ -110,6 +110,15 @@ function log(...args) {
   internalLogger('sidebar/tab-preview-tooltip', ...args);
 }
 
+// Generates a custom element name at random. This mainly aims to avoid
+// conflicting of custom element names defined by webpage scripts.
+// The generated name is user-unfriendly, this aims to guard your privacy.
+function generateOneTimeCustomElementName() {
+  const alphabets = 'abcdefghijklmnopqrstuvwxyz';
+  const prefix = alphabets[Math.floor(Math.random() * alphabets.length)];
+  return prefix + '-' + Date.now() + '-' + Math.round(Math.random() * 65000);
+}
+
 async function prepareFrame(tabId) {
   const tab = Tab.get(tabId);
   if (!tab)
@@ -136,29 +145,46 @@ async function prepareFrame(tabId) {
     code: `(() => {
       const logging = ${!!logging};
 
-      // This exposes "moz-extension://<UUID>/" URL to the webpage, so it
-      // may allow the webpage to identify you by fingerprinting with the
-      // UUID. It is not safe for privacy, but sadly this is most safer way
-      // we can do.
-      // If we load iframe with "about:blank", we cannot inject arbitrary
-      // script into the iframe due to restrictions of WebExtensions API
-      // (tabs.executeScript()) and the cross-origin policy. We can bypass
-      // the cross-origin restrictions with sandbox=allow-same-origin, but
-      // it means that webpage scripts can read all contents of the iframe,
-      // thus titles and URLs (and preview images) from other tabs will be
-      // accessible from webpage scripts - it is seriously vulnerable.
-      // Data: URI and Blob URL have same issue.
-      const url = '${browser.runtime.getURL('/resources/tab-preview-frame.html')}';
+      window.closedIframeType = window.closedIframeType || '${generateOneTimeCustomElementName()}';
 
       // cleanup!
-      const oldFrames = document.querySelectorAll('iframe[src="' + url + '"]');
-      for (const oldFrame of oldFrames) {
-        oldFrame.parentNode.removeChild(oldFrame);
+      for (const maybeOldFrame of document.documentElement.childNodes) {
+        if (maybeOldFrame.isTSTTabPreviewFrame)
+          maybeOldFrame.parentNode.removeChild(maybeOldFrame);
       }
 
-      const frame = document.createElement('iframe');
-      frame.setAttribute('src', url);
-      frame.setAttribute('style', ${JSON.stringify(TAB_PREVIEW_FRAME_STYLE)});
+      // We cannot undefine custom element types, so we define it just one time.
+      if (!window.customElements.get(window.closedIframeType)) {
+        // This may exposes "moz-extension://<UUID>/" URL to the webpage, so
+        // it may allow the webpage to identify you by fingerprinting with the
+        // UUID. It is not safe for privacy, but sadly this is most safer way
+        // we can do.
+        // If we load iframe with "about:blank", we cannot inject arbitrary
+        // script into the iframe due to restrictions of WebExtensions API
+        // (tabs.executeScript()) and the cross-origin policy. We can bypass
+        // the cross-origin restrictions with sandbox=allow-same-origin, but
+        // it means that webpage scripts can read all contents of the iframe,
+        // thus titles and URLs (and preview images) from other tabs will be
+        // accessible from webpage scripts - it is seriously vulnerable.
+        // Data: URI and Blob URL have same issue.
+        const url = '${browser.runtime.getURL('/resources/tab-preview-frame.html')}';
+        // So we use a wrapper custom element to enclose the raw iframe.
+        // It should guard the raw iframe from accesses by webpage scripts.
+        class ClosedIframe extends HTMLElement {
+          constructor() {
+            super();
+            const shadow = this.attachShadow({ mode: 'closed' });
+            const frame = document.createElement('iframe');
+            frame.setAttribute('src', url);
+            frame.setAttribute('sandbox', 'allow-same-origin allow-scripts');
+            frame.setAttribute('style', ${JSON.stringify(TAB_PREVIEW_FRAME_STYLE)});
+            shadow.appendChild(frame);
+            this.isTSTTabPreviewFrame = true;
+          }
+        }
+        window.customElements.define(window.closedIframeType, ClosedIframe);
+      }
+      const frame = document.createElement(window.closedIframeType);
       document.documentElement.appendChild(frame);
 
       let lastFrameId;

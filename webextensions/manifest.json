@@ -263,6 +263,7 @@
   "web_accessible_resources": [
     "/resources/blank.html",
     "/resources/group-tab.html*",
+    "/resources/tab-preview-frame.html*",
     "/resources/icons/*",
     "/sidebar/styles/icons/*"
   ],
