@@ -135,6 +135,19 @@ async function prepareFrame(tabId) {
     runAt: 'document_start',
     code: `(() => {
       const logging = ${!!logging};
+
+      // This exposes "moz-extension://<UUID>/" URL to the webpage, so it
+      // may allow the webpage to identify you by fingerprinting with the
+      // UUID. It is not safe for privacy, but sadly this is most safer way
+      // we can do.
+      // If we load iframe with "about:blank", we cannot inject arbitrary
+      // script into the iframe due to restrictions of WebExtensions API
+      // (tabs.executeScript()) and the cross-origin policy. We can bypass
+      // the cross-origin restrictions with sandbox=allow-same-origin, but
+      // it means that webpage scripts can read all contents of the iframe,
+      // thus titles and URLs (and preview images) from other tabs will be
+      // accessible from webpage scripts - it is seriously vulnerable.
+      // Data: URI and Blob URL have same issue.
       const url = '${browser.runtime.getURL('/resources/tab-preview-frame.html')}';
 
       // cleanup!
