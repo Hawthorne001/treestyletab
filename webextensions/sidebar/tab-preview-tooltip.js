@@ -148,9 +148,8 @@ async function prepareFrame(tabId) {
       window.closedIframeType = window.closedIframeType || '${generateOneTimeCustomElementName()}';
 
       // cleanup!
-      for (const maybeOldFrame of document.documentElement.childNodes) {
-        if (maybeOldFrame.isTSTTabPreviewFrame)
-          maybeOldFrame.parentNode.removeChild(maybeOldFrame);
+      for (const oldFrame of document.querySelectorAll(window.closedIframeType)) {
+        oldFrame.parentNode.removeChild(oldFrame);
       }
 
       // We cannot undefine custom element types, so we define it just one time.
@@ -179,7 +178,6 @@ async function prepareFrame(tabId) {
             frame.setAttribute('sandbox', 'allow-same-origin allow-scripts');
             frame.setAttribute('style', ${JSON.stringify(TAB_PREVIEW_FRAME_STYLE)});
             shadow.appendChild(frame);
-            this.isTSTTabPreviewFrame = true;
           }
         }
         window.customElements.define(window.closedIframeType, ClosedIframe);
