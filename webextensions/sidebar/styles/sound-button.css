@@ -127,5 +127,5 @@ tab-item.faviconized tab-sound-button {
   padding: 0;
   position: absolute;
   right: 0;
-  top: 0;
+  top: calc(var(--sound-button-size) * 0.2); /* cancel negative margin of the background circle */
 }
