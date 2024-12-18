@@ -14,7 +14,7 @@ tab-sound-button {
   border: none 0 transparent;
   display: none;
   height: var(--sound-button-size);
-  margin: 0 calc(var(--sound-button-size) * 0.2); /* prevent overrapping of this button's background circle on other buttons */
+  margin: 0 calc(var(--sound-button-size) * 0.2 /* prevent overrapping of this button's background circle on other buttons */ + 0.2em /* and put spaces between other UIs */);
   min-height: var(--sound-button-size);
   min-width: var(--sound-button-size); /* this is required to prevent shrinking of the box which has no position:static content */
   opacity: 1;
