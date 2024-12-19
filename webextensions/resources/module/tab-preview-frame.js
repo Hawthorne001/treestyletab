@@ -526,22 +526,23 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
     if (logging)
       console.log('updatePanel/completeUpdate: overflow: ', contentsHeight, '>', panelHeight);
 
+    let top;
     if (windowId) { // in-sidebar
       if (logging)
         console.log('updatePanel/completeUpdate: in-sidebar, alignment calculating: ', { half: window.innerHeight, maxY, scale, previewTabRect });
       if (previewTabRect.top > (window.innerHeight / 2)) { // align to bottom edge of the tab
-        panel.style.top = `${Math.min(maxY, previewTabRect.bottom / scale) - panelHeight - previewTabRect.height}px`;
+        top = `${Math.min(maxY, previewTabRect.bottom / scale) - panelHeight - previewTabRect.height}px`;
         if (logging)
-          console.log(' => align to bottom edge of the tab, top=', panel.style.top);
+          console.log(' => align to bottom edge of the tab, top=', top);
       }
       else { // align to top edge of the tab
-        panel.style.top = `${Math.max(0, previewTabRect.top / scale) + previewTabRect.height}px`;
+        top = `${Math.max(0, previewTabRect.top / scale) + previewTabRect.height}px`;
         if (logging)
-          console.log(' => align to top edge of the tab, top=', panel.style.top);
+          console.log(' => align to top edge of the tab, top=', top);
       }
 
       if (logging)
-        console.log(' => top=', panel.style.top);
+        console.log(' => top=', top);
     }
     else { // in-content
       // We need to shift the position with the height of the sidebar header.
@@ -552,23 +553,38 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
         console.log('updatePanel/completeUpdate: in-content, alignment calculating: ', { offsetFromWindowEdge, sidebarContentsOffset, alignToTopPosition, panelHeight, maxY, scale });
       if (alignToTopPosition + panelHeight >= maxY &&
           alignToBottomPosition >= 0) { // align to bottom edge of the tab
-        panel.style.top = `${alignToBottomPosition}px`;
+        top = `${alignToBottomPosition}px`;
         if (logging)
-          console.log(' => align to bottom edge of the tab, top=', panel.style.top);
+          console.log(' => align to bottom edge of the tab, top=', top);
       }
       else { // align to top edge of the tab
-        panel.style.top = `${alignToTopPosition}px`;
+        top = `${alignToTopPosition}px`;
         if (logging)
-          console.log(' => align to top edge of the tab, top=', panel.style.top);
+          console.log(' => align to top edge of the tab, top=', top);
       }
     }
+    // updatePanel() may be called multiple times for a target tab
+    // (with/without previewURL), so we should not set positions again
+    // if not needed. Otherwise the animation may be canceled in middle.
+    if (top &&
+        panel.style.top != top) {
+      panel.style.top = top;
+    }
+
+    let left, right;
     if (align == 'left') {
-      panel.style.left  = 'var(--panel-shadow-margin)';
-      panel.style.right = '';
+      left  = 'var(--panel-shadow-margin)';
+      right = '';
     }
     else {
-      panel.style.left  = '';
-      panel.style.right = 'var(--panel-shadow-margin)';
+      left  = '';
+      right = 'var(--panel-shadow-margin)';
+    }
+    if (panel.style.left != left) {
+      panel.style.left = left;
+    }
+    if (panel.style.right != right) {
+      panel.style.right = right;
     }
 
     panel.classList.remove('updating');
