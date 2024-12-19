@@ -266,6 +266,8 @@ async function sendTabPreviewMessage(tabId, message, deferredResultResolver) {
   if (!tab)
     return false;
 
+  const promisedPreviewURL = typeof message.previewURL == 'function' && message.previewURL();
+
   let frameId;
   let loadedInfo;
   try {
@@ -277,9 +279,6 @@ async function sendTabPreviewMessage(tabId, message, deferredResultResolver) {
         type: 'treestyletab:ask-tab-preview-frame-loaded',
         tabId,
       }).catch(_error => {}),
-      typeof message.previewURL == 'function' && (async () => {
-        message.previewURL = await message.previewURL();
-      })(),
     ]);
     frameId = gotFrameId;
     loadedInfo = gotLoadedInfo;
@@ -345,17 +344,35 @@ async function sendTabPreviewMessage(tabId, message, deferredResultResolver) {
 
   let response;
   try {
+    const timestamp = Date.now();
     response = await browser.tabs.sendMessage(tabId, {
       tabId,
-      timestamp: Date.now(),
+      timestamp,
       ...message,
       ...TabPreviewFrame.getColors(),
+      ...(promisedPreviewURL ? { previewURL: null } : {}),
       animation: shouldApplyAnimation(),
       logging: configs.logFor['sidebar/tab-preview-tooltip'] && configs.debug,
     }, frameId ? { frameId } : {});
-    log(`sendTabPreviewMessage(${message.type}${retrying ? ', retrying' : ''}): message was sent to the frame, response=`, response);
+    log(`sendTabPreviewMessage(${message.type}${retrying ? ', retrying' : ''}): message was sent to the frame, response=`, response, ', promisedPreviewURL=', promisedPreviewURL);
     if (deferredResultResolver)
       deferredResultResolver(!!response);
+
+    if (response && promisedPreviewURL) {
+      log(`sendTabPreviewMessage(${message.type}${retrying ? ', retrying' : ''}, with previewURL): trying to get preview URL`);
+      promisedPreviewURL.then(async previewURL => {
+        const response = await browser.tabs.sendMessage(tabId, {
+          tabId,
+          timestamp,
+          ...message,
+          previewURL,
+          ...TabPreviewFrame.getColors(),
+          animation: shouldApplyAnimation(),
+          logging: configs.logFor['sidebar/tab-preview-tooltip'] && configs.debug,
+        }, frameId ? { frameId } : {});
+        log(`sendTabPreviewMessage(${message.type}${retrying ? ', retrying' : ''}, with previewURL): message was sent to the frame again, response=`, response);
+      });
+    }
   }
   catch (error) {
     log(`sendTabPreviewMessage(${message.type}${retrying ? ', retrying' : ''}): failed to send message to the frame `, error);
