@@ -1805,6 +1805,9 @@
   "config_simulateTabsLoadInBackgroundInverted_label": {
     "message": "当您用新标签页打开拖放的链接时，立即切换过去 (* 模拟 Firefox 的内置选项 \"新建标签页打开链接、图像、媒体时，立即切换过去\" (\"browser.tabs.loadInBackground\"))"
   },
+  "config_tabsLoadInBackgroundDiscarded_label": {
+    "message": "让这些标签页在变为活动状态前始终保持休眠"
+  },
   "config_insertDroppedTabsAt_caption": {
     "message": "被拖放至父项上的子项的插入位置"
   },

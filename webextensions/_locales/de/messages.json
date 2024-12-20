@@ -719,6 +719,7 @@
   "config_dropLinksOnTabBehavior_load":    { "message": "In diesem Tab öffnen" },
   "config_dropLinksOnTabBehavior_newtab":  { "message": "In einem neuen untergeordneten Tab öffnen" },
   "config_simulateTabsLoadInBackgroundInverted_label": { "message": "When you open a dropped link in a new tab, switch to it immediately (*simulation of the browser's built-in option \"When you open a link, image or media in a new tab, switch to it immediately\" (\"browser.tabs.loadInBackground\"))" },
+  "config_tabsLoadInBackgroundDiscarded_label": { "message": "Tabs ausstehend lassen bis sie aktiv werden" },
 
   "config_insertDroppedTabsAt_caption": { "message": "Einfügeposition von Tabs, die auf übergeordnete Tabs abgelegt werden" },
   "config_insertDroppedTabsAt_inherit": { "message": "Wie neue untergeordnete Tab behandeln" },

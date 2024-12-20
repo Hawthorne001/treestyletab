@@ -301,6 +301,7 @@ function onMessage(message, openerTab) {
           insertBefore: Tab.get(message.insertBeforeId),
           insertAfter:  Tab.get(message.insertAfterId),
           active:       !!message.active,
+          discarded:    message.discarded,
         });
       });
       break;
@@ -320,6 +321,7 @@ function onMessage(message, openerTab) {
           insertBefore: Tab.get(message.insertBeforeId),
           insertAfter:  Tab.get(message.insertAfterId),
           active:       message.active,
+          discarded:    message.discarded,
         });
       });
       break;

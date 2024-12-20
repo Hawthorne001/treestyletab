@@ -719,6 +719,7 @@
   "config_dropLinksOnTabBehavior_load":    { "message": "Загрузить во вкладке" },
   "config_dropLinksOnTabBehavior_newtab":  { "message": "Открыть новую дочернюю вкладку" },
   "config_simulateTabsLoadInBackgroundInverted_label": { "message": "При открытии ссылки в новой вкладке, переключатся на эту вкладку (* имитация параметра Firefox \"Переключаться на открываемую ссылку, изображение или медиа\" (\"browser.tabs.loadInBackground\"))" },
+  "config_tabsLoadInBackgroundDiscarded_label": { "message": "Открывать незагруженными" },
 
   "config_insertDroppedTabsAt_caption": { "message": "Позиция вставки дочерних элементов, перетянутых на родителя" },
   "config_insertDroppedTabsAt_inherit": { "message": "Рассматривать как новые дочерние, открытые из родителя" },

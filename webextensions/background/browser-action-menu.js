@@ -2099,6 +2099,12 @@ const mItems = [
         key:   'simulateTabsLoadInBackgroundInverted',
         expert:  true,
       },
+      {
+        title: indent(2) + browser.i18n.getMessage('config_tabsLoadInBackgroundDiscarded_label'),
+        type:  'checkbox',
+        key:   'tabsLoadInBackgroundDiscarded',
+        expert:  true,
+      },
       //{ type: 'separator', expert: true },
       {
         title:   indent() + browser.i18n.getMessage('config_insertDroppedTabsAt_caption'),

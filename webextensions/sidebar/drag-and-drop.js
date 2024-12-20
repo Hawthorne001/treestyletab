@@ -572,6 +572,7 @@ async function handleDroppedNonTabItems(event, dropActionInfo) {
       });
     }
   }
+  const active = !!configs.simulateTabsLoadInBackgroundInverted;
   BackgroundConnection.sendMessage({
     type:           Constants.kCOMMAND_NEW_TABS,
     uris,
@@ -579,7 +580,8 @@ async function handleDroppedNonTabItems(event, dropActionInfo) {
     parentId:       dropActionInfo.parent && dropActionInfo.parent.id,
     insertBeforeId: dropActionInfo.insertBefore && dropActionInfo.insertBefore.id,
     insertAfterId:  dropActionInfo.insertAfter && dropActionInfo.insertAfter.id,
-    active:         configs.simulateTabsLoadInBackgroundInverted,
+    active,
+    discarded:      !active && configs.tabsLoadInBackgroundDiscarded,
   });
 }
 

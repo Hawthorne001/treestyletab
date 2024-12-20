@@ -2289,6 +2289,10 @@
     "message": "Link naar een nieuw tabblad automatisch laden (*bootst het gedrag van “Als u een koppeling, afbeelding of media opent in een nieuw tabblad, er meteen naartoe gaan” / \"browser.tabs.loadInBackground\" na)",
     "hash": "0b7a2bc33fc4d7d6ce76d76ecd24662e"
   },
+  "config_tabsLoadInBackgroundDiscarded_label": {
+    "message": "Tabbladen pas activeren als ze worden aangeklikt",
+    "hash": "509c995c21ab51263ec0f69c24e360b5"
+  },
   "config_insertDroppedTabsAt_caption": {
     "message": "Invoeglocatie van onderliggende tabbladen die naar een bovenliggend tabblad worden gesleept",
     "hash": "72bc7288abbf1e34dab8a4747b533f54"

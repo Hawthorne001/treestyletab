@@ -364,6 +364,7 @@ export const configs = new Configs({
   simulateLockTabSizing: true,
   deferScrollingToOutOfViewportSuccessor: true,
   simulateTabsLoadInBackgroundInverted: false,
+  tabsLoadInBackgroundDiscarded: false,
   supportTabsMultiselect: typeof browser.menus.overrideContext == 'function',
   warnOnCloseTabs: true,
   warnOnCloseTabsNotificationTimeout: 20 * 1000,

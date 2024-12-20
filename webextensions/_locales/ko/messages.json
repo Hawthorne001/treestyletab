@@ -1433,6 +1433,10 @@
         "message": "트리의 마지막",
         "hash": "fb8149b1acff1a3722270b8ba8d4f816"
     },
+    "config_tabsLoadInBackgroundDiscarded_label": {
+        "message": "읽기를 보류하고 탭을 열기.",
+        "hash": "509c995c21ab51263ec0f69c24e360b5"
+    },
     "config_groupTab_caption": {
         "message": "탭을 자동으로 묶기",
         "hash": "998c6484eb3eccfe367c727c71d482ae"
