@@ -992,12 +992,12 @@ function onDragOver(event) {
 
   let dragData = dt.getData(kTREE_DROP_TYPE);
   dragData = (dragData && JSON.parse(dragData)) || mCurrentDragData;
-  const sessionId = dragData && dragData.sessionId || '';
-  log(`onDragOver: sessionId=${sessionId}, types=${dt.types}, dropEffect=${dt.dropEffect}, effectAllowed=${dt.effectAllowed}`);
+  const sessionId = dragData?.sessionId || '';
+  log(`onDragOver: sessionId=${sessionId}, types=${dt.types}, dropEffect=${dt.dropEffect}, effectAllowed=${dt.effectAllowed}, tab=`, dragData?.tab);
 
   if (isEventFiredOnTabDropBlocker(event) ||
       !info.canDrop) {
-    log(`onDragOver: not droppable ${sessionId}`);
+    log(`onDragOver: not droppable sessionId=${sessionId}`);
     dt.dropEffect = 'none';
     if (mLastDropPosition)
       clearDropPosition();
@@ -1006,10 +1006,10 @@ function onDragOver(event) {
   }
 
   let dropPositionTargetTab = info.targetTab;
-  if (dropPositionTargetTab && dropPositionTargetTab.$TST.collapsed)
+  if (dropPositionTargetTab?.$TST.collapsed)
     dropPositionTargetTab = info.targetTab.$TST.nearestVisiblePrecedingTab || info.targetTab;
   if (!dropPositionTargetTab) {
-    log(`onDragOver: no drop target tab ${sessionId}`);
+    log(`onDragOver: no drop target tab sessionId=${sessionId}`);
     dt.dropEffect = 'none';
     mLastDropPosition = null;
     return;
@@ -1019,7 +1019,7 @@ function onDragOver(event) {
       dropPositionTargetTab.id != info.draggedTab.id) {
     const dropPosition = `${dropPositionTargetTab.id}:${info.dropPosition}`;
     if (dropPosition == mLastDropPosition) {
-      log(`onDragOver: no move ${sessionId}`);
+      log(`onDragOver: no move sessionId=${sessionId}`);
       return;
     }
     clearDropPosition();
@@ -1031,7 +1031,7 @@ function onDragOver(event) {
       mDropPositionHolderTabs.add(info.substanceTargetTab);
     }
     mLastDropPosition = dropPosition;
-    log(`onDragOver: set drop position to ${dropPosition}, ${sessionId}`);
+    log(`onDragOver: set drop position to ${dropPosition}, sessionId=${sessionId}`);
   }
   else {
     mLastDropPosition = null;
