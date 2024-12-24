@@ -98,7 +98,7 @@ browser.runtime.onMessage.addListener((message, _sender) => {
 
   const permissions = JSON.stringify(message.permissions);
 
-  isGranted(permissions); // to cache latest state
+  isGranted(message.permissions); // to cache latest state
 
   const requests = mRequests.get(permissions);
   if (!requests)
