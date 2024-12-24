@@ -317,6 +317,8 @@ export function migrateConfigs() {
   configs.configsVersion = kCONFIGS_VERSION;
 }
 
+let mShouldShowInitialStartupPage = false;
+
 export function tryNotifyNewFeatures() {
   /*
   let featuresVersionOffset = 0;
@@ -351,6 +353,28 @@ export function tryNotifyNewFeatures() {
     title:   browser.i18n.getMessage(`startup_notification_title_${typeSuffix}`),
     message: browser.i18n.getMessage(`startup_notification_message_${typeSuffix}${platformSuffix}`),
     timeout: 90 * 1000
+  });
+
+  if (isInitialInstall) {
+    mShouldShowInitialStartupPage = true;
+    browser.browserAction.setBadgeText({
+      text: '!',
+    });
+  }
+}
+
+export function isInitialStartup() {
+  return !!mShouldShowInitialStartupPage;
+}
+
+export function openInitialStartupPage() {
+  mShouldShowInitialStartupPage = false;
+  browser.browserAction.setBadgeText({
+    text: null,
+  });
+  browser.tabs.create({
+    url: Constants.kSHORTHAND_URIS.startup,
+    active: true,
   });
 }
 

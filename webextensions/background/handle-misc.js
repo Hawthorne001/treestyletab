@@ -89,8 +89,14 @@ Background.onDestroy.addListener(() => {
 
 function onToolbarButtonClick(tab) {
   if (mInitializationPhase < PHASE_BACKGROUND_INITIALIZED ||
-      Permissions.requestPostProcess())
+      Permissions.requestPostProcess()) {
     return;
+  }
+
+  if (Migration.isInitialStartup()) {
+    Migration.openInitialStartupPage();
+    return;
+  }
 
   if (typeof browser.sidebarAction.toggle == 'function')
     browser.sidebarAction.toggle();
