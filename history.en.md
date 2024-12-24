@@ -1,6 +1,13 @@
 # History
 
  - master/HEAD
+   * Reconstruct UI of the bookmarks creation dialog to simulate behaviors of the native one more.
+   * Add ability to simulate tab preview panel on vertical tabs (requires the permission to run arbitrary scripts on webpages, aka "Access yuor data for all websites.")
+   * Render descendants of a collapsed tree with better appearance based on HTML list, when tab preview panel simulation is available.
+   * Revoke needless optional permissions when all features requiring the permission are disabled.
+   * Add a new expert option to open dropped links in background tabs with discarded state.
+   * Update styling of the sound playing state button in tabs to match to the native one on recent versions of Firefox.
+   * Show a badge on TST's toolbar button and open the initial startup page by clicking of it, when it is the first time of TST installation, as a failsafe of the suppressable notifications.
  - 4.0.25 (2024.11.11)
    * Fix disability of `get-tree` API for other addons and disability of tree view in group tabs. (regression at 4.0.24)
  - 4.0.24 (2024.10.29)
