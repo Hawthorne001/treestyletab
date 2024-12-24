@@ -45,6 +45,11 @@
     text-align: left;
     margin-left: 8%;
     margin-right: 8%;
+    padding: 0;
+  }
+  ul.permissions,
+  ul.permissions > li {
+    list-style: none;
   }
   label.has-checkbox:not(.inline),
   label.has-radio:not(.inline) {
@@ -138,20 +143,36 @@
   >__MSG_message_startup_history_after__</p>
 
 <p>__MSG_message_startup_requestPermissions_description__</p>
-<div class="permissions">
-  <p><label class="has-checkbox"
-           ><input id="bookmarksPermissionGranted"
-                   type="checkbox">
-           __MSG_message_startup_requestPermissions_bookmarks__</label></p>
-  <p><label class="has-checkbox"
-           ><input id="allUrlsPermissionGranted"
-                   type="checkbox">
-           __MSG_message_startup_requestPermissions_allUrls__</label></p>
-  <p><label class="has-checkbox"
-           ><input id="clipboardReadPermissionGranted"
-                   type="checkbox">
-           __MSG_message_startup_requestPermissions_clipboardRead__</label></p>
-</div>
+<ul class="permissions">
+  <li><label class="has-checkbox"
+            ><input id="bookmarksPermissionGranted"
+                    type="checkbox">
+             __MSG_message_startup_requestPermissions_bookmarks__</label>
+      <ul>
+        <li><label for="bookmarksPermissionGranted">__MSG_message_startup_requestPermissions_bookmarks_contextMenuItems__</label></li>
+        <li><label for="bookmarksPermissionGranted">__MSG_message_startup_requestPermissions_bookmarks_migrationForImportedBookmarks__</label></li>
+        <li><label for="bookmarksPermissionGranted">__MSG_message_startup_requestPermissions_bookmarks_detectTabsFromBookmarks__</label></li>
+      </ul>
+  </li>
+  <li><label class="has-checkbox"
+            ><input id="allUrlsPermissionGranted"
+                    type="checkbox">
+             __MSG_message_startup_requestPermissions_allUrls__</label>
+      <ul>
+        <li><label for="allUrlsPermissionGranted">__MSG_message_startup_requestPermissions_allUrls_tabPreviewPanel__</label></li>
+        <li><label for="allUrlsPermissionGranted">__MSG_message_startup_requestPermissions_allUrls_skipCollapsedTabsWithCtrlTab__</label></li>
+        <li><label for="allUrlsPermissionGranted">__MSG_message_startup_requestPermissions_allUrls_preventBlankDialogRestoration__</label></li>
+      </ul>
+  </li>
+  <li><label class="has-checkbox"
+            ><input id="clipboardReadPermissionGranted"
+                    type="checkbox">
+             __MSG_message_startup_requestPermissions_clipboardRead__</label>
+      <ul>
+        <li><label for="clipboardReadPermissionGranted">__MSG_message_startup_requestPermissions_clipboardRead_newTabButtonMiddleClick__</label></li>
+      </ul>
+  </li>
+</ul>
 
 <div class="user-chrome-css">
   <span class="arrow top-tabbar">▼</span>

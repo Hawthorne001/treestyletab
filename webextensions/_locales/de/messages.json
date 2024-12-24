@@ -257,9 +257,17 @@
   "message_startup_history_after":      { "message": " für weitere Informationen." },
 
   "message_startup_requestPermissions_description": { "message": "⚠Für einige Funktionen sind zusätzliche Berechtigungen erforderlich. Falls du sie aktivieren möchtest, erteile bitte manuell die Berechtigungen." },
-  "message_startup_requestPermissions_bookmarks": { "message": "\"Lesezeichen für diesen Zweig erstellen\" im Kontextmenü von Tabs (benötigt Zugriff auf Lesezeichen.)" },
-  "message_startup_requestPermissions_allUrls":   { "message": "Beim Auswählen von Tabs per Tastatur zugeklappte Zweige nicht ausklappen und zugeklappte untergeordnete Tabs überspringen / Don't restore blank window which was for a closed dialog, by actions to restore closed tabs." },
-  "message_startup_requestPermissions_clipboardRead": { "message": "Allow to open a new tab with the URL in the clipboard, by middle click on the \"New Tab\" button (*you may need to activate \"dom.events.asyncClipboard.clipboardItem\")" },
+  "message_startup_requestPermissions_bookmarks": { "message": "Zugriff auf Lesezeichen" },
+  "message_startup_requestPermissions_bookmarks_contextMenuItems": { "message": "\"Lesezeichen für diesen Zweig erstellen\" im Kontextmenü von Tabs." },
+  "_message_startup_requestPermissions_bookmarks_migrationForImportedBookmarks": { "message": "" },
+  "_message_startup_requestPermissions_bookmarks_detectTabsFromBookmarks": { "message": "" },
+  "_message_startup_requestPermissions_allUrls":   { "message": "" },
+  "_message_startup_requestPermissions_allUrls_tabPreviewPanel":   { "message": "" },
+  "message_startup_requestPermissions_allUrls_skipCollapsedTabsWithCtrlTab":   { "message": "Beim Auswählen von Tabs per Tastatur zugeklappte Zweige nicht ausklappen und zugeklappte untergeordnete Tabs überspringen." },
+  "message_startup_requestPermissions_allUrls_preventBlankDialogRestoration":   { "message": "Don't restore blank window which was for a closed dialog, by actions to restore closed tabs." },
+  "_message_startup_requestPermissions_clipboardRead": { "message": "" },
+  "_message_startup_requestPermissions_clipboardRead_newTabButtonMiddleClick": { "message": "" },
+
 
   "message_startup_userChromeCss_notify": { "message": "Wie kann man die Tableiste und die Überschrift der Seitenleiste ausblenden?" },
   "message_startup_userChromeCss_description_1": { "message": "Aufgrund von Beschränkungen für WebExtensions, hat Tree Style Tab keine Kontrolle über die Tableiste und die Seitenleiste-Überschriften von Firefox. Um sie zu verändern, siehe " },

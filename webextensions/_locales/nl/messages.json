@@ -729,18 +729,16 @@
     "message": "⚠Sommige functies vereisen aanvullende bevoegdheden. Als u gebruik wilt maken van deze functies, wijs dan de juiste bevoegdheden toe.",
     "hash": "579d612ed89439363c1b15dc629175bc"
   },
-  "message_startup_requestPermissions_bookmarks": {
-    "message": "‘Boom toevoegen aan bladwijzers’ in het rechtermuisknopmenu, automatische migratie van interne bladwijzer-url's en detectie van tabbladen geopend via de bladwijzers (bladwijzertoegang vereist).",
-    "hash": "0cd09f626c61edcb5e506f2a5d27d0ac"
-  },
-  "message_startup_requestPermissions_allUrls": {
-    "message": "Klap ingeklapte bomen niet uit  en verleg de focus van tabbladen naar het toetsenbord. Herstel geen blanco vensters door acties die gesloten tabbladen herstellen.",
-    "hash": "8668cb68850a8c9601f184aec54d9a8d"
-  },
-  "message_startup_requestPermissions_clipboardRead": {
-    "message": "Open een nieuw tabblad met daarop de url van het klembord door te middelklikken op de knop ‘Nieuw tabblad’ (dom.events.asyncClipboard.clipboardItem dient mogelijk te worden ingeschakeld).",
-    "hash": "e4f0fec6d54e5b5845024a9652f370ed"
-  },
+  "message_startup_requestPermissions_bookmarks": { "message": "Bladwijzer toegang" },
+  "message_startup_requestPermissions_bookmarks_contextMenuItems": { "message": "‘Boom toevoegen aan bladwijzers’ in het rechtermuisknopmenu, automatische migratie van interne bladwijzer-url's en detectie van tabbladen geopend via de bladwijzers" },
+  "_message_startup_requestPermissions_bookmarks_migrationForImportedBookmarks": { "message": "" },
+  "_message_startup_requestPermissions_bookmarks_detectTabsFromBookmarks": { "message": "" },
+  "_message_startup_requestPermissions_allUrls":   { "message": "" },
+  "_message_startup_requestPermissions_allUrls_tabPreviewPanel":   { "message": "" },
+  "message_startup_requestPermissions_allUrls_skipCollapsedTabsWithCtrlTab":   { "message": "Klap ingeklapte bomen niet uit  en verleg de focus van tabbladen naar het toetsenbord." },
+  "message_startup_requestPermissions_allUrls_preventBlankDialogRestoration":   { "message": "Herstel geen blanco vensters door acties die gesloten tabbladen herstellen." },
+  "_message_startup_requestPermissions_clipboardRead": { "message": "" },
+  "message_startup_requestPermissions_clipboardRead_newTabButtonMiddleClick": { "message": "Open een nieuw tabblad met daarop de url van het klembord door te middelklikken op de knop ‘Nieuw tabblad’ (dom.events.asyncClipboard.clipboardItem dient mogelijk te worden ingeschakeld)." },
   "message_startup_userChromeCss_notify": {
     "message": "Hoe verberg ik de tabbladbalk bovenaan en de zijbalkkop?",
     "hash": "991184685e856081ec9ee06431fda2d2"

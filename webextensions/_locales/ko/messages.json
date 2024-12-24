@@ -604,14 +604,16 @@
         "message": "⚠아래 기능에는 추기적인 권한이 필요합니다. 이 기능을 원하시는 경우에만 권한을 부여해주세요.",
         "hash": "579d612ed89439363c1b15dc629175bc"
     },
-    "message_startup_requestPermissions_bookmarks": {
-        "message": "콘텍스트 메뉴인 \"이 트리를 북마크\"나 다른 환경에서 내보내진 북마크 내부 URL을 자동으로 옮기고, 북마크가 열려있는 탭 검출(북마크 편집 허가 필요)",
-        "hash": "0cd09f626c61edcb5e506f2a5d27d0ac"
-    },
-    "message_startup_requestPermissions_allUrls": {
-        "message": "키보드 단축키에서 탭 전환 중, 접혀있는 하위 항목을 넘기고, 트리도 펼치지 않음 / Don't restore blank window which was for a closed dialog, by actions to restore closed tabs.",
-        "hash": "6277b31e6f8bad41fbd31bbb26e4bbe7"
-    },
+    "message_startup_requestPermissions_bookmarks": { "message": "북마크 편집 허가" },
+    "message_startup_requestPermissions_bookmarks_contextMenuItems": { "message": "콘텍스트 메뉴인 \"이 트리를 북마크\"나 다른 환경에서 내보내진 북마크 내부 URL을 자동으로 옮기고, 북마크가 열려있는 탭 검출" },
+    "_message_startup_requestPermissions_bookmarks_migrationForImportedBookmarks": { "message": "" },
+    "_message_startup_requestPermissions_bookmarks_detectTabsFromBookmarks": { "message": "" },
+    "_message_startup_requestPermissions_allUrls":   { "message": "" },
+    "_message_startup_requestPermissions_allUrls_tabPreviewPanel":   { "message": "" },
+    "message_startup_requestPermissions_allUrls_skipCollapsedTabsWithCtrlTab":   { "message": "키보드 단축키에서 탭 전환 중, 접혀있는 하위 항목을 넘기고, 트리도 펼치지 않음" },
+    "_message_startup_requestPermissions_allUrls_preventBlankDialogRestoration":   { "message": "" },
+    "_message_startup_requestPermissions_clipboardRead": { "message": "" },
+    "_message_startup_requestPermissions_clipboardRead_newTabButtonMiddleClick": { "message": "" },
     "message_startup_userChromeCss_notify": {
         "message": "탭 바와 사이드 바의 헤더를 숨기고 싶은 경우",
         "hash": "991184685e856081ec9ee06431fda2d2"

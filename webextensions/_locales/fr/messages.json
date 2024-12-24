@@ -399,14 +399,16 @@
     "message": "⚠Quelques fonctionnalités requièrent des permissions supplémentaires. Si vous voulez les utiliser, acceptez les permissions manuellement.",
     "hash": "579d612ed89439363c1b15dc629175bc"
   },
-  "message_startup_requestPermissions_bookmarks": {
-    "message": "« Ajouter cet arbre aux marque-pages » dans le menu contextuel sur les onglets (requiert l'accès aux marque-pages)",
-    "hash": "0cd09f626c61edcb5e506f2a5d27d0ac"
-  },
-  "message_startup_requestPermissions_allUrls": {
-    "message": "Ne pas déplier les arbres repliés et ignorer les descendants repliés lorsque vous changez d'onglet courant via des raccourcis claviers / Don't restore blank window which was for a closed dialog, by actions to restore closed tabs.",
-    "hash": "6277b31e6f8bad41fbd31bbb26e4bbe7"
-  },
+  "message_startup_requestPermissions_bookmarks": { "message": "l'accès aux marque-pages" },
+  "message_startup_requestPermissions_bookmarks_contextMenuItems": { "message": "« Ajouter cet arbre aux marque-pages » dans le menu contextuel sur les onglets" },
+  "_message_startup_requestPermissions_bookmarks_migrationForImportedBookmarks": { "message": "" },
+  "_message_startup_requestPermissions_bookmarks_detectTabsFromBookmarks": { "message": "" },
+  "_message_startup_requestPermissions_allUrls":   { "message": "" },
+  "_message_startup_requestPermissions_allUrls_tabPreviewPanel":   { "message": "" },
+  "message_startup_requestPermissions_allUrls_skipCollapsedTabsWithCtrlTab":   { "message": "Ne pas déplier les arbres repliés et ignorer les descendants repliés lorsque vous changez d'onglet courant via des raccourcis claviers" },
+  "_message_startup_requestPermissions_allUrls_preventBlankDialogRestoration":   { "message": "" },
+  "_message_startup_requestPermissions_clipboardRead": { "message": "" },
+  "_message_startup_requestPermissions_clipboardRead_newTabButtonMiddleClick": { "message": "" },
   "message_startup_userChromeCss_notify": {
     "message": "Comment cacher la barre d'onglets du haut et l'entête du panneau latéral ?",
     "hash": "991184685e856081ec9ee06431fda2d2"
