@@ -20,7 +20,14 @@ window.addEventListener('DOMContentLoaded', () => {
   Permissions.bindToCheckbox(
     Permissions.ALL_URLS,
     document.querySelector('#allUrlsPermissionGranted'),
-    { onChanged: (granted) => configs.skipCollapsedTabsForTabSwitchingShortcuts = granted }
+    {
+      onChanged: (granted) => {
+        if (!granted)
+          return;
+        configs.tabPreviewTooltip = true;
+        configs.skipCollapsedTabsForTabSwitchingShortcuts = true;
+      },
+    }
   );
   Permissions.bindToCheckbox(
     Permissions.BOOKMARKS,
