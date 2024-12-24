@@ -235,7 +235,7 @@ export function bindToCheckbox(permissions, checkbox, options = {}) {
       if (granted) {
         if (checkbox.dataset.relatedConfigKey)
           configs[checkbox.dataset.relatedConfigKey] = true;
-        const configValue = !!checkbox.dataset.relatedConfigKey;
+        const configValue = checkbox.dataset.relatedConfigKey ? true : null;
         const onChangedResult = options.onChanged && options.onChanged(true);
         const checked = configValue !== null ? configValue :
           options.onChanged ?
