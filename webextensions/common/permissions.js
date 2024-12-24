@@ -37,7 +37,8 @@ export async function isGranted(permissions) {
     cachedGranted.set(JSON.stringify(permissions), granted);
     return granted;
   }
-  catch(_e) {
+  catch(error) {
+    console.error(error);
     return Promise.reject(new Error('unsupported permission'));
   }
 }
@@ -181,16 +182,21 @@ export function bindToCheckbox(permissions, checkbox, options = {}) {
   mRequests.set(key, requests);
 
   checkbox.requestPermissions = async () => {
+    log('permission requested: ', permissions);
     const checkboxes = checkboxesForPermission.get(permissions);
     try {
+      log('checkboxes: ', checkboxes);
+      log('checkbox.checked: ', checkbox.checked);
       if (!checkbox.checked) {
         if (checkbox.dataset.relatedConfigKey)
           configs[checkbox.dataset.relatedConfigKey] = false;
         if (options.onChanged)
           options.onChanged(false);
         const canRevoke = Array.from(checkboxes, checkbox => checkbox.dataset.relatedConfigKey ? configs[checkbox.dataset.relatedConfigKey] : null).filter(state => state !== null).every(state => !state);
+        log('canRevoke: ', canRevoke);
         if (!canRevoke)
           return;
+        log('revoking the permission');
         await browser.permissions.remove(permissions).catch(ApiTabs.createErrorSuppressor());
         for (const otherCheckbox of checkboxes) {
           if (otherCheckbox != checkbox &&
@@ -211,14 +217,20 @@ export function bindToCheckbox(permissions, checkbox, options = {}) {
       if (configs.requestingPermissionsNatively)
         return;
 
+      log('requesting the permission');
       configs.requestingPermissionsNatively = permissions;
       let granted = await browser.permissions.request(permissions).catch(ApiTabs.createErrorHandler());
       configs.requestingPermissionsNatively = null;
 
-      if (granted === undefined)
+      log('granted: ', granted);
+      if (granted === undefined) {
         granted = await isGranted(permissions);
-      else if (!granted)
+        log('granted (retry): ', granted);
+      }
+      else if (!granted) {
+        log('not granted: cacneled');
         return;
+      }
 
       if (granted) {
         if (checkbox.dataset.relatedConfigKey)
@@ -229,6 +241,7 @@ export function bindToCheckbox(permissions, checkbox, options = {}) {
           options.onChanged ?
             onChangedResult :
             undefined;
+        log('update checkboxes with checked state ', checked);
         for (const otherCheckbox of checkboxes) {
           if (otherCheckbox != checkbox &&
               otherCheckbox.dataset.relatedConfigKey)
@@ -239,9 +252,11 @@ export function bindToCheckbox(permissions, checkbox, options = {}) {
           type: Constants.kCOMMAND_NOTIFY_PERMISSIONS_GRANTED,
           permissions
         }).catch(_error => {});
+        log('finish');
         return;
       }
 
+      log('fallback to the failsafe method');
       configs.requestingPermissions = permissions;
       browser.browserAction.setBadgeText({ text: '!' });
       browser.browserAction.setPopup({ popup: '' });
