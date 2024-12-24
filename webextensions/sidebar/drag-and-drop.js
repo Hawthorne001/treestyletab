@@ -1005,6 +1005,15 @@ function onDragOver(event) {
     return;
   }
 
+  if (EventUtils.isEventFiredOnNewTabButton(event)) {
+    log(`onDragOver: dragging something on the new tab button sessionId=${sessionId}`);
+    dt.dropEffect = 'move';
+    if (mLastDropPosition)
+      clearDropPosition();
+    mLastDropPosition = null;
+    return;
+  }
+
   let dropPositionTargetTab = info.targetTab;
   if (dropPositionTargetTab?.$TST.collapsed)
     dropPositionTargetTab = info.targetTab.$TST.nearestVisiblePrecedingTab || info.targetTab;
