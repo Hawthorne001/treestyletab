@@ -6,6 +6,7 @@
    * Render descendants of a collapsed tree with better appearance based on HTML list, when tab preview panel simulation is available.
    * Revoke needless optional permissions when all features requiring the permission are disabled.
    * Add a new expert option to open dropped links in background tabs with discarded state.
+   * Accept dropping of tabs and links onto the new tab button, like Firefox does.
    * Update styling of the sound playing state button in tabs to match to the native one on recent versions of Firefox.
    * Show a badge on TST's toolbar button and open the initial startup page by clicking of it, when it is the first time of TST installation, as a failsafe of the suppressable notifications.
  - 4.0.25 (2024.11.11)
