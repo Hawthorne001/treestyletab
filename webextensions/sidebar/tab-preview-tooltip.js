@@ -119,6 +119,8 @@ function generateOneTimeCustomElementName() {
   return prefix + '-' + Date.now() + '-' + Math.round(Math.random() * 65000);
 }
 
+let mDirectLoadScript;
+
 async function prepareFrame(tabId) {
   const tab = Tab.get(tabId);
   if (!tab)
@@ -130,9 +132,14 @@ async function prepareFrame(tabId) {
     // if the tab is TST's internal page, because Firefox closes such tabs
     // when the addon is reloaded. Instead we load tab preview frame script
     // to the internal page directly.
+    if (!mDirectLoadScript) {
+      const response = await fetch('/resources/module/tab-preview-frame.js');
+      const moduleScript = await response.text();
+      mDirectLoadScript = moduleScript.replace(/^export /gm, '');
+    }
     await browser.tabs.executeScript(tabId, {
       runAt: 'document_start',
-      file: '/resources/module/tab-preview-frame.js',
+      code: mDirectLoadScript,
     });
     return;
   }
