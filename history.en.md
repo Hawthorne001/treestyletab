@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 4.1.0 (2024.12.25)
    * Reconstruct UI of the bookmarks creation dialog to simulate behaviors of the native one more.
    * Add ability to simulate tab preview panel on vertical tabs (requires the permission to run arbitrary scripts on webpages, aka "Access yuor data for all websites.")
    * Render descendants of a collapsed tree with better appearance based on HTML list, when tab preview panel simulation is available.
