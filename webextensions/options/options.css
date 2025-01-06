@@ -7,6 +7,10 @@
 @import url(/resources/ui-base.css);
 @import url(/resources/ui-color.css);
 
+:root.rtl {
+  direction: rtl;
+}
+
 :root > * {
   transition: opacity 0.25s ease-out;
 }
@@ -320,6 +324,11 @@ body > section > h1:first-child::before {
 fieldset.collapsible.collapsed > legend::before,
 body > section.collapsed > h1:first-child::before {
   transform: rotate(-90deg);
+}
+
+:root.rtl fieldset.collapsible.collapsed > legend::before,
+:root.rtl body > section.collapsed > h1:first-child::before {
+  transform: rotate(90deg);
 }
 
 
