@@ -12,10 +12,10 @@
   --favicon-size: 16px;
   --tab-size: unset;
   --tab-indent: 0px;
-  --tab-margin-block-start: var(--tab-margin-top, 0px);
-  --tab-margin-block-end: var(--tab-margin-bottom, 0px);
-  --tab-margin-inline-start: var(--tab-margin-left, 0px);
-  --tab-margin-inline-end: var(--tab-margin-right, 0px);
+  --tab-margin-block-start: 0px;
+  --tab-margin-block-end: 0px;
+  --tab-margin-inline-start: 0px;
+  --tab-margin-inline-end: 0px;
   --faviconized-tab-size: 28px;
   --svg-small-icon-size: 16px;
   --new-tab-button-anchor-size: 1.5em;
