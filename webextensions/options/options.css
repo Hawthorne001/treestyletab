@@ -252,18 +252,18 @@ table {
 }
 th + *,
 td + * {
-  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  border-inline-start: 1px solid rgba(0, 0, 0, 0.1);
 }
 tbody tr {
-  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  border-block-start: 1px solid rgba(0, 0, 0, 0.2);
 }
 @media (prefers-color-scheme: dark) {
   th + *,
   td + * {
-    border-left-color: rgba(255, 255, 255, 0.1);
+    border-inline-start-color: rgba(255, 255, 255, 0.1);
   }
   tbody tr {
-    border-top-color: rgba(255, 255, 255, 0.2);
+    border-block-start-color: rgba(255, 255, 255, 0.2);
   }
 }
 

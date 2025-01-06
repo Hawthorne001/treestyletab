@@ -223,7 +223,7 @@ try{
     }
 
     .tab-preview-image-container {
-      border-top: calc(1px / var(--tab-preview-panel-scale)) solid var(--panel-border-color);
+      border-block-start: calc(1px / var(--tab-preview-panel-scale)) solid var(--panel-border-color);
       margin-block-start: 0.25em;
       max-height: calc(var(--panel-width) * ${BASE_PANEL_HEIGHT / BASE_PANEL_WIDTH}); /* use relative value instead of 140px */
       overflow: hidden;

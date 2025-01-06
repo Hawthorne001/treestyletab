@@ -228,7 +228,7 @@ export function updateContainers() {
   const pinnedContainerBox     = mPinnedScrollBox.querySelector('.tabs');
   const pinnedContainerBoxRect = pinnedContainerBox.getBoundingClientRect();
   const pinnedContainerStyle   = window.getComputedStyle(pinnedContainerBox, null);
-  const newPinnedTabsContainerWidth = pinnedContainerBoxRect.width - parseFloat(pinnedContainerStyle.paddingInlineStart) - parseFloat(pinnedContainerStyle.borderLeftWidth) - parseFloat(pinnedContainerStyle.paddingInlineEnd) - parseFloat(pinnedContainerStyle.borderRightWidth);
+  const newPinnedTabsContainerWidth = pinnedContainerBoxRect.width - parseFloat(pinnedContainerStyle.paddingInlineStart) - parseFloat(pinnedContainerStyle.borderInlineStartWidth) - parseFloat(pinnedContainerStyle.paddingInlineEnd) - parseFloat(pinnedContainerStyle.borderInlineEndWidth);
   if (newPinnedTabsContainerWidth != mPinnedTabsContainerWidth)
     modifiedCount++;
   mPinnedTabsContainerWidth    = newPinnedTabsContainerWidth;

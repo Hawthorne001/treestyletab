@@ -783,8 +783,8 @@ tab-item.faviconized {
   width: var(--tab-current-size);
 }
 tab-item.faviconized tab-item-substance {
-  border-top: none;
-  border-left: none;
+  border-block-start: none;
+  border-inline-start: none;
   margin-block: 0;
   margin-inline: 0;
   padding-block: var(--faviconized-tab-padding);
@@ -1224,7 +1224,7 @@ iframe#subpanel {
 
 #subpanel-header {
   background: var(--tab-surface);
-  border-top: 1px solid var(--tab-border);
+  border-block-start: 1px solid var(--tab-border);
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -1239,7 +1239,7 @@ iframe#subpanel {
 }
 
 #subpanel-container:not(.collapsed) #subpanel-header {
-  border-bottom: 1px solid var(--tab-border);
+  border-block-end: 1px solid var(--tab-border);
 }
 
 #subpanel-header-main {

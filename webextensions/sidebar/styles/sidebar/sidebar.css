@@ -79,17 +79,17 @@ body,
 
 /* Use the splitter to display the border of tab-items */
 :root.left {
-  border-right: 1px solid var(--shadow-color);
+  border-inline-end: 1px solid var(--shadow-color);
 }
 :root:not(.active).left {
-  border-right-color: var(--shadow-color-inactive);
+  border-inline-end-color: var(--shadow-color-inactive);
 }
 
 :root.right {
-  border-left: 1px solid var(--shadow-color);
+  border-inline-start: 1px solid var(--shadow-color);
 }
 :root:not(.active).right {
-  border-left-color: var(--shadow-color-inactive);
+  border-inline-start-color: var(--shadow-color-inactive);
 }
 
 
@@ -122,7 +122,7 @@ body,
 
 /* Style tabs themselves.  Get rid of most of the initial XUL styling */
 tab-item-substance {
-  border-top: 1px solid transparent;
+  border-block-start: 1px solid transparent;
   min-height: 2.2em;     /* height including border! */
   padding-block: var(--tab-vertical-padding) var(--tab-vertical-padding);
   padding-inline: 2px 3px;
@@ -134,7 +134,7 @@ tab-item.active {
 }
 tab-item.active tab-item-substance {
   background: var(--tab-surface);
-  border-top: 1px solid var(--tab-surface-active-color);
+  border-block-start: 1px solid var(--tab-surface-active-color);
 }
 
 tab-item.bundled-active {
@@ -142,7 +142,7 @@ tab-item.bundled-active {
 }
 tab-item.bundled-active tab-item-substance {
   background: var(--tab-surface);
-  border-top: 1px solid var(--tab-surface-active-color-pale);
+  border-block-start: 1px solid var(--tab-surface-active-color-pale);
 }
 
 :root:not(.active) tab-item.active {
@@ -150,7 +150,7 @@ tab-item.bundled-active tab-item-substance {
 }
 :root:not(.active) tab-item.active tab-item-substance {
   background: var(--tab-surface);
-  border-top: 1px solid var(--tab-surface-active-color-inactive);
+  border-block-start: 1px solid var(--tab-surface-active-color-inactive);
 }
 
 .sticky-tabs-container tab-item:not(.active):not(.bundled-active) .background.base {

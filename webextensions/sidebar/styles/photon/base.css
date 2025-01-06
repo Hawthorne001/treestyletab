@@ -39,8 +39,8 @@ tab-item.pinned tab-item-substance {
      We need to keep sizes of the .after-tabs boxes inside/outside #tabbar exact same,
      to prevent flashing of the scrollbar from repeatedly switched overflow/underflow
      state. See also: https://github.com/piroor/treestyletab/issues/3589 */
-  /* border-bottom: none; */
-  border-bottom-color: transparent;
+  /* border-block-end: none; */
+  border-block-end-color: transparent;
 }
 
 
@@ -50,7 +50,7 @@ tab-item.pinned tab-item-substance {
   padding-inline-end: 0.35em;
 }
 :root.left tab-item:not(.pinned)[data-parent-id] tab-item-substance {
-  border-left-width: 1px;
+  border-inline-start-width: 1px;
 }
 
 :root.right tab-item:not(.pinned) tab-item-substance,
@@ -59,16 +59,16 @@ tab-item.pinned tab-item-substance {
   padding-inline-start: 0.35em;
 }
 :root.right tab-item:not(.pinned)[data-parent-id] tab-item-substance {
-  border-right-width: 1px;
+  border-inline-end-width: 1px;
 }
 
 #tabbar tab-item.pinned + tab-item:not(.pinned) tab-item-substance,
 #tabbar tab-item:not(.pinned):first-of-type tab-item-substance {
-  border-top: none;
+  border-block-start: none;
 }
 
 :root.have-pinned-tabs #pinned-tabs-container {
-  border-bottom: 1px solid var(--tab-border);
+  border-block-end: 1px solid var(--tab-border);
 }
 
 
@@ -82,7 +82,7 @@ tab-item.pinned tab-item-substance {
 }
 .overflow-indicator.end {
   background-position: 0 0.3em;
-  border-bottom: 1px solid var(--tab-border);
+  border-block-end: 1px solid var(--tab-border);
 }
 :root.left .overflow-indicator.start,
 :root.left .overflow-indicator.end {
