@@ -588,19 +588,21 @@ tab-item.duplicating tab-item-substance {
 }
 
 
-:root.left tab-item tab-twisty,
+:root.left:not(.rtl) tab-item tab-twisty,
 :root.right.rtl tab-item tab-twisty {
   order: -1;
 }
-:root.left tab-item tab-closebox,
+:root.left:not(.rtl) tab-item tab-closebox,
 :root.right.rtl tab-item tab-closebox {
   order: 10000;
 }
 
-:root.right:not(.rtl) tab-item tab-twisty {
+:root.right:not(.rtl) tab-item tab-twisty,
+:root.left.rtl tab-item tab-twisty {
   order: 10000;
 }
-:root.right:not(.rtl) tab-item tab-closebox {
+:root.right:not(.rtl) tab-item tab-closebox,
+:root.left.rtl tab-item tab-closebox {
   order: -1;
 }
 
