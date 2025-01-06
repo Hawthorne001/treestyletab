@@ -25,8 +25,8 @@ const mTabBar           = document.querySelector('#tabbar');
 let mTabHeight          = 0;
 let mTabXOffset         = 0;
 let mTabYOffset         = 0;
-let mTabMarginTop       = 0;
-let mTabMarginBottom    = 0;
+let mTabMarginBlockStart = 0;
+let mTabMarginBlockEnd  = 0;
 let mFavIconSize        = 0;
 let mFavIconizedTabSize = 0;
 let mFavIconizedTabWidth = 0;
@@ -55,12 +55,12 @@ export function getTabYOffset() {
   return mTabYOffset;
 }
 
-export function getTabMarginTop() {
-  return mTabMarginTop;
+export function getTabMarginBlockStart() {
+  return mTabMarginBlockStart;
 }
 
-export function getTabMarginBottom() {
-  return mTabMarginBottom;
+export function getTabMarginBlockEnd() {
+  return mTabMarginBlockEnd;
 }
 
 export function getFavIconSize() {
@@ -133,26 +133,26 @@ export function updateTabs() {
   mFavIconizedTabWidth  = dummyFaviconizedTab.offsetWidth;
   mFavIconizedTabHeight = dummyFaviconizedTab.offsetHeight;
   // simulating margin collapsing
-  const favIconizedMarginLeft  = parseFloat(faviconizedTabStyle.marginLeft);
-  const favIconizedMarginRight = parseFloat(faviconizedTabStyle.marginRight);
-  mFavIconizedTabXOffset = (favIconizedMarginLeft > 0 && favIconizedMarginRight > 0) ?
-    Math.max(favIconizedMarginLeft, favIconizedMarginRight) :
-    favIconizedMarginLeft + favIconizedMarginRight;
-  const favIconizedMarginTop    = parseFloat(faviconizedTabStyle.marginTop);
-  const favIconizedMarginBottom = parseFloat(faviconizedTabStyle.marginBottom);
-  mFavIconizedTabYOffset = (favIconizedMarginTop > 0 && favIconizedMarginBottom > 0) ?
-    Math.max(favIconizedMarginTop, favIconizedMarginBottom) :
-    favIconizedMarginTop + favIconizedMarginBottom;
+  const favIconizedMarginInlineStart = parseFloat(faviconizedTabStyle.marginInlineStart);
+  const favIconizedMarginInlineEnd   = parseFloat(faviconizedTabStyle.marginInlineEnd);
+  mFavIconizedTabXOffset = (favIconizedMarginInlineStart > 0 && favIconizedMarginInlineEnd > 0) ?
+    Math.max(favIconizedMarginInlineStart, favIconizedMarginInlineEnd) :
+    favIconizedMarginInlineStart + favIconizedMarginInlineEnd;
+  const favIconizedMarginBlockStart = parseFloat(faviconizedTabStyle.marginBlockStart);
+  const favIconizedMarginBlockEnd   = parseFloat(faviconizedTabStyle.marginBlockEnd);
+  mFavIconizedTabYOffset = (favIconizedMarginBlockStart > 0 && favIconizedMarginBlockEnd > 0) ?
+    Math.max(favIconizedMarginBlockStart, favIconizedMarginBlockEnd) :
+    favIconizedMarginBlockStart + favIconizedMarginBlockEnd;
 
   const dummyTab = document.querySelector('#dummy-tab');
   const tabStyle  = window.getComputedStyle(dummyTab);
-  mTabXOffset = parseFloat(tabStyle.marginLeft) + parseFloat(tabStyle.marginRight);
+  mTabXOffset = parseFloat(tabStyle.marginInlineStart) + parseFloat(tabStyle.marginInlineEnd);
   // simulating margin collapsing
-  mTabMarginTop    = parseFloat(tabStyle.marginTop);
-  mTabMarginBottom = parseFloat(tabStyle.marginBottom);
-  mTabYOffset = (mTabMarginTop > 0 && mTabMarginBottom > 0) ?
-    Math.max(mTabMarginTop, mTabMarginBottom) :
-    mTabMarginTop + mTabMarginBottom;
+  mTabMarginBlockStart = parseFloat(tabStyle.marginBlockStart);
+  mTabMarginBlockEnd   = parseFloat(tabStyle.marginBlockEnd);
+  mTabYOffset = (mTabMarginBlockStart > 0 && mTabMarginBlockEnd > 0) ?
+    Math.max(mTabMarginBlockStart, mTabMarginBlockEnd) :
+    mTabMarginBlockStart + mTabMarginBlockEnd;
 
   const substanceRect = dummyTab.querySelector('tab-item-substance').getBoundingClientRect();
   const uiRect = dummyTab.querySelector('tab-item-substance > .ui').getBoundingClientRect();
@@ -228,7 +228,7 @@ export function updateContainers() {
   const pinnedContainerBox     = mPinnedScrollBox.querySelector('.tabs');
   const pinnedContainerBoxRect = pinnedContainerBox.getBoundingClientRect();
   const pinnedContainerStyle   = window.getComputedStyle(pinnedContainerBox, null);
-  const newPinnedTabsContainerWidth = pinnedContainerBoxRect.width - parseFloat(pinnedContainerStyle.paddingLeft) - parseFloat(pinnedContainerStyle.borderLeftWidth) - parseFloat(pinnedContainerStyle.paddingRight) - parseFloat(pinnedContainerStyle.borderRightWidth);
+  const newPinnedTabsContainerWidth = pinnedContainerBoxRect.width - parseFloat(pinnedContainerStyle.paddingInlineStart) - parseFloat(pinnedContainerStyle.borderLeftWidth) - parseFloat(pinnedContainerStyle.paddingInlineEnd) - parseFloat(pinnedContainerStyle.borderRightWidth);
   if (newPinnedTabsContainerWidth != mPinnedTabsContainerWidth)
     modifiedCount++;
   mPinnedTabsContainerWidth    = newPinnedTabsContainerWidth;

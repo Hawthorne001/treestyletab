@@ -134,7 +134,7 @@ try{
       font: Message-Box;
       left: auto;
       line-height: 1.5;
-      margin-top: 0px;
+      margin-block-start: 0px;
       max-width: var(--panel-width);
       min-width: var(--panel-width);
       opacity: 0;
@@ -148,7 +148,7 @@ try{
     .tab-preview-panel.animation {
       transition: var(--tab-preview-panel-show-hide-animation),
                   left 0.1s ease-out,
-                  margin-top 0.1s ease-out,
+                  margin-block-start 0.1s ease-out,
                   right 0.1s ease-out;
     }
     .tab-preview-panel.extended {
@@ -159,7 +159,7 @@ try{
     }
     .tab-preview-panel.animation.updating,
     .tab-preview-panel.animation:not(.open) {
-      margin-top: 1ch; /* The native tab preview panel "popups up" on the vertical tab bar. */
+      margin-block-start: 1ch; /* The native tab preview panel "popups up" on the vertical tab bar. */
     }
     /*
     .tab-preview-panel[data-align="left"].updating,
@@ -224,7 +224,7 @@ try{
 
     .tab-preview-image-container {
       border-top: calc(1px / var(--tab-preview-panel-scale)) solid var(--panel-border-color);
-      margin-top: 0.25em;
+      margin-block-start: 0.25em;
       max-height: calc(var(--panel-width) * ${BASE_PANEL_HEIGHT / BASE_PANEL_WIDTH}); /* use relative value instead of 140px */
       overflow: hidden;
     }
@@ -261,7 +261,8 @@ try{
     /* tree */
     .tab-preview-extended-content ul,
     .tab-preview-extended-content ul ul {
-      margin: 0 0 0 1em;
+      margin-block: 0;
+      margin-inline: 1em 0;
       padding: 0;
       list-style: disc;
     }
@@ -278,7 +279,7 @@ try{
     }
     .tab-preview-extended-content .title-line .cookieStoreName {
       display: flex;
-      margin-left: 1ch;
+      margin-inline-start: 1ch;
     }
     .tab-preview-extended-content .title-line .cookieStoreName::before {
       content: "- ";

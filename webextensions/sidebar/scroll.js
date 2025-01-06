@@ -240,7 +240,7 @@ function renderVirtualScrollViewport(scrollPosition = undefined) {
   const tabSize               = Size.getRenderedTabHeight();
   const renderableTabs        = skipRefreshTabs && mLastRenderableTabs || Tab.getVirtualScrollRenderableTabs(windowId);
   const disappearingTabs      = skipRefreshTabs && mLastDisappearingTabs || renderableTabs.filter(tab => tab.$TST.removing || tab.$TST.states.has(Constants.kTAB_STATE_COLLAPSING));
-  const allRenderableTabsSize = Size.getTabMarginTop() + (tabSize * (renderableTabs.length - disappearingTabs.length)) + Size.getTabMarginBottom();
+  const allRenderableTabsSize = Size.getTabMarginBlockStart() + (tabSize * (renderableTabs.length - disappearingTabs.length)) + Size.getTabMarginBlockEnd();
   const viewPortSize = Size.getNormalTabsViewPortSize();
 
   if (staticRendering) {

@@ -66,7 +66,7 @@ export async function show(ownerWindow, dialogParams) {
           container => {
             const style = container.closest('.rich-confirm-dialog').style;
             style.maxWidth = `${Math.floor(window.innerWidth * 0.6)}px`;
-            style.marginLeft = style.marginRight = 'auto';
+            style.marginInlineStart = style.marginInlineEnd = 'auto';
           },
           dialogParams.onShownInTab || dialogParams.onShown
         ],
@@ -112,23 +112,25 @@ export function tabsToHTMLList(tabs, { maxHeight, maxWidth }) {
                 flex-direction: column;
                 flex-grow: 1;
                 flex-shrink: 1;
-                margin: 0.5em 0;
+                margin-block: 0.5em;
+                margin-inline: 0;
                 min-height: 2em;
                 max-height: calc(${maxHeight}px - 12em /* title bar, message, checkbox, buttons, and margins */);
                 max-width: ${maxWidth}px;
                 overflow: auto;
-                padding: 0.5em;">` +
+                padding-block: 0.5em;
+                padding-inline: 0.5em;">` +
       tabs.map(tab => `<li style="align-items: center;
                                   display: flex;
                                   flex-direction: row;
-                                  padding-left: calc((${tab.$TST.getAttribute(Constants.kLEVEL)} - ${rootLevelOffset}) * 0.25em);"
+                                  padding-inline-start: calc((${tab.$TST.getAttribute(Constants.kLEVEL)} - ${rootLevelOffset}) * 0.25em);"
                            title="${sanitizeForHTMLText(tab.title)}"
                           ><img style="display: flex;
                                        max-height: 1em;
                                        max-width: 1em;"
                                 alt=""
                                 src="${sanitizeForHTMLText(tab.favIconUrl || browser.runtime.getURL('resources/icons/defaultFavicon.svg'))}"
-                               ><span style="margin-left: 0.25em;
+                               ><span style="margin-inline-start: 0.25em;
                                              overflow: hidden;
                                              text-overflow: ellipsis;
                                              white-space: nowrap;"

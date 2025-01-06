@@ -41,11 +41,13 @@ tab-sharing-state {
   border: none 0 transparent;
   display: none;
   height: var(--sharing-state-size);
-  margin: 0;
+  margin-block: 0;
+  margin-inline: 0;
   min-height: var(--sharing-state-size);
   min-width: var(--sharing-state-size); /* this is required to prevent shrinking of the box which has no position:static content */
   opacity: 1;
-  padding: 0;
+  padding-block: 0;
+  padding-inline: 0;
   position: relative;
   width: var(--sharing-state-size);
   z-index: var(--tab-ui-z-index);

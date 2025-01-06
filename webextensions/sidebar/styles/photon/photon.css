@@ -66,9 +66,11 @@ body,
     bottom: 0;
     content: "";
     left: 0;
-    margin: 0;
+    margin-block: 0;
+    margin-inline: 0;
     overflow: hidden;
-    padding: 0;
+    padding-block: 0;
+    padding-inline: 0;
     position: fixed;
     right: 0;
     top: 0;
@@ -138,8 +140,10 @@ tab-item.active tab-item-substance:hover {
 tab-closebox {
   background: none transparent;
   border: none 0 transparent;
-  margin: 0;
-  padding: 0.1em;
+  margin-block: 0;
+  margin-inline: 0;
+  padding-block: 0.1em;
+  padding-inline: 0.1em;
 }
 
 tab-item .burster {

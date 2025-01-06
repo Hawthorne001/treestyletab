@@ -40,7 +40,8 @@ tab-item:not(.collapsed) .throbber {
   max-height: var(--throbber-size);
   max-width: var(--throbber-size);
   overflow: hidden;
-  padding: 0;
+  padding-block: 0;
+  padding-inline: 0;
   pointer-events: none;
   position: relative;
   width: var(--throbber-size);

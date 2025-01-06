@@ -13,12 +13,13 @@ tab-item-substance,
 .after-tabs [role="button"] {
   border: 1px solid var(--tab-border);
   border-width: 1px 0;
-  padding: var(--tab-vertical-padding) 0.25em;
+  padding-block: var(--tab-vertical-padding);
+  padding-inline: 0.25em;
 }
 tab-item,
 .after-tabs button,
 .after-tabs [role="button"] {
-  margin-bottom: -1px;
+  margin-block-end: -1px;
 }
 
 tab-item.pinned tab-item-substance {
@@ -28,7 +29,8 @@ tab-item.pinned tab-item-substance {
 
 .after-tabs button,
 .after-tabs [role="button"] {
-  padding: 0em;
+  padding-block: 0em;
+  padding-inline: 0em;
 }
 
 #tabbar + .after-tabs button,
@@ -45,7 +47,7 @@ tab-item.pinned tab-item-substance {
 :root.left tab-item:not(.pinned) tab-item-substance,
 :root.left .after-tabs button:not([data-menu-ui]),
 :root.left .after-tabs [role="button"]:not([data-menu-ui]) {
-  padding-right: 0.35em;
+  padding-inline-end: 0.35em;
 }
 :root.left tab-item:not(.pinned)[data-parent-id] tab-item-substance {
   border-left-width: 1px;
@@ -54,7 +56,7 @@ tab-item.pinned tab-item-substance {
 :root.right tab-item:not(.pinned) tab-item-substance,
 :root.right .after-tabs button:not([data-menu-ui]),
 :root.right .after-tabs [role="button"]:not([data-menu-ui]) {
-  padding-left: 0.35em;
+  padding-inline-start: 0.35em;
 }
 :root.right tab-item:not(.pinned)[data-parent-id] tab-item-substance {
   border-right-width: 1px;
@@ -99,13 +101,13 @@ tab-item.pinned tab-item-substance {
 
 
 tab-item tab-label {
-  margin-left: 0.25em;
-  padding: 0 0 0.25em 0;
+  margin-inline-start: 0.25em;
+  padding-block: 0 0.25em;
+  padding-inline: 0;
 }
 
 tab-item tab-favicon {
-  margin-bottom: 0.25em;
-  margin-top: 0.25em;
+  margin-block: 0.25em;
 }
 
 tab-item {
@@ -115,9 +117,9 @@ tab-item {
 
 /* expand closebox to fill full height of tab */
 tab-item tab-closebox {
-  margin-bottom: var(--tab-closebox-negative-offset);
-  margin-top: var(--tab-closebox-negative-offset);
-  padding: var(--tab-closebox-offset) 0.25em;
+  margin-block: var(--tab-closebox-negative-offset);
+  padding-block: var(--tab-closebox-offset);
+  padding-inline: 0.25em;
 }
 
 tab-item tab-closebox::before,
@@ -126,8 +128,8 @@ tab-item:not(.faviconized) tab-sound-button::before {
   content: "";
   display: inline-block;
   height: calc(var(--svg-small-icon-size) + 0.2em);
-  margin-left: -0.1em;
-  margin-top: -0.1em;
+  margin-block-start: -0.1em;
+  margin-inline-start: -0.1em;
   width: calc(var(--svg-small-icon-size) + 0.2em);
   position: absolute;
 }

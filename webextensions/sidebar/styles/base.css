@@ -12,10 +12,10 @@
   --favicon-size: 16px;
   --tab-size: unset;
   --tab-indent: 0px;
-  --tab-margin-bottom: 0px;
-  --tab-margin-left: 0px;
-  --tab-margin-right: 0px;
-  --tab-margin-top: 0px;
+  --tab-margin-block-start: var(--tab-margin-top, 0px);
+  --tab-margin-block-end: var(--tab-margin-bottom, 0px);
+  --tab-margin-inline-start: var(--tab-margin-left, 0px);
+  --tab-margin-inline-end: var(--tab-margin-right, 0px);
   --faviconized-tab-size: 28px;
   --svg-small-icon-size: 16px;
   --new-tab-button-anchor-size: 1.5em;
@@ -32,8 +32,8 @@
   --tab-basic-animation: background    var(--color-animation),
                          color         var(--color-animation),
                          left          var(--collapse-animation),
-                         margin-bottom var(--collapse-animation),
-                         margin-top    var(--collapse-animation),
+                         margin-block-start var(--collapse-animation),
+                         margin-block-end   var(--collapse-animation),
                          max-height    var(--collapse-animation),
                          max-width     var(--collapse-animation),
                          min-height    var(--collapse-animation),
@@ -44,8 +44,8 @@
   --tab-animation: var(--tab-basic-animation),
                    background    var(--color-animation),
                    top           var(--collapse-animation);
-  --tab-indent-animation: margin-left   var(--indent-animation),
-                          margin-right  var(--indent-animation);
+  --tab-indent-animation: margin-inline-start var(--indent-animation),
+                          margin-inline-end   var(--indent-animation);
 
   --button-opacity: 0.75;
   --button-hover-opacity: 1;
@@ -94,8 +94,10 @@
 }
 
 body {
-  margin: 0;
-  padding: 0;
+  margin-block: 0;
+  margin-inline: 0;
+  padding-block: 0;
+  padding-inline: 0;
 }
 
 tab-item {
@@ -216,9 +218,11 @@ tab-sound-button */ {
 #subpanel-container {
   bottom: 0;
   left: 0;
-  margin: 0;
+  margin-block: 0;
+  margin-inline: 0;
   overflow: hidden;
-  padding: 0;
+  padding-block: 0;
+  padding-inline: 0;
   position: fixed;
   right: 0;
   top: 0;
@@ -240,7 +244,7 @@ tab-sound-button */ {
 }
 
 #normal-tabs-container {
-  margin-top: var(--pinned-tabs-area-size);
+  margin-block-start: var(--pinned-tabs-area-size);
   max-height: 100%;
   min-height: 0;
   overflow: hidden;
@@ -332,7 +336,7 @@ tab-sound-button */ {
 }
 
 :root.animation:not(.minimized) #tabbar {
-  transition: margin-top var(--collapse-animation);
+  transition: margin-block-start var(--collapse-animation);
 }
 
 #background {
@@ -360,8 +364,10 @@ tab-sound-button */ {
 ul {
   flex-grow: 1;
   list-style: none;
-  margin: 0;
-  padding: 0;
+  margin-block: 0;
+  margin-inline: 0;
+  padding-block: 0;
+  padding-inline: 0;
 }
 
 
@@ -416,7 +422,8 @@ tab-item,
   justify-content: stretch;
   line-height: 1;
   list-style: none;
-  margin: 0;
+  margin-block: 0;
+  margin-inline: 0;
   max-width: 100%;
   /*overflow: hidden;*/ /* we should not apply overflow:hidden here to allow rendering box-shadow of contents */
   pointer-events: none;
@@ -430,7 +437,8 @@ tab-item-substance {
   flex-wrap: nowrap;
   justify-content: flex-start;
   line-height: 1;
-  margin: var(--tab-margin-top) var(--tab-margin-right) var(--tab-margin-bottom) var(--tab-margin-left);
+  margin-block: var(--tab-margin-block-start) var(--tab-margin-block-end);
+  margin-inline: var(--tab-margin-inline-start) var(--tab-margin-inline-end);
   max-width: 100%;
   min-height: 0;
   /*overflow: hidden;*/ /* we should not apply overflow:hidden here to allow rendering box-shadow of contents */
@@ -457,7 +465,8 @@ tab-item-substance .caption {
   flex-wrap: nowrap;
   justify-content: flex-start;
   line-height: 1;
-  margin: 0;
+  margin-block: 0;
+  margin-inline: 0;
   width: 100%;
   max-height: var(--tab-size); /* Limit tab contents height for tabs customized as thinner. See also https://github.com/piroor/treestyletab/issues/3478 */
   min-height: 0;
@@ -466,7 +475,7 @@ tab-item-substance .caption {
 }
 
 :root.left tab-item:not(.pinned) tab-item-substance {
-  margin-left: calc(var(--tab-margin-left) + var(--tab-indent));
+  margin-inline-start: calc(var(--tab-margin-inline-start) + var(--tab-indent));
 }
 
 /* auto-hidden scrollbar placeholder workaround */
@@ -476,11 +485,11 @@ tab-item-substance .caption {
 :root.left:not(.shift-tabs-for-scrollbar-only-on-hover)
   #tabbar.scrollbar-autohide
   #normal-tabs-container.overflow tab-item:not(.pinned) tab-item-substance {
-  margin-left: calc(var(--tab-margin-left) + var(--tab-indent) + var(--shift-tabs-for-scrollbar-distance));
+  margin-inline-start: calc(var(--tab-margin-inline-start) + var(--tab-indent) + var(--shift-tabs-for-scrollbar-distance));
 }
 
 :root.right tab-item:not(.pinned) tab-item-substance {
-  margin-right: calc(var(--tab-margin-right) + var(--tab-indent));
+  margin-inline-end: calc(var(--tab-margin-inline-end) + var(--tab-indent));
 }
 
 /* auto-hidden scrollbar placeholder workaround */
@@ -490,7 +499,7 @@ tab-item-substance .caption {
 :root.right:not(.shift-tabs-for-scrollbar-only-on-hover)
   #tabbar.scrollbar-autohide
   #normal-tabs-container.overflow tab-item:not(.pinned) tab-item-substance {
-  margin-right: calc(var(--tab-margin-right) + var(--tab-indent) + var(--shift-tabs-for-scrollbar-distance));
+  margin-inline-end: calc(var(--tab-margin-inline-end) + var(--tab-indent) + var(--shift-tabs-for-scrollbar-distance));
 }
 
 tab-item,
@@ -529,13 +538,13 @@ tab-item.duplicating {
 tab-item.removing:not(.pinned.faviconized),
 tab-item:not(.pinned.faviconized).collapsed,
 tab-item.duplicating {
-  margin-top: calc(0px - var(--tab-current-size) - var(--tab-margin-bottom));
+  margin-block-start: calc(0px - var(--tab-current-size) - var(--tab-margin-block-end));
 }
 :root.left tab-item.removing.pinned.faviconized {
-  margin-left: calc(0px - var(--tab-current-size) - var(--tab-margin-right));
+  margin-inline-start: calc(0px - var(--tab-current-size) - var(--tab-margin-inline-end));
 }
 :root.right tab-item.removing.pinned.faviconized {
-  margin-right: calc(0px - var(--tab-current-size) - var(--tab-margin-left));
+  margin-inline-end: calc(0px - var(--tab-current-size) - var(--tab-margin-inline-start));
 }
 tab-item.removing tab-item-substance,
 tab-item:not(.pinned).collapsed tab-item-substance,
@@ -727,8 +736,8 @@ tab-item .extra-items-container.behind {
   flex-grow: 0;
   flex-wrap: wrap;
   justify-content: flex-start;
-  padding-right: max(1px, calc(100% - (var(--pinned-tab-width, 100%) * var(--pinned-tabs-max-column, 99999)) - (var(--pinned-tab-width, 100%) / 2)));
-  transition: padding-right var(--collapse-animation);
+  padding-inline-end: max(1px, calc(100% - (var(--pinned-tab-width, 100%) * var(--pinned-tabs-max-column, 99999)) - (var(--pinned-tab-width, 100%) / 2)));
+  transition: padding-inline-end var(--collapse-animation);
 }
 
 :root.faviconize-pinned-tabs .tabs.pinned {
@@ -743,7 +752,7 @@ tab-item .extra-items-container.behind {
 :root.left:not(.shift-tabs-for-scrollbar-only-on-hover)
   #tabbar.scrollbar-autohide
   #pinned-tabs-container.overflow .tabs.pinned {
-  padding-left: var(--shift-tabs-for-scrollbar-distance);
+  padding-inline-start: var(--shift-tabs-for-scrollbar-distance);
 }
 :root.right.shift-tabs-for-scrollbar-only-on-hover.on-scrollbar-area:hover
   #tabbar.scrollbar-autohide
@@ -751,7 +760,7 @@ tab-item .extra-items-container.behind {
 :root.right:not(.shift-tabs-for-scrollbar-only-on-hover)
   #tabbar.scrollbar-autohide
   #pinned-tabs-container.overflow .tabs.pinned {
-  padding-right: var(--shift-tabs-for-scrollbar-distance);
+  padding-inline-end: var(--shift-tabs-for-scrollbar-distance);
 }
 
 :root.hover-on-top-edge:hover .tabs.pinned {
@@ -767,7 +776,8 @@ tab-item.faviconized {
   --faviconized-tab-padding: calc((var(--tab-current-size) - var(--favicon-size)) / 2);
   --tab-current-size: var(--faviconized-tab-size);
   height: var(--tab-current-size);
-  margin: 0;
+  margin-block: 0;
+  margin-inline: 0;
   max-height: var(--tab-current-size);
   max-width: var(--tab-current-size);
   width: var(--tab-current-size);
@@ -775,8 +785,10 @@ tab-item.faviconized {
 tab-item.faviconized tab-item-substance {
   border-top: none;
   border-left: none;
-  margin: 0;
-  padding: var(--faviconized-tab-padding);
+  margin-block: 0;
+  margin-inline: 0;
+  padding-block: var(--faviconized-tab-padding);
+  padding-inline: var(--faviconized-tab-padding);
 }
 
 tab-item.pinned tab-closebox,
@@ -1004,7 +1016,8 @@ tab-item.faviconized .contextual-identity-marker {
 
 .newtab-button {
   background: none transparent;
-  margin: 0;
+  margin-block: 0;
+  margin-inline: 0;
   text-align: center;
 }
 
@@ -1052,7 +1065,8 @@ tab-item.faviconized .contextual-identity-marker {
   max-width: var(--new-tab-button-anchor-size);
   opacity: 0;
   overflow: hidden;
-  padding: calc((var(--new-tab-button-anchor-size) - var(--svg-small-icon-size)) / 2);
+  padding-block: calc((var(--new-tab-button-anchor-size) - var(--svg-small-icon-size)) / 2);
+  padding-inline: calc((var(--new-tab-button-anchor-size) - var(--svg-small-icon-size)) / 2);
   pointer-events: none;
   position: absolute;
   top: 0;
@@ -1085,7 +1099,8 @@ tab-item.faviconized .contextual-identity-marker {
 #subpanel-toggler::before {
   content: "▼";
   font-size: 0.65em;
-  margin: 0.125em;
+  margin-block: 0.125em;
+  margin-inline: 0.125em;
 }
 
 .newtab-action-selector-anchor::after,
@@ -1098,7 +1113,7 @@ tab-item.faviconized .contextual-identity-marker {
   fill: var(--tab-text);
   height: var(--svg-small-icon-size);
   line-height: 1;
-  margin-top: calc((var(--favicon-size) - var(--svg-small-icon-size)) / 2);
+  margin-block-start: calc((var(--favicon-size) - var(--svg-small-icon-size)) / 2);
   max-height: var(--favicon-size);
   max-width: var(--favicon-size);
   width: var(--svg-small-icon-size);
@@ -1119,7 +1134,7 @@ tab-item.faviconized .contextual-identity-marker {
                       transparent 100%
                     );
   display: none;
-  margin-top: calc(0 - var(--tab-size));
+  margin-block-start: calc(0 - var(--tab-size));
   min-height: var(--tab-size);
   pointer-events: none;
   position: relative;
@@ -1150,7 +1165,8 @@ tab-item.faviconized .contextual-identity-marker {
   left: 0;
   line-height: 1;
   opacity: 0;
-  padding: calc(var(--svg-small-icon-size) * 0.25) 0;
+  padding-block: calc(var(--svg-small-icon-size) * 0.25) 0;
+  padding-inline: calc(var(--svg-small-icon-size) * 0.25) 0;
   pointer-events: none;
   position: fixed;
   transition: opacity var(--collapse-animation);
@@ -1176,7 +1192,7 @@ tab-item.faviconized .contextual-identity-marker {
   background-repeat: no-repeat;
   background-size: 100% 0.2em;
   font: message-box;
-  padding-bottom: 0.25em;
+  padding-block-end: 0.25em;
   width: 100%;
 }
 
@@ -1195,12 +1211,14 @@ tab-item.faviconized .contextual-identity-marker {
 iframe#subpanel {
   border: none;
   height: var(--subpanel-content-size);
-  margin: 0;
+  margin-block: 0;
+  margin-inline: 0;
   max-height: none;
   max-width: 100%;
   min-height: 0;
   min-width: 0;
-  padding: 0;
+  padding-block: 0;
+  padding-inline: 0;
   width: 100%;
 }
 
@@ -1211,8 +1229,10 @@ iframe#subpanel {
   flex-direction: row;
   justify-content: space-between;
   line-height: 1;
-  margin: 0;
-  padding: 0.3em 0.2em 0.2em;
+  margin-block: 0;
+  margin-inline: 0;
+  padding-block: 0.3em 0.2em;
+  padding-inline: 0.2em;
 }
 #subpanel-header.resizable {
   cursor: ns-resize;
@@ -1239,7 +1259,8 @@ iframe#subpanel {
   display: flex;
   flex-direction: row;
   font: -moz-button;
-  padding: 0 0 0 0.5em;
+  padding-block: 0;
+  padding-inline: 0.5em 0;
 }
 
 #subpanel-selector-anchor {
@@ -1267,12 +1288,13 @@ iframe#subpanel {
 }
 
 #subpanel-selector span.icon {
-  margin-right: 0.25em;
+  margin-inline-end: 0.25em;
 }
 
 #subpanel-toggler {
   cursor: default;
-  padding: 0 0.5em;
+  padding-block: 0;
+  padding-inline: 0.5em;
   max-width: 1.5em;
 }
 

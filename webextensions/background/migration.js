@@ -74,10 +74,10 @@ export function migrateConfigs() {
 
 /* cancel spaces for macOS overlay scrollbar */
 :root.platform-mac #tabbar:dir(rtl).overflow .tab:not(.pinned) {
-  padding-left: 0;
+  padding-inline-start: 0;
 }
 :root.platform-mac #tabbar:dir(ltr).overflow .tab:not(.pinned) {
-  padding-right: 0;
+  padding-inline-end: 0;
 }`;
             break;
           case 3: // overlay (macOS)

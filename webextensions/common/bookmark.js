@@ -118,7 +118,7 @@ export const FOLDER_CHOOSER_STYLE = `
   .parentIdChooserMini {
     display: flex;
     flex-grow: 1;
-    margin-right: 0.2em;
+    margin-inline-end: 0.2em;
     max-width: calc(100% - 2em /* width of the showAllFolders button */ - 0.2em);
   }
 
@@ -157,8 +157,10 @@ export const FOLDER_CHOOSER_STYLE = `
 
   .parentIdChooserFullContainer ul {
     list-style: none;
-    margin: 0;
-    padding: 0;
+    margin-block: 0;
+    margin-inline: 0;
+    padding-block: 0;
+    padding-inline: 0;
   }
 
   .parentIdChooserFullContainer ul.parentIdChooserFull {
@@ -172,7 +174,8 @@ export const FOLDER_CHOOSER_STYLE = `
 
   .parentIdChooserFullTreeContainer {
     border: 1px solid;
-    margin: 0.5em 0;
+    margin-block: 0.5em;
+    margin-inline: 0;
     min-height: 10em;
     display: flex;
     flex-direction: column;
@@ -183,12 +186,15 @@ export const FOLDER_CHOOSER_STYLE = `
 
   .parentIdChooserFull li {
     list-style: none;
-    margin: 0;
-    padding: 0;
+    margin-block: 0;
+    margin-inline: 0;
+    padding-block: 0;
+    padding-inline: 0;
   }
 
   .parentIdChooserFull li > label {
-    padding: 0.25em;
+    padding-block: 0.25em;
+    padding-inline: 0.25em;
     white-space: nowrap;
     display: flex;
     user-select: none;
@@ -272,7 +278,8 @@ const DIALOG_STYLE = `
     align-items: stretch;
     display: flex;
     flex-direction: column;
-    margin: 0.2em 0;
+    margin-block: 0.2em;
+    margin-inline: 0;
     text-align: start;
   }
   .itemContainer.last {
@@ -282,7 +289,7 @@ const DIALOG_STYLE = `
 
   .itemContainer > label {
     display: flex;
-    margin-bottom: 0.2em;
+    margin-block-end: 0.2em;
     white-space: nowrap;
   }
 
@@ -732,8 +739,8 @@ export async function initFolderChooser({ rootItems, defaultItem, defaultValue, 
       fullChooserHeight = Math.max(
         fullChooserHeight,
         Math.ceil(fullContainer.offsetHeight
-          + parseFloat(fullContainerStyle.getPropertyValue('margin-top'))
-          + parseFloat(fullContainerStyle.getPropertyValue('margin-bottom'))),
+          + parseFloat(fullContainerStyle.getPropertyValue('margin-block-start'))
+          + parseFloat(fullContainerStyle.getPropertyValue('margin-block-end'))),
         150
       );
       await browser.runtime.sendMessage({
@@ -828,7 +835,7 @@ export async function initFolderChooser({ rootItems, defaultItem, defaultValue, 
     item.setAttribute('data-id', folder.id);
     const title = folder.title || browser.i18n.getMessage('bookmarkFolderChooser_blank');
     const label = item.appendChild(document.createElement('label'));
-    label.setAttribute('style', `padding-left: calc(1.25em * ${level} + 0.25em);`);
+    label.setAttribute('style', `padding-inline-start: calc(1.25em * ${level} + 0.25em);`);
     label.setAttribute('title', title);
     const twisty = label.appendChild(document.createElement('span'));
     twisty.setAttribute('class', 'twisty');
