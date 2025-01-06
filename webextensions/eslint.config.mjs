@@ -9,10 +9,13 @@ const languageOptions = {
     ...globals.webextensions,
   },
 
+  // This is for a workaround to avoid parsing error around static properties defined in class definitions.
+  // See also: https://stackoverflow.com/questions/42701440/eslint-parsing-error-unexpected-token-error-for-assigned-fat-arrow-prop
   parser: babelParser,
   parserOptions: {
     requireConfigFile: false,
   },
+
   ecmaVersion: 2020,
   sourceType: "module",
 };
