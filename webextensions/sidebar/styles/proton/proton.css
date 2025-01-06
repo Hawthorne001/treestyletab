@@ -245,7 +245,7 @@ tab-item-substance {
 .after-tabs button,
 .after-tabs [role="button"] {
   --tab-like-button-padding: 0.2em;
-  padding-block: calc(var(--tab-dropshadow-blur) + var(--tab-like-button-padding))
+  padding-block: calc(var(--tab-dropshadow-blur) + var(--tab-like-button-padding));
   padding-inline: 0;
   z-index: 100;
 }
