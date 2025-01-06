@@ -255,8 +255,7 @@ tab-sound-button */ {
   overflow: hidden;
 }
 
-:root.rtl #pinned-tabs-container,
-:root.rtl #normal-tabs-container,
+:root.rtl,
 :root.rtl tab-item-substance .caption {
   direction: rtl;
 }
@@ -350,13 +349,17 @@ tab-sound-button */ {
   z-index: var(--background-z-index);
 }
 
-/* put scrollbar leftside */
-:root.left #tabbar {
+/* put scrollbar farside from the content area */
+:root.left:not(.rtl) #tabbar,
+:root.right.rtl #pinned-tabs-container > *,
+:root.right.rtl #normal-tabs-container > *,
+:root.right.rtl #tabbar .after-tabs {
   direction: rtl;
 }
-:root.left #pinned-tabs-container > *,
-:root.left #normal-tabs-container > *,
-:root.left #tabbar .after-tabs {
+:root.right.rtl #tabbar,
+:root.left:not(.rtl) #pinned-tabs-container > *,
+:root.left:not(.rtl) #normal-tabs-container > *,
+:root.left:not(.rtl) #tabbar .after-tabs {
   direction: ltr;
 }
 
