@@ -1220,8 +1220,8 @@ tab-item.faviconized .contextual-identity-marker {
   left: 0;
   line-height: 1;
   opacity: 0;
-  padding-block: calc(var(--svg-small-icon-size) * 0.25) 0;
-  padding-inline: calc(var(--svg-small-icon-size) * 0.25) 0;
+  padding-block: calc(var(--svg-small-icon-size) * 0.25);
+  padding-inline: 0;
   pointer-events: none;
   position: fixed;
   transition: opacity var(--collapse-animation);
