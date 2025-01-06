@@ -16,6 +16,7 @@ import {
   shouldApplyAnimation,
   loadUserStyleRules,
   isMacOS,
+  isRTL,
   notify,
 } from '/common/common.js';
 import * as ApiTabs from '/common/api-tabs.js';
@@ -91,6 +92,7 @@ const mContextualIdentitiesStyle  = document.querySelector('#contextual-identity
 // allow customiation for platform specific styles with selectors like `:root[data-user-agent*="Windows NT 10"]`
 document.documentElement.dataset.userAgent = navigator.userAgent;
 document.documentElement.classList.toggle('platform-mac', isMacOS());
+document.documentElement.classList.toggle('rtl', isRTL());
 
 {
   const url = new URL(location.href);
@@ -1018,6 +1020,7 @@ async function isSidebarRightSide() {
   const mayBeRight = window.mozInnerScreenX - window.screenX > (window.outerWidth - window.innerWidth) / 2;
   if (configs.sidebarPosition == Constants.kTABBAR_POSITION_AUTO &&
       mayBeRight &&
+      !isRTL() &&
       !configs.sidebarPositionRighsideNotificationShown) {
     if (mTargetWindow != (await browser.windows.getLastFocused({})).id)
       return;
@@ -1053,7 +1056,7 @@ async function isSidebarRightSide() {
     }
   }
   return configs.sidebarPosition == Constants.kTABBAR_POSITION_AUTO ?
-    mayBeRight :
+    (mayBeRight || isRTL()) :
     configs.sidebarPosition == Constants.kTABBAR_POSITION_RIGHT;
 }
 

@@ -1200,3 +1200,20 @@ export function isMacOS() {
 export function isWindows() {
   return configs.enableWindowsBehaviors || /^Win/i.test(navigator.platform);
 }
+
+const RTL_LANGUAGES = new Set([
+  'ar',
+  'he',
+  'fa',
+  'ur',
+]);
+
+export function isRTL() {
+  const lang = (
+    navigator.language ||
+    navigator.userLanguage ||
+    //(new Intl.DateTimeFormat()).resolvedOptions().locale ||
+    ''
+  ).split('-')[0];
+  return RTL_LANGUAGES.has(lang);
+}
