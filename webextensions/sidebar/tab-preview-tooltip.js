@@ -70,6 +70,7 @@ import {
   configs,
   shouldApplyAnimation,
   log as internalLogger,
+  isRTL,
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
 import * as Permissions from '/common/permissions.js';
@@ -560,7 +561,7 @@ async function onTabSubstanceEnter(event) {
     /* These information is used to calculate offset of the sidebar header */
     offsetTop: window.mozInnerScreenY - window.screenY,
     offsetLeft: window.mozInnerScreenX - window.screenX,
-    align: mayBeRight ? 'right' : 'left',
+    align: mayBeRight || isRTL() ? 'right' : 'left',
     scale: 1 / window.devicePixelRatio,
     hasCustomTooltip,
     ...(hasCustomTooltip ?

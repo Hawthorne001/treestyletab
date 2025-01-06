@@ -28,7 +28,8 @@
 
 import {
   log as internalLogger,
-  configs
+  configs,
+  isRTL,
 } from '/common/common.js';
 
 import * as Constants from '/common/constants.js';
@@ -241,28 +242,34 @@ function onMessage(message, _sender, _respond) {
       );
     }; break;
 
-    case Constants.kCOMMAND_GET_LEFT_TAB: {
-      const { col, row } = getTabPosition(Tab.get(message.tabId));
-      const maxCol = row == mMaxRow ? mMaxColLastRow : mMaxCol;
-      const nextCol = col == 0 ? maxCol : col - 1;
-      log(`left tab: ${col}:${row} => ${nextCol}:${row}`);
-      return Promise.resolve(
-        mTabsMatrix.get(`${nextCol}:${row}`) ||
-        null
-      );
-    }; break;
+    case Constants.kCOMMAND_GET_LEFT_TAB:
+      return isRTL() ? getTabInlineNextTab(message) : getTabInlinePreviousTab(message);
 
-    case Constants.kCOMMAND_GET_RIGHT_TAB: {
-      const { col, row } = getTabPosition(Tab.get(message.tabId));
-      const maxCol = row == mMaxRow ? mMaxColLastRow : mMaxCol;
-      const nextCol = col == maxCol ? 0 : col + 1;
-      log(`right tab: ${col}:${row} => ${nextCol}:${row}`);
-      return Promise.resolve(
-        mTabsMatrix.get(`${nextCol}:${row}`) ||
-        null
-      );
-    }; break;
+    case Constants.kCOMMAND_GET_RIGHT_TAB:
+      return isRTL() ? getTabInlinePreviousTab(message) : getTabInlineNextTab(message);
   }
+}
+
+function getTabInlinePreviousTab(message) {
+  const { col, row } = getTabPosition(Tab.get(message.tabId));
+  const maxCol = row == mMaxRow ? mMaxColLastRow : mMaxCol;
+  const nextCol = col == 0 ? maxCol : col - 1;
+  log(`left tab: ${col}:${row} => ${nextCol}:${row}`);
+  return Promise.resolve(
+    mTabsMatrix.get(`${nextCol}:${row}`) ||
+    null
+  );
+}
+
+function getTabInlineNextTab(message) {
+  const { col, row } = getTabPosition(Tab.get(message.tabId));
+  const maxCol = row == mMaxRow ? mMaxColLastRow : mMaxCol;
+  const nextCol = col == maxCol ? 0 : col + 1;
+  log(`right tab: ${col}:${row} => ${nextCol}:${row}`);
+  return Promise.resolve(
+    mTabsMatrix.get(`${nextCol}:${row}`) ||
+    null
+  );
 }
 
 const BUFFER_KEY_PREFIX = 'pinned-tabs-';

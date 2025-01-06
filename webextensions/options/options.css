@@ -155,10 +155,15 @@ label input[type="checkbox"] ~ img {
   opacity: 0;
   pointer-events: none;
   position: fixed;
-  right: 0;
   top: 1.5em;
   transition: opacity 0.25s ease-out;
   width: 120px /*80px*/;
+}
+:root:not(.rtl) .preview-image {
+  right: 0;
+}
+:root.rtl .preview-image {
+  left: 0;
 }
 .has-preview-image:not([data-value="-1"]):hover .preview-image {
   opacity: 1;
@@ -276,7 +281,7 @@ tbody tr {
 .contextConfigs tbody th,
 .tabDragBehaviorConfigs thead th,
 .tabDragBehaviorConfigs tbody th {
-  text-align: left;
+  text-align: start;
 }
 
 .contextConfigs td,
@@ -370,7 +375,7 @@ body > section.collapsed > h1:first-child ~ * {
 
 
 #link-optionsPage-top {
-  float: right;
+  float: inline-end;
   padding-inline-end: 1em;
 }
 

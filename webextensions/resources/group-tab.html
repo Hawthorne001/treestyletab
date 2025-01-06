@@ -150,8 +150,13 @@
     display: inline-block;
     opacity: 0;
     position: absolute;
-    right: 0;
     top: 0;
+  }
+  :root:not(.rtl) .closebox::before {
+    right: 0;
+  }
+  :root.rtl .closebox::before {
+    left: 0;
   }
 
   .closebox:hover::before {
@@ -164,8 +169,13 @@
     display: inline-block;
     mask: url("/sidebar/styles/icons/close-16.svg") no-repeat center / 100%;
     position: absolute;
-    right: 0;
     top: 0;
+  }
+  :root:not(.rtl) .closebox::after {
+    right: 0;
+  }
+  :root.rtl .closebox::after {
+    left: 0;
   }
 
   #tabs a,
@@ -235,8 +245,13 @@
 
     position: absolute;
     top: calc(50% - var(--throbber-size));
-    left: calc(50% - var(--throbber-size));
     transform: scale(2, 2);
+  }
+  :root.updating:not(.has-contents):not(.rtl) .throbber {
+    left: calc(50% - var(--throbber-size));
+  }
+  :root.updating:not(.has-contents).rtl .throbber {
+    right: calc(50% - var(--throbber-size));
   }
 
   :root.updating:not(.has-contents) .throbber::before {
@@ -248,7 +263,12 @@
     height: var(--throbber-size);
     position: absolute;
     width: calc(var(--throbber-size) * 60);
+  }
+  :root.updating:not(.has-contents):not(.rtl) .throbber::before {
     mask: url("/sidebar/styles/throbber.svg") no-repeat left center / 100%;
+  }
+  :root.updating:not(.has-contents).rtl .throbber::before {
+    mask: url("/sidebar/styles/throbber.svg") no-repeat right center / 100%;
   }
 
 
@@ -265,10 +285,15 @@
     padding-block: 0.5em;
     padding-inline: 0.5em;
     position: fixed;
-    right: 0.5em;
     top: 0.5em;
     transition: opacity 150ms ease-out;
     z-idnex: 1000;
+  }
+  :root:not(.rtl) #optionsHint {
+    right: 0.5em;
+  }
+  :root.rtl #optionsHint {
+    left: 0.5em;
   }
   #optionHint:hover {
     opacity: 1;

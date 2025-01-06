@@ -9,7 +9,8 @@ import EventListenerManager from '/extlib/EventListenerManager.js';
 
 import {
   log as internalLogger,
-  configs
+  configs,
+  isRTL,
 } from '/common/common.js';
 
 function log(...args) {
@@ -179,12 +180,12 @@ export function updateTabs() {
     --tab-x-offset: ${mTabXOffset}px;
     --tab-y-offset: ${mTabYOffset}px;
     --tab-height: var(--tab-size); /* for backward compatibility of custom user styles */
-    --tab-favicon-start-offset: ${favIconRect.left - baseLeft}px;
-    --tab-favicon-end-offset: ${baseRight - favIconRect.right}px;
-    --tab-label-start-offset: ${labelRect.left - baseLeft}px;
-    --tab-label-end-offset: ${baseRight - labelRect.right}px;
-    --tab-closebox-start-offset: ${closeBoxRect.left - baseLeft}px;
-    --tab-closebox-end-offset: ${baseRight - closeBoxRect.right}px;
+    --tab-favicon-start-offset: ${isRTL() ? baseRight - favIconRect.right : favIconRect.left - baseLeft}px;
+    --tab-favicon-end-offset: ${isRTL() ? favIconRect.left - baseLeft : baseRight - favIconRect.right}px;
+    --tab-label-start-offset: ${isRTL() ? baseRight - labelRect.right : labelRect.left - baseLeft}px;
+    --tab-label-end-offset: ${isRTL() ? labelRect.left - baseLeft : baseRight - labelRect.right}px;
+    --tab-closebox-start-offset: ${isRTL() ? baseRight - closeBoxRect.right : closeBoxRect.left - baseLeft}px;
+    --tab-closebox-end-offset: ${isRTL() ? closeBoxRect.left - baseLeft : baseRight - closeBoxRect.right}px;
 
     --tab-burst-duration: ${configs.burstDuration}ms;
     --indent-duration:    ${configs.indentDuration}ms;

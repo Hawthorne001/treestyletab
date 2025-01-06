@@ -43,7 +43,7 @@
   }
 
   .permissions {
-    text-align: left;
+    text-align: start;
     margin-inline-start: 8%;
     margin-inline-end: 8%;
     padding-block: 0;
@@ -69,10 +69,15 @@
   .user-chrome-css {
     position: fixed;
     top: 0;
-    left: 0;
     font-size: 95%;
-    text-align: left;
+    text-align: start;
     transition: opacity 0.3s ease;
+  }
+  :root:not(.rtl) .user-chrome-css {
+    left: 0;
+  }
+  :root.rtl .user-chrome-css {
+    right: 0;
   }
   .user-chrome-css:not(:hover) {
     opacity: 0.65;
@@ -87,13 +92,23 @@
   }
   .user-chrome-css .arrow.top-tabbar {
     top: 0;
-    left: 2em;
     transform: rotate(180deg);
+  }
+  :root:not(.rtl) .user-chrome-css .arrow.top-tabbar {
+    left: 2em;
+  }
+  :root.rtl .user-chrome-css .arrow.top-tabbar {
+    right: 2em;
   }
   .user-chrome-css .arrow.sidebar-header {
     top: 1.8em;
-    left: 0;
     transform: rotate(90deg);
+  }
+  :root:not(.rtl) .user-chrome-css .arrow.sidebar-header {
+    left: 0;
+  }
+  :root.rtl .user-chrome-css .arrow.sidebar-header {
+    right: 0;
   }
   .user-chrome-css p {
     margin-block: 1em 0;

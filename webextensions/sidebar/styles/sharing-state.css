@@ -61,9 +61,14 @@ tab-sharing-state::after {
   fill: var(--sharing-state-color);
   height: var(--sharing-state-size);
   position: absolute;
-  right: 0;
   top: 0;
   width: var(--sharing-state-size);
+}
+:root:not(.rtl) tab-sharing-state::after {
+  right: 0;
+}
+:root.rtl tab-sharing-state::after {
+  left: 0;
 }
 :root.simulate-svg-context-fill tab-sharing-state::after {
   background: var(--sharing-state-color);

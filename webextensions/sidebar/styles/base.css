@@ -160,9 +160,14 @@ tab-item.faviconized:focus tab-favicon {
   overflow: hidden;
   pointer-events: none;
   position: absolute;
-  right: 0;
-  text-align: right;
+  text-align: end;
   z-index: var(--tab-favicon-z-index);
+}
+:root.debug:not(.rtl) {
+  right: 0;
+}
+:root.debug.rtl {
+  left: 0;
 }
 
 /* This is required to prevent dragging of images (ex. favicon).
@@ -634,10 +639,16 @@ tab-item .extra-items-container.indent {
 
 tab-item .extra-items-container.front {
   justify-content: flex-end;
-  left: var(--tab-label-start-offset);
   pointer-events: auto;
-  right: var(--tab-label-end-offset);
   z-index: var(--tab-extra-contents-front-z-index);
+}
+:root:not(.rtl) tab-item .extra-items-container.front {
+  left: var(--tab-label-start-offset);
+  right: var(--tab-label-end-offset);
+}
+:root.rtl tab-item .extra-items-container.front {
+  left: var(--tab-label-end-offset);
+  right: var(--tab-label-start-offset);
 }
 tab-item.faviconized .extra-items-container.front {
   left: var(--faviconized-tab-padding);
@@ -661,10 +672,18 @@ tab-item.attention tab-favicon::before {
   bottom: auto;
   content: '';
   height: var(--tab-current-size);
-  left: var(--attention-marker-x-offset);
-  right: auto;
   top: var(--attention-marker-y-offset);
   width: var(--tab-current-size);
+}
+:root:not(.rtl) tab-item.faviconized.unread tab-favicon::before,
+:root:not(.rtl) tab-item.attention tab-favicon::before {
+  left: var(--attention-marker-x-offset);
+  right: auto;
+}
+:root.rtl tab-item.faviconized.unread tab-favicon::before,
+:root.rtl tab-item.attention tab-favicon::before {
+  left: auto;
+  right: var(--attention-marker-x-offset);
 }
 
 tab-item .background {
@@ -688,16 +707,25 @@ tab-item .extra-items-container.behind {
   z-index: var(--tab-extra-contents-front-z-index);
 }
 
-:root.newtab-action-selectable
+:root.newtab-action-selectable:not(.rtl)
   .newtab-button
   .extra-items-container,
-:root:not(.newtab-action-selectable).contextual-identity-selectable:not(.incognito)
+:root:not(.newtab-action-selectable).contextual-identity-selectable:not(.incognito):not(.rtl)
+  .newtab-button
+  .extra-items-container,
+:root.newtab-action-selectable.contextual-identity-selectable:not(.incognito).rtl
   .newtab-button
   .extra-items-container {
   right: var(--new-tab-button-anchor-size);
 }
 
-:root.newtab-action-selectable.contextual-identity-selectable:not(.incognito)
+:root.newtab-action-selectable.rtl
+  .newtab-button
+  .extra-items-container,
+:root:not(.newtab-action-selectable).contextual-identity-selectable:not(.incognito).rtl
+  .newtab-button
+  .extra-items-container,
+:root.newtab-action-selectable.contextual-identity-selectable:not(.incognito):not(.rtl)
   .newtab-button
   .extra-items-container {
   left: var(--new-tab-button-anchor-size);
@@ -1073,17 +1101,26 @@ tab-item.faviconized .contextual-identity-marker {
   transition: opacity var(--collapse-animation);
   z-index: var(--over-buttons-z-index);
 }
-:root.contextual-identity-selectable
+:root.contextual-identity-selectable:not(.rtl)
   .after-tabs
-  .newtab-action-selector-anchor {
+  .newtab-action-selector-anchor,
+:root:not(.contextual-identity-selectable).rtl
+  .after-tabs
+  .newtab-action-selector-anchor,
+:root.contextual-identity-selectable.rtl
+  .after-tabs
+  .contextual-identities-selector-anchor {
   border-width: 0 1px 0 0;
   display: flex;
   left: 0;
 }
-:root:not(.contextual-identity-selectable)
+:root.contextual-identity-selectable.rtl
   .after-tabs
   .newtab-action-selector-anchor,
-:root.contextual-identity-selectable
+:root:not(.contextual-identity-selectable):not(.rtl)
+  .after-tabs
+  .newtab-action-selector-anchor,
+:root.contextual-identity-selectable:not(.rtl)
   .after-tabs
   .contextual-identities-selector-anchor {
   border-width: 0 0 0 1px;

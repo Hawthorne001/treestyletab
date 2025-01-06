@@ -186,8 +186,13 @@ tab-item.group-tab tab-favicon:not(.error) .favicon-image[src] {
   max-height: 10px;
   max-width: 10px;
   position: absolute;
-  right: 0;
   z-index: var(--favicon-preferred-image-z-index);
+}
+:root:not(.rtl) tab-item.group-tab tab-favicon:not(.error) .favicon-image[src] {
+  right: 0;
+}
+:root.rtl tab-item.group-tab tab-favicon:not(.error) .favicon-image[src] {
+  left: 0;
 }
 
 
@@ -296,9 +301,14 @@ tab-item.faviconized.sharing-screen .favicon-sharing-state::before {
 
 .favicon-sticky-state {
   --svg-small-icon-size: 12px;
-  left: calc(var(--svg-small-icon-size) - var(--favicon-size));
   position: absolute;
   top: calc(var(--svg-small-icon-size) - var(--favicon-size));
+}
+:root:not(.rtl) .favicon-sticky-state {
+  left: calc(var(--svg-small-icon-size) - var(--favicon-size));
+}
+:root.rtl .favicon-sticky-state {
+  left: calc(var(--svg-small-icon-size) - var(--favicon-size));
 }
 
 .favicon-sticky-state::before {
@@ -307,12 +317,17 @@ tab-item.faviconized.sharing-screen .favicon-sharing-state::before {
   content: "";
   display: inline-block;
   height: var(--svg-small-icon-size);
-  left: -10%;
   opacity: 0.75;
   position: absolute;
   top: 10%;
   transform: scale(1.3, 1.3);
   width: var(--svg-small-icon-size);
+}
+:root:not(.rtl) .favicon-sticky-state::before {
+  left: -10%;
+}
+:root.rtl .favicon-sticky-state::before {
+  right: -10%;
 }
 
 tab-item:not(.sticky) .favicon-sticky-state,

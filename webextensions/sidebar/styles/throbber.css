@@ -85,10 +85,15 @@ tab-item:not(.collapsed) .throbber {
   -moz-context-properties: fill;
   background: url("/resources/icons/hourglass.svg") no-repeat;
 }
-:root.simulate-svg-context-fill.blocking-throbber #blocking-screen .throbber::before,
-:root.simulate-svg-context-fill #tabbar tab-item:not(.collapsed).loading .throbber::before {
+:root.simulate-svg-context-fill:not(.rtl).blocking-throbber #blocking-screen .throbber::before,
+:root.simulate-svg-context-fill:not(.rtl) #tabbar tab-item:not(.collapsed).loading .throbber::before {
   background-image: none;
   mask: url("/resources/icons/hourglass.svg") no-repeat left center / 100%;
+}
+:root.simulate-svg-context-fill.rtl.blocking-throbber #blocking-screen .throbber::before,
+:root.simulate-svg-context-fill.rtl #tabbar tab-item:not(.collapsed).loading .throbber::before {
+  background-image: none;
+  mask: url("/resources/icons/hourglass.svg") no-repeat right center / 100%;
 }
 
 :root.animation.blocking-throbber #blocking-screen .throbber::before,
@@ -101,15 +106,19 @@ tab-item:not(.collapsed) .throbber {
   mask-image: url("./throbber.svg");
 }
 
-#tabbar tab-item:not(.collapsed).loading.throbber-unsynchronized .throbber::before {
+#tabbar tab-item:not(.collapsed).loading.throbber-unsynchronized:not(.rtl) .throbber::before {
   background-image: none;
   mask: -moz-element(#conductor-throbber) no-repeat left center / 100%;
+}
+#tabbar tab-item:not(.collapsed).loading.throbber-unsynchronized.rtl .throbber::before {
+  background-image: none;
+  mask: -moz-element(#conductor-throbber) no-repeat right center / 100%;
 }
 :root.simulate-svg-context-fill #tabbar tab-item:not(.collapsed).loading.throbber-unsynchronized .throbber::before {
   mask: -moz-element(#conductor-throbber-container) no-repeat;
 }
 
-#conductor-throbber {
+:root#conductor-throbber {
   background: url("/resources/icons/hourglass.svg") no-repeat left center;
 }
 :root.animation #conductor-throbber {
@@ -121,8 +130,13 @@ tab-item:not(.collapsed) .throbber {
 :root.blocking-throbber #blocking-screen .throbber {
   position: absolute;
   top: calc(50% - var(--throbber-size));
-  left: calc(50% - var(--throbber-size));
   transform: scale(2, 2);
+}
+:root.blocking-throbber:not(.rtl) #blocking-screen .throbber {
+  left: calc(50% - var(--throbber-size));
+}
+:root.blocking-throbber.rtl #blocking-screen .throbber {
+  right: calc(50% - var(--throbber-size));
 }
 
 :root.blocking-throbber #blocking-screen .throbber::before {

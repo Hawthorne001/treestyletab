@@ -36,6 +36,7 @@ import {
   sha1sum,
   isMacOS,
   isLinux,
+  isRTL,
   dumpTab,
 } from '/common/common.js';
 import * as ApiTabs from '/common/api-tabs.js';
@@ -347,7 +348,7 @@ function getDropAction(event) {
   const onFaviconizedTab    = targetTab.pinned && configs.faviconizePinnedTabs;
   const dropAreasCount      = (info.draggedTab && onFaviconizedTab && !info.substanceTargetTab) ? 2 : 3 ;
   const targetTabRect       = Scroll.getTabRect(targetTab);
-  const targetTabCoordinate = onFaviconizedTab ? targetTabRect.left : targetTabRect.top ;
+  const targetTabCoordinate = onFaviconizedTab ? (isRTL() ? targetTabRect.right : targetTabRect.left) : targetTabRect.top ;
   const targetTabSize       = onFaviconizedTab ? targetTabRect.width : targetTabRect.height ;
   let beforeOrAfterDropAreaSize;
   if (dropAreasCount == 2) {
