@@ -286,6 +286,7 @@
           'renderTreeInGroupTabs',
           'showAutoGroupOptionHint',
           'showAutoGroupOptionHintWithOpener',
+          'rtl',
         ]
       }),
       browser.runtime.sendMessage({
@@ -303,6 +304,8 @@
       ${contextualIdentitiesColorInfo.colorDeclarations}
     `;
     gUserStyleRules.textContent = userStyleRules;
+
+    document.documentElement.classList.toggle('rtl', configs.rtl);
 
     updateTree.enabled = configs.renderTreeInGroupTabs;
     updateTree();

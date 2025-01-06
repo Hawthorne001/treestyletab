@@ -62,6 +62,7 @@ const localKeys = DEVICE_SPECIFIC_CONFIG_KEYS.concat(mapAndFilter(`
   optionsExpandedGroups
   optionsExpandedSections
   outOfScreenTabsRenderingPages
+  rtl,
   sidebarPosition
   sidebarVirtuallyClosedWindows
   sidebarVirtuallyOpenedWindows
@@ -142,6 +143,7 @@ export const configs = new Configs({
   sidebarPosition: Constants.kTABBAR_POSITION_AUTO,
   sidebarPositionRighsideNotificationShown: false,
   sidebarPositionOptionNotificationTimeout: 20 * 1000,
+  rtl: isRTL(),
 
   style: /^Mac/i.test(navigator.platform) ? 'sidebar' : 'proton',
   colorScheme: /^Linux/i.test(navigator.platform) ? 'system-color' : 'photon' ,

@@ -58,6 +58,8 @@ if ((location.hash &&
     /independent=true/.test(location.search))
   document.body.classList.add('independent');
 
+document.documentElement.classList.toggle('rtl', isRTL());
+
 const CODEMIRROR_THEMES = `
 3024-day
 3024-night
