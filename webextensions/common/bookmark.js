@@ -16,6 +16,7 @@ import {
   sha1sum,
   sanitizeForHTMLText,
   isLinux,
+  isRTL,
 } from './common.js';
 import * as ApiTabs from './api-tabs.js';
 import * as TreeBehavior from './tree-behavior.js';
@@ -227,6 +228,9 @@ export const FOLDER_CHOOSER_STYLE = `
     transform: rotatez(-90deg);
     width: 1em;;
   }
+  .rtl .parentIdChooserFull li > label > .twisty::before {
+    transform: rotatez(90deg);
+  }
   .parentIdChooserFull li.expanded > label > .twisty::before {
     transform: rotatez(0deg);
   }
@@ -336,7 +340,8 @@ export async function bookmarkTab(tab, { parentId, showDialog } = {}) {
         <div class="itemContainer ${inlineClass}"
             ><label for="${BASE_ID}title"
                     accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_title_accessKey')))}
-                   >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_title'))}</label
+                   ><span accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_title_accessKey')))}
+                         >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_title'))}</span></label
             ><input id="${BASE_ID}title"
                     type="text"
                     name="title"
@@ -344,7 +349,8 @@ export async function bookmarkTab(tab, { parentId, showDialog } = {}) {
        ><div class="itemContainer ${inlineClass}"
             ><label for="${BASE_ID}url"
                     accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_url_accessKey')))}
-                   >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_url'))}</label
+                   ><span accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_url_accessKey')))}
+                         >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_url'))}</span></label
             ><input id="${BASE_ID}url"
                     type="text"
                     name="url"
@@ -353,7 +359,8 @@ export async function bookmarkTab(tab, { parentId, showDialog } = {}) {
             ><div class="itemContainer"
                  ><label for="${BASE_ID}parentId"
                          accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_parentId_accessKey')))}
-                        >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_parentId'))}</label
+                        ><span accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_parentId_accessKey')))}
+                              >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_parentId'))}</span></label
                  ><span class="parentIdChooserMiniContainer"
                        ><select id="${BASE_ID}parentId"
                                 name="parentId"
@@ -374,7 +381,7 @@ export async function bookmarkTab(tab, { parentId, showDialog } = {}) {
                                ></span></div
        ></div>
       `.trim(),
-      async onShown(container, { initFolderChooser, parentId, inline }) {
+      async onShown(container, { initFolderChooser, parentId, inline, isRTL }) {
         if (container.classList.contains('simulation'))
           return;
         container.classList.add('bookmark-dialog');
@@ -387,6 +394,7 @@ export async function bookmarkTab(tab, { parentId, showDialog } = {}) {
           rootItems,
           container,
           inline,
+          isRTL,
         });
         container.querySelector('[name="title"]').select();
       },
@@ -394,6 +402,7 @@ export async function bookmarkTab(tab, { parentId, showDialog } = {}) {
         initFolderChooser,
         parentId,
         inline,
+        isRTL: isRTL(),
       },
       buttons: [
         browser.i18n.getMessage('bookmarkDialog_accept'),
@@ -537,7 +546,8 @@ export async function bookmarkTabs(tabs, { parentId, index, showDialog, title } 
         <div class="itemContainer ${inlineClass}"
             ><label for="${BASE_ID}title"
                     accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_title_accessKey')))}
-                   >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_title'))}</label
+                   ><span accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_title_accessKey')))}
+                         >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_title'))}</span></label
             ><input id="${BASE_ID}title"
                     type="text"
                     name="title"
@@ -546,7 +556,8 @@ export async function bookmarkTabs(tabs, { parentId, index, showDialog, title } 
             ><div class="itemContainer"
                  ><label for="${BASE_ID}parentId"
                          accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_parentId_accessKey')))}
-                        >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_parentId'))}</label
+                        ><span accesskey=${JSON.stringify(sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_parentId_accessKey')))}
+                              >${sanitizeForHTMLText(browser.i18n.getMessage('bookmarkDialog_parentId'))}</span></label
                  ><span class="parentIdChooserMiniContainer"
                        ><select id="${BASE_ID}parentId"
                                 name="parentId"
@@ -567,7 +578,7 @@ export async function bookmarkTabs(tabs, { parentId, index, showDialog, title } 
                                ></span></div
        ></div>
       `.trim(),
-      async onShown(container, { initFolderChooser, parentId, inline }) {
+      async onShown(container, { initFolderChooser, parentId, inline, isRTL }) {
         if (container.classList.contains('simulation'))
           return;
         container.classList.add('bookmark-dialog');
@@ -580,6 +591,7 @@ export async function bookmarkTabs(tabs, { parentId, index, showDialog, title } 
           rootItems,
           container,
           inline,
+          isRTL,
         });
         container.querySelector('[name="title"]').select();
       },
@@ -587,6 +599,7 @@ export async function bookmarkTabs(tabs, { parentId, index, showDialog, title } 
         initFolderChooser,
         parentId: folderParams.parentId,
         inline,
+        isRTL: isRTL(),
       },
       buttons: [
         browser.i18n.getMessage('bookmarkDialog_accept'),
@@ -665,7 +678,7 @@ function getTitlesWithTreeStructure(tabs) {
 // chooser of the bookmark creation dialog.
 // Bookmark creation dialog is loaded into a popup window and we use this large
 // method to inject the behavior of the folder chooser.
-export async function initFolderChooser({ rootItems, defaultItem, defaultValue, container, inline } = {}) {
+export async function initFolderChooser({ rootItems, defaultItem, defaultValue, container, inline, isRTL } = {}) {
   const miniList = container.querySelector('select.parentIdChooserMini');
   const fullList = container.querySelector('ul.parentIdChooserFull');
   const fullListFocusibleContainer = container.querySelector('.parentIdChooserFullTreeContainer');
@@ -808,6 +821,28 @@ export async function initFolderChooser({ rootItems, defaultItem, defaultValue, 
       item.$completeFolderItem();
 
     focusToItem(item);
+  };
+
+  const expandOrDigIn = (event, focusedItem) => {
+    if (!focusedItem.classList.contains('expanded')) {
+      focusedItem.classList.add('expanded');
+      focusedItem.$completeFolderItem();
+    }
+    else {
+      const firstChild = focusedItem.querySelector('li');
+      if (firstChild)
+        focusToItem(firstChild);
+    }
+  };
+  const collapseOrDigOut = (event, focusedItem) => {
+    if (focusedItem.classList.contains('expanded')) {
+      focusedItem.classList.remove('expanded');
+    }
+    else {
+      const nearestAncestor = focusedItem.parentNode.closest('li');
+      if (nearestAncestor)
+        focusToItem(nearestAncestor);
+    }
   };
 
   const createNewSubFolder = async () => {
@@ -1052,27 +1087,18 @@ export async function initFolderChooser({ rootItems, defaultItem, defaultValue, 
 
       case 'ArrowRight':
         cancelEvent(event);
-        if (!focusedItem.classList.contains('expanded')) {
-          focusedItem.classList.add('expanded');
-          focusedItem.$completeFolderItem();
-        }
-        else {
-          const firstChild = focusedItem.querySelector('li');
-          if (firstChild)
-            focusToItem(firstChild);
-        }
+        if (isRTL)
+          collapseOrDigOut(event, focusedItem);
+        else
+          expandOrDigIn(event, focusedItem);
         break;
 
       case 'ArrowLeft':
         cancelEvent(event);
-        if (focusedItem.classList.contains('expanded')) {
-          focusedItem.classList.remove('expanded');
-        }
-        else {
-          const nearestAncestor = focusedItem.parentNode.closest('li');
-          if (nearestAncestor)
-            focusToItem(nearestAncestor);
-        }
+        if (isRTL)
+          expandOrDigIn(event, focusedItem);
+        else
+          collapseOrDigOut(event, focusedItem);
         break;
 
       case 'PageUp': {
