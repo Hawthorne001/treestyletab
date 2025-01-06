@@ -246,6 +246,12 @@ tab-sound-button */ {
   overflow: hidden;
 }
 
+:root.rtl #pinned-tabs-container,
+:root.rtl #normal-tabs-container,
+:root.rtl tab-item-substance .caption {
+  direction: rtl;
+}
+
 .virtual-scroll-container {
   /* We need to use min-height instead of height for a flexbox. */
   min-height: 0px; /* this will be updated dynamically by scroll.js */
@@ -547,17 +553,19 @@ tab-item.duplicating tab-item-substance {
 }
 
 
-:root.left tab-item tab-twisty {
+:root.left tab-item tab-twisty,
+:root.right.rtl tab-item tab-twisty {
   order: -1;
 }
-:root.left tab-item tab-closebox {
+:root.left tab-item tab-closebox,
+:root.right.rtl tab-item tab-closebox {
   order: 10000;
 }
 
-:root.right tab-item tab-twisty {
+:root.right:not(.rtl) tab-item tab-twisty {
   order: 10000;
 }
-:root.right tab-item tab-closebox {
+:root.right:not(.rtl) tab-item tab-closebox {
   order: -1;
 }
 
