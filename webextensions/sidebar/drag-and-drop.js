@@ -348,7 +348,7 @@ function getDropAction(event) {
   const onFaviconizedTab    = targetTab.pinned && configs.faviconizePinnedTabs;
   const dropAreasCount      = (info.draggedTab && onFaviconizedTab && !info.substanceTargetTab) ? 2 : 3 ;
   const targetTabRect       = Scroll.getTabRect(targetTab);
-  const targetTabCoordinate = onFaviconizedTab ? (isRTL() ? targetTabRect.right : targetTabRect.left) : targetTabRect.top ;
+  const targetTabCoordinate = onFaviconizedTab ? targetTabRect.left : targetTabRect.top ;
   const targetTabSize       = onFaviconizedTab ? targetTabRect.width : targetTabRect.height ;
   let beforeOrAfterDropAreaSize;
   if (dropAreasCount == 2) {
@@ -369,13 +369,14 @@ function getDropAction(event) {
     after: `> ${targetTabCoordinate + targetTabSize - beforeOrAfterDropAreaSize}`,
   });
   */
+  const shouldInvertArea = onFaviconizedTab && isRTL();
   if (eventCoordinate < targetTabCoordinate + beforeOrAfterDropAreaSize) {
-    info.dropPosition = kDROP_BEFORE;
+    info.dropPosition = shouldInvertArea ? kDROP_AFTER : kDROP_BEFORE;
     info.insertBefore = info.firstTargetTab;
   }
   else if (dropAreasCount == 2 ||
            eventCoordinate > targetTabCoordinate + targetTabSize - beforeOrAfterDropAreaSize) {
-    info.dropPosition = kDROP_AFTER;
+    info.dropPosition = shouldInvertArea ? kDROP_BEFORE : kDROP_AFTER;
     info.insertAfter  = info.lastTargetTab;
   }
   else {
