@@ -486,24 +486,20 @@ tab-item-substance .caption {
 :root.rtl.right tab-item:not(.pinned) tab-item-substance {
   margin-inline-start: calc(var(--tab-margin-inline-start) + var(--tab-indent));
 }
-:root.rtl.left tab-item:not(.pinned) tab-item-substance,
-:root:not(.rtl).right tab-item:not(.pinned) tab-item-substance {
-  margin-inline-end: calc(var(--tab-margin-inline-end) + var(--tab-indent));
-}
 
 /* auto-hidden scrollbar placeholder workaround */
 :root:not(.rtl).left.shift-tabs-for-scrollbar-only-on-hover.on-scrollbar-area:hover
   #tabbar.scrollbar-autohide
   #normal-tabs-container.overflow tab-item:not(.pinned) tab-item-substance,
-:root:not(.rtl).left.shift-tabs-for-scrollbar-only-on-hover.on-scrollbar-area:hover
+:root:not(.rtl).left:not(.shift-tabs-for-scrollbar-only-on-hover)
+  #tabbar.scrollbar-autohide
+  #normal-tabs-container.overflow tab-item:not(.pinned) tab-item-substance,
+:root.rtl.right.shift-tabs-for-scrollbar-only-on-hover.on-scrollbar-area:hover
   #tabbar.scrollbar-autohide
   #normal-tabs-container.overflow tab-item:not(.pinned) tab-item-substance,
 :root.rtl.right:not(.shift-tabs-for-scrollbar-only-on-hover)
   #tabbar.scrollbar-autohide
-  #normal-tabs-container.overflow tab-item:not(.pinned) tab-item-substance
-:root.rtl.right:not(.shift-tabs-for-scrollbar-only-on-hover)
-  #tabbar.scrollbar-autohide
-  #normal-tabs-container.overflow tab-item:not(.pinned) tab-item-substance, {
+  #normal-tabs-container.overflow tab-item:not(.pinned) tab-item-substance {
   margin-inline-start: calc(var(--tab-margin-inline-start) + var(--tab-indent) + var(--shift-tabs-for-scrollbar-distance));
 }
 
@@ -516,10 +512,10 @@ tab-item-substance .caption {
 :root:not(.rtl).right.shift-tabs-for-scrollbar-only-on-hover.on-scrollbar-area:hover
   #tabbar.scrollbar-autohide
   #normal-tabs-container.overflow tab-item:not(.pinned) tab-item-substance,
-:root:not(.rtl).right.shift-tabs-for-scrollbar-only-on-hover.on-scrollbar-area:hover
+:root:not(.rtl).right:not(.shift-tabs-for-scrollbar-only-on-hover)
   #tabbar.scrollbar-autohide
   #normal-tabs-container.overflow tab-item:not(.pinned) tab-item-substance,
-:root.rtl.left:not(.shift-tabs-for-scrollbar-only-on-hover)
+:root.rtl.left.shift-tabs-for-scrollbar-only-on-hover.on-scrollbar-area:hover
   #tabbar.scrollbar-autohide
   #normal-tabs-container.overflow tab-item:not(.pinned) tab-item-substance,
 :root.rtl.left:not(.shift-tabs-for-scrollbar-only-on-hover)
