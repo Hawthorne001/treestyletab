@@ -131,6 +131,7 @@ try{
       box-shadow: var(--panel-shadow);
       box-sizing: border-box;
       color: var(--panel-color);
+      direction: ltr;
       font: Message-Box;
       left: auto;
       line-height: 1.5;
@@ -144,6 +145,9 @@ try{
       position: fixed;
       right: auto;
       z-index: ${Number.MAX_SAFE_INTEGER}; /* for SIDEBAR and TAB case */
+    }
+    .tab-preview-panel.rtl {
+      direction: rtl;
     }
     .tab-preview-panel.animation {
       transition: var(--tab-preview-panel-show-hide-animation),
@@ -417,7 +421,7 @@ function preparePanel() {
   panel = createdPanel;
 }
 
-function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, scale, logging, animation, backgroundColor, borderColor, color } = {}) {
+function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, rtl, scale, logging, animation, backgroundColor, borderColor, color } = {}) {
   if (!panel)
     return;
 
@@ -428,7 +432,7 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
     hasPreview = hasLoadablePreviewURL;
 
   if (logging)
-    console.log('updatePanel ', { previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, scale });
+    console.log('updatePanel ', { previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, rtl, scale });
 
   panel.classList.add('updating');
   panel.classList.toggle('animation', animation);
@@ -469,6 +473,8 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   panel.dataset.tabId = previewTabId;
   if (align)
     panel.dataset.align = align;
+
+  panel.classList.toggle('rtl', !!rtl);
 
   const previewImage = panel.querySelector('.tab-preview-image');
   previewImage.classList.toggle('blank', !hasPreview && !hasLoadablePreviewURL);

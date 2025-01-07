@@ -561,7 +561,8 @@ async function onTabSubstanceEnter(event) {
     /* These information is used to calculate offset of the sidebar header */
     offsetTop: window.mozInnerScreenY - window.screenY,
     offsetLeft: window.mozInnerScreenX - window.screenX,
-    align: mayBeRight || isRTL() ? 'right' : 'left',
+    align: mayBeRight ? 'right' : 'left',
+    rtl: isRTL(),
     scale: 1 / window.devicePixelRatio,
     hasCustomTooltip,
     ...(hasCustomTooltip ?
