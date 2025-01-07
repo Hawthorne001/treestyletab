@@ -261,7 +261,7 @@ export function calc(expression) {
   const box = document.createElement('span');
   const style = box.style;
   style.display       = 'inline-block';
-  style.left          = 0;
+  style.insetInlineStart = 0;
   style.height        = 0;
   style.overflow      = 'hidden';
   style.pointerEvents = 'none';
@@ -272,7 +272,7 @@ export function calc(expression) {
   const innerBox = box.appendChild(document.createElement('span'));
   const innerStyle = innerBox.style;
   innerStyle.display       = 'inline-block';
-  innerStyle.left          = 0;
+  innerStyle.insetInlineStart = 0;
   innerStyle.height        = 0;
   innerStyle.pointerEvents = 'none';
   innerStyle.position      = 'fixed';

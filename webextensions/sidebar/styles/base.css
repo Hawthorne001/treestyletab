@@ -31,7 +31,8 @@
   --collapse-animation: var(--collapse-duration) ease-out;
   --tab-basic-animation: background    var(--color-animation),
                          color         var(--color-animation),
-                         left          var(--collapse-animation),
+                         inset-inline-start var(--collapse-animation),
+                         inset-inline-end   var(--collapse-animation),
                          margin-block-start var(--collapse-animation),
                          margin-block-end   var(--collapse-animation),
                          max-height    var(--collapse-animation),
@@ -39,8 +40,7 @@
                          min-height    var(--collapse-animation),
                          min-width     var(--collapse-animation),
                          opacity       var(--collapse-animation),
-                         padding       var(--collapse-animation), /* for extra margin on overlay-scrollbar mode */
-                         right         var(--collapse-animation);
+                         padding       var(--collapse-animation); /* for extra margin on overlay-scrollbar mode */
   --tab-animation: var(--tab-basic-animation),
                    background    var(--color-animation),
                    top           var(--collapse-animation);
@@ -156,18 +156,13 @@ tab-item.faviconized:focus tab-favicon {
 :root.debug tab-item::after {
   bottom: 0;
   content: attr(data-tab-id) !important; /* override definition for the highlighting marker */
+  inset-inline-end: 0;
   opacity: 0.65;
   overflow: hidden;
   pointer-events: none;
   position: absolute;
   text-align: end;
   z-index: var(--tab-favicon-z-index);
-}
-:root.debug:not(.rtl) {
-  right: 0;
-}
-:root.debug.rtl {
-  left: 0;
 }
 
 /* This is required to prevent dragging of images (ex. favicon).
@@ -222,14 +217,14 @@ tab-sound-button */ {
 #background,
 #subpanel-container {
   bottom: 0;
-  left: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   margin-block: 0;
   margin-inline: 0;
   overflow: hidden;
   padding-block: 0;
   padding-inline: 0;
   position: fixed;
-  right: 0;
   top: 0;
   z-index: var(--accessible-ui-z-index);
 }
@@ -286,8 +281,8 @@ tab-sound-button */ {
   background-repeat: no-repeat;
   opacity: 0;
   position: fixed;
-  left: 0;
-  right: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   pointer-events: none;
   z-index: var(--over-tabs-z-index);
 }
@@ -313,11 +308,11 @@ tab-sound-button */ {
 }
 
 .sticky-tabs-container {
-  left: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   min-height: 0;
   pointer-events: none;
   position: fixed;
-  right: 0;
   z-index: var(--tab-ui-z-index);
 }
 .sticky-tabs-container.above {
@@ -383,11 +378,11 @@ ul {
 
 #dummy-tabs {
   bottom: 0;
-  left: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   overflow-y: scroll;
   pointer-events: none;
   position: fixed;
-  right: 0;
   z-index: var(--dummy-element-z-index); /* Put it below the background. See also: https://github.com/piroor/treestyletab/issues/1703#issuecomment-354646405 */
 }
 :root:not(.have-unsynchronized-throbber) #dummy-tabs {
@@ -612,10 +607,10 @@ tab-item .extra-items-container.behind,
 tab-item .extra-items-container.front,
 .newtab-button .extra-items-container {
   bottom: 0;
-  left: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   pointer-events: none;
   position: absolute;
-  right: 0;
   top: 0;
 }
 tab-item .extra-items-container.above,
@@ -649,29 +644,20 @@ tab-item .extra-items-container.indent {
   #normal-tabs-container.overflow tab-item .extra-items-container.indent{
   width: calc(var(--tab-indent) + var(--shift-tabs-for-scrollbar-distance));
 }
-:root.left tab-item .extra-items-container.indent {
-  right: auto;
-}
-:root.right tab-item .extra-items-container.indent {
-  left: auto;
+tab-item .extra-items-container.indent {
+  inset-inline-end: auto;
 }
 
 tab-item .extra-items-container.front {
+  inset-inline-start: var(--tab-label-start-offset);
+  inset-inline-end: var(--tab-label-end-offset);
   justify-content: flex-end;
   pointer-events: auto;
   z-index: var(--tab-extra-contents-front-z-index);
 }
-:root:not(.rtl) tab-item .extra-items-container.front {
-  left: var(--tab-label-start-offset);
-  right: var(--tab-label-end-offset);
-}
-:root.rtl tab-item .extra-items-container.front {
-  left: var(--tab-label-end-offset);
-  right: var(--tab-label-start-offset);
-}
 tab-item.faviconized .extra-items-container.front {
-  left: var(--faviconized-tab-padding);
-  right: var(--faviconized-tab-padding);
+  inset-inline-start: var(--faviconized-tab-padding);
+  inset-inline-end: var(--faviconized-tab-padding);
 }
 
 tab-item:not(.bursting) .burster {
@@ -691,18 +677,10 @@ tab-item.attention tab-favicon::before {
   bottom: auto;
   content: '';
   height: var(--tab-current-size);
+  inset-inline-start: var(--attention-marker-x-offset);
+  inset-inline-end: auto;
   top: var(--attention-marker-y-offset);
   width: var(--tab-current-size);
-}
-:root:not(.rtl) tab-item.faviconized.unread tab-favicon::before,
-:root:not(.rtl) tab-item.attention tab-favicon::before {
-  left: var(--attention-marker-x-offset);
-  right: auto;
-}
-:root.rtl tab-item.faviconized.unread tab-favicon::before,
-:root.rtl tab-item.attention tab-favicon::before {
-  left: auto;
-  right: var(--attention-marker-x-offset);
 }
 
 tab-item .background {
@@ -726,28 +704,16 @@ tab-item .extra-items-container.behind {
   z-index: var(--tab-extra-contents-front-z-index);
 }
 
-:root.newtab-action-selectable:not(.rtl)
+:root.newtab-action-selectable
   .newtab-button
   .extra-items-container,
-:root:not(.newtab-action-selectable).contextual-identity-selectable:not(.incognito):not(.rtl)
+:root:not(.newtab-action-selectable).contextual-identity-selectable:not(.incognito)
   .newtab-button
   .extra-items-container,
-:root.newtab-action-selectable.contextual-identity-selectable:not(.incognito).rtl
+:root.newtab-action-selectable.contextual-identity-selectable:not(.incognito)
   .newtab-button
   .extra-items-container {
-  right: var(--new-tab-button-anchor-size);
-}
-
-:root.newtab-action-selectable.rtl
-  .newtab-button
-  .extra-items-container,
-:root:not(.newtab-action-selectable).contextual-identity-selectable:not(.incognito).rtl
-  .newtab-button
-  .extra-items-container,
-:root.newtab-action-selectable.contextual-identity-selectable:not(.incognito):not(.rtl)
-  .newtab-button
-  .extra-items-container {
-  left: var(--new-tab-button-anchor-size);
+  inset-inline-end: var(--new-tab-button-anchor-size);
 }
 
 
@@ -852,11 +818,11 @@ tab-item.faviconized tab-label,
 tab-item.faviconized tab-label * {
   bottom: 0;
   display: flex;
-  left: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   opacity: 0;
   overflow: hidden;
   position: absolute;
-  right: 0;
   top: 0;
 }
 
@@ -1002,24 +968,17 @@ tab-item:not(.collapsed) tab-closebox:active {
 tab-item:not(.faviconized) .contextual-identity-marker {
   --contextual-identity-marker-margin: min(calc((var(--tab-current-size) - var(--favicon-size)) / 2), calc(var(--tab-current-size) * 0.15));
   bottom: var(--contextual-identity-marker-margin);
+  inset-inline-end: 0;
   top: var(--contextual-identity-marker-margin);
   width: var(--contextual-identity-marker-width);
-}
-
-:root.left tab-item:not(.faviconized) .contextual-identity-marker {
-  right: 0;
-}
-
-:root.right tab-item:not(.faviconized) .contextual-identity-marker {
-  left: 0;
 }
 
 tab-item.faviconized .contextual-identity-marker {
   --contextual-identity-marker-margin: min(calc((var(--tab-current-size) - var(--favicon-size)) / 2), calc(var(--tab-current-size) * 0.33));
   bottom: 0;
   height: var(--contextual-identity-marker-width);
-  left: var(--contextual-identity-marker-margin);
-  right: var(--contextual-identity-marker-margin);
+  inset-inline-start: var(--contextual-identity-marker-margin);
+  inset-inline-end: var(--contextual-identity-marker-margin);
 }
 
 
@@ -1029,10 +988,10 @@ tab-item.faviconized .contextual-identity-marker {
 #tabbar-bottom,
 #tabbar ~ .after-tabs {
   height: 0;
-  left: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   overflow: visible;
   position: absolute;
-  right: 0;
   z-index: var(--over-tabs-z-index);
 }
 
@@ -1120,31 +1079,19 @@ tab-item.faviconized .contextual-identity-marker {
   transition: opacity var(--collapse-animation);
   z-index: var(--over-buttons-z-index);
 }
-:root.contextual-identity-selectable:not(.rtl)
+:root.contextual-identity-selectable
   .after-tabs
   .newtab-action-selector-anchor,
-:root:not(.contextual-identity-selectable).rtl
+:root:not(.contextual-identity-selectable)
   .after-tabs
   .newtab-action-selector-anchor,
-:root.contextual-identity-selectable.rtl
+:root.contextual-identity-selectable
   .after-tabs
   .contextual-identities-selector-anchor {
-  border-width: 0 1px 0 0;
+  border-width: 0;
+  border-inline-end-width: 1px;
   display: flex;
-  left: 0;
-}
-:root.contextual-identity-selectable.rtl
-  .after-tabs
-  .newtab-action-selector-anchor,
-:root:not(.contextual-identity-selectable):not(.rtl)
-  .after-tabs
-  .newtab-action-selector-anchor,
-:root.contextual-identity-selectable:not(.rtl)
-  .after-tabs
-  .contextual-identities-selector-anchor {
-  border-width: 0 0 0 1px;
-  display: flex;
-  right: 0;
+  inset-inline-start: 0;
 }
 
 .newtab-action-selector-anchor::-moz-focus-inner,
@@ -1218,7 +1165,8 @@ tab-item.faviconized .contextual-identity-marker {
   color: var(--tab-text);
   font-size: var(--svg-small-icon-size);
   height: calc(var(--svg-small-icon-size) * 1.5);
-  left: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   line-height: 1;
   opacity: 0;
   padding-block: calc(var(--svg-small-icon-size) * 0.25);
@@ -1226,7 +1174,6 @@ tab-item.faviconized .contextual-identity-marker {
   pointer-events: none;
   position: fixed;
   transition: opacity var(--collapse-animation);
-  right: 0;
   z-index: var(--notification-ui-z-index);
 }
 
@@ -1380,9 +1327,9 @@ iframe#subpanel {
 #blocking-screen {
   bottom: 0;
   display: none;
-  left: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   position: fixed;
-  right: 0;
   top: 0;
   z-index: var(--blocking-ui-z-index);
 }

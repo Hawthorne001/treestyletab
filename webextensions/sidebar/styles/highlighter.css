@@ -41,17 +41,10 @@ tab-item:not(.faviconized).highlighted .highlighter::after {
 tab-item:not(.faviconized) .highlighter::before,
 tab-item:not(.faviconized) .highlighter::after {
   bottom: 0;
+  inset-inline-start: 0;
   top: 0;
   transform: scaleY(0);
   width: var(--tab-highlighter-size);
-}
-:root.left tab-item:not(.faviconized) .highlighter::before,
-:root.left tab-item:not(.faviconized) .highlighter::after {
-  left: 0;
-}
-:root.right tab-item:not(.faviconized) .highlighter::before,
-:root.right tab-item:not(.faviconized) .highlighter::after {
-  right: 0;
 }
 tab-item:not(.faviconized) tab-item-substance:hover .highlighter::before,
 tab-item:not(.faviconized) tab-item-substance:hover .highlighter::after,
@@ -67,8 +60,8 @@ tab-item.highlighted:not(.faviconized) .highlighter::after {
 
 tab-item.faviconized .highlighter::before {
   height: var(--tab-highlighter-size);
-  left: 0;
-  right: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   top: 0;
   transform: scaleX(0);
 }

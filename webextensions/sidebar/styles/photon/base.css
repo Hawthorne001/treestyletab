@@ -183,11 +183,11 @@ tab-item tab-closebox::after {
   bottom: 0;
   content: " ";
   display: block;
-  left: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   opacity: var(--multiselected-color-opacity);
   pointer-events: none;
   position: absolute;
-  right: 0;
   top: 0;
   z-index: 10;
 }

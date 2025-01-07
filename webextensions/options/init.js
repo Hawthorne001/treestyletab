@@ -898,10 +898,7 @@ function initPreviews() {
             select.contains(event.target))
         return;
       const rect = select.getBoundingClientRect();
-      if (isRTL())
-        previewImage.style.right = `${rect.right}px`;
-      else
-        previewImage.style.left = `${rect.left}px`;
+      previewImage.style.insetInlineStart = `${isRTL() ? rect.right : rect.left}px`;
       previewImage.style.top  = `${rect.top - 5 - previewImage.offsetHeight}px`;
     });
     select.addEventListener('change', () => {

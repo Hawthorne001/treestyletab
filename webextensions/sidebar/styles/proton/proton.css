@@ -286,8 +286,8 @@ tab-item .background,
 .after-tabs button:hover::before,
 .after-tabs [role="button"]:hover::before {
   bottom: var(--tab-dropshadow-padding);
-  left: var(--tab-dropshadow-padding);
-  right: var(--tab-dropshadow-padding);
+  inset-inline-start: var(--tab-dropshadow-padding);
+  inset-inline-end: var(--tab-dropshadow-padding);
   top: var(--tab-dropshadow-padding);
 }
 
@@ -297,8 +297,8 @@ tab-item.faviconized .background {
 
 #subpanel-selector-anchor:hover::before {
   bottom: 0;
-  left: 0;
-  right: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   top: 0;
 }
 
@@ -418,11 +418,11 @@ tab-item:not(.faviconized).subtree-collapsed.all-descendants-highlighted .highli
 /* contextual identity marker in tabs */
 
 :root.left tab-item:not(.faviconized) .contextual-identity-marker {
-  right: calc(var(--tab-dropshadow-blur) - var(--tab-highlighter-size));
+  inset-inline-end: calc(var(--tab-dropshadow-blur) - var(--tab-highlighter-size));
 }
 
 :root.right tab-item:not(.faviconized) .contextual-identity-marker {
-  left: calc(var(--tab-dropshadow-blur) - var(--tab-highlighter-size));
+  inset-inline-start: calc(var(--tab-dropshadow-blur) - var(--tab-highlighter-size));
 }
 
 tab-item.faviconized .contextual-identity-marker {

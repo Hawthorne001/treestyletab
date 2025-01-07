@@ -155,6 +155,7 @@ label input[type="checkbox"] ~ img {
   box-shadow: 0.25em 0.25em 0.5em rgba(0, 0, 0, 0.45);
   display: inline-block;
   height: 125px /*83px*/;
+  inset-inline-start: 0;
   margin-inline-start: 0.5em;
   opacity: 0;
   pointer-events: none;
@@ -162,12 +163,6 @@ label input[type="checkbox"] ~ img {
   top: 1.5em;
   transition: opacity 0.25s ease-out;
   width: 120px /*80px*/;
-}
-:root:not(.rtl) .preview-image {
-  right: 0;
-}
-:root.rtl .preview-image {
-  left: 0;
 }
 .has-preview-image:not([data-value="-1"]):hover .preview-image {
   opacity: 1;

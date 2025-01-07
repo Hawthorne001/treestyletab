@@ -33,16 +33,11 @@ tab-sound-button::before {
   content: "";
   display: inline-block;
   height: calc(var(--sound-button-size) * 1.4);
+  inset-inline-start: calc(0px - (var(--sound-button-size) * 0.2));
   top: calc(0px - (var(--sound-button-size) * 0.2));
   width: calc(var(--sound-button-size) * 1.4);
   opacity: 0.95;
   position: absolute;
-}
-:root:not(.rtl) tab-sound-button::before {
-  left: calc(0px - (var(--sound-button-size) * 0.2));
-}
-:root.rtl tab-sound-button::before {
-  right: calc(0px - (var(--sound-button-size) * 0.2));
 }
 tab-sound-button:hover::before {
   opacity: 0.5;
@@ -58,15 +53,10 @@ tab-sound-button::after {
   display: inline-block;
   fill: var(--tab-text-inverted);
   height: var(--sound-button-size);
+  inset-inline-end: 0;
   position: absolute;
   top: 0;
   width: var(--sound-button-size);
-}
-:root:not(.rtl) tab-sound-button::after {
-  right: 0;
-}
-:root.rtl tab-sound-button::after {
-  left: 0;
 }
 :root.simulate-svg-context-fill tab-sound-button::after {
   background: var(--tab-text-inverted);
@@ -136,14 +126,9 @@ tab-item:not(.collapsed).has-sound-playing-member.subtree-collapsed[data-child-i
 
 tab-item.faviconized tab-sound-button {
   --sound-button-size: 10px;
+  inset-inline-end: 0;
   padding-block: 0;
   padding-inline: 0;
   position: absolute;
   top: calc(var(--sound-button-size) * 0.2); /* cancel negative margin of the background circle */
-}
-:root:not(.rtl) tab-item.faviconized tab-sound-button {
-  right: 0;
-}
-:root.rtl tab-item.faviconized tab-sound-button {
-  left: 0;
 }
