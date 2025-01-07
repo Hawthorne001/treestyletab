@@ -126,12 +126,29 @@ export const obsoleteConfigs = new Set(mapAndFilter(`
   return key && key.indexOf('//') != 0 && key;
 }));
 
+
 const RTL_LANGUAGES = new Set([
   'ar',
   'he',
   'fa',
   'ur',
+  'ps',
+  'sd',
+  'ckb',
+  'prs',
+  'rhg',
 ]);
+
+export function isRTL() {
+  const lang = (
+    navigator.language ||
+    navigator.userLanguage ||
+    //(new Intl.DateTimeFormat()).resolvedOptions().locale ||
+    ''
+  ).split('-')[0];
+  return RTL_LANGUAGES.has(lang);
+}
+
 
 export const configs = new Configs({
   optionsExpandedSections: [
@@ -1208,14 +1225,4 @@ export function isMacOS() {
 
 export function isWindows() {
   return configs.enableWindowsBehaviors || /^Win/i.test(navigator.platform);
-}
-
-export function isRTL() {
-  const lang = (
-    navigator.language ||
-    navigator.userLanguage ||
-    //(new Intl.DateTimeFormat()).resolvedOptions().locale ||
-    ''
-  ).split('-')[0];
-  return RTL_LANGUAGES.has(lang);
 }
