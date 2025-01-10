@@ -228,7 +228,6 @@
     display: inline-block;
     font-size: var(--throbber-size);
     height: var(--throbber-size);
-    inset-inline-start: calc(50% - var(--throbber-size));
     max-height: var(--throbber-size);
     max-width: var(--throbber-size);
     overflow: hidden;
@@ -240,6 +239,7 @@
 
     position: absolute;
     top: calc(50% - var(--throbber-size));
+    inset-inline-start: calc(50% - var(--throbber-size));
     transform: scale(2, 2);
   }
 

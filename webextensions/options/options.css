@@ -42,7 +42,7 @@ body.independent {
   font: caption;
   margin-block: 0;
   margin-inline: 0;
-  padding: 1em 100%;
+  padding-block: 1em 100%;
   padding-inline: 1em;
   -moz-user-select: none;
 }
@@ -155,7 +155,7 @@ label input[type="checkbox"] ~ img {
   box-shadow: 0.25em 0.25em 0.5em rgba(0, 0, 0, 0.45);
   display: inline-block;
   height: 125px /*83px*/;
-  inset-inline-start: 0;
+  inset-inline-end: 0;
   margin-inline-start: 0.5em;
   opacity: 0;
   pointer-events: none;
