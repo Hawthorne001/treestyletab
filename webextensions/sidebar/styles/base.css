@@ -92,6 +92,23 @@
   --visual-gap-animation: top var(--collapse-animation);
   --visual-gap-hover-animation: top var(--collapse-animation) var(--visual-gap-hover-animation-delay);
 }
+/* Some users may use physical properties to customize tab margins, so we should map them to logical propertis for better compatibility.
+   https://github.com/piroor/treestyletab/wiki/Code-snippets-for-custom-style-rules#change-tab-margin */
+:root:not(.rtl),
+:root:not(.rtl) tab-item {
+  --tab-margin-block-start: var(--tab-margin-top, 0px);
+  --tab-margin-block-end: var(--tab-margin-bottom, 0px);
+  --tab-margin-inline-start: var(--tab-margin-left, 0px);
+  --tab-margin-inline-end: var(--tab-margin-right, 0px);
+}
+:root.rtl,
+:root.rtl tab-item {
+  --tab-margin-block-start: var(--tab-margin-top, 0px);
+  --tab-margin-block-end: var(--tab-margin-bottom, 0px);
+  --tab-margin-inline-start: var(--tab-margin-right, 0px);
+  --tab-margin-inline-end: var(--tab-margin-left, 0px);
+}
+
 
 body {
   margin-block: 0;
