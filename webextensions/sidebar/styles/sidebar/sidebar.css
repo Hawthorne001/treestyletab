@@ -14,7 +14,7 @@
  * The Original Code is the SidebarStyleTab.
  * 
  * The Initial Developer of the Original Code is YUKI "Piro" Hiroshi.
- * Portions created by the Initial Developer are Copyright (C) 2010-2024
+ * Portions created by the Initial Developer are Copyright (C) 2010-2025
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s): Philipp von Weitershausen <philipp@weitershausen.de>
@@ -78,17 +78,21 @@ body,
 }
 
 /* Use the splitter to display the border of tab-items */
-:root.left {
+:root.left:not(.rtl),
+:root.right.rtl {
   border-inline-end: 1px solid var(--shadow-color);
 }
-:root:not(.active).left {
+:root:not(.active).left:not(.rtl),
+:root:not(.active).right.rtl {
   border-inline-end-color: var(--shadow-color-inactive);
 }
 
-:root.right {
+:root.right:not(.rtl),
+:root.left.rtl {
   border-inline-start: 1px solid var(--shadow-color);
 }
-:root:not(.active).right {
+:root:not(.active).right:not(.rtl),
+:root:not(.active).left.rtl {
   border-inline-start-color: var(--shadow-color-inactive);
 }
 

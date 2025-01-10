@@ -40,7 +40,9 @@
                          min-height    var(--collapse-animation),
                          min-width     var(--collapse-animation),
                          opacity       var(--collapse-animation),
-                         padding       var(--collapse-animation); /* for extra margin on overlay-scrollbar mode */
+                         /* for extra margin on overlay-scrollbar mode */
+                         padding-inline-start var(--collapse-animation),
+                         padding-inline-end   var(--collapse-animation);
   --tab-animation: var(--tab-basic-animation),
                    background    var(--color-animation),
                    top           var(--collapse-animation);

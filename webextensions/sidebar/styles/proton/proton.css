@@ -250,15 +250,21 @@ tab-item-substance {
   z-index: 100;
 }
 
-:root.left tab-item:not(.pinned) tab-item-substance,
-:root.left .after-tabs button:not([data-menu-ui]),
-:root.left .after-tabs [role="button"]:not([data-menu-ui]) {
+:root.left:not(.rtl) tab-item:not(.pinned) tab-item-substance,
+:root.left:not(.rtl) .after-tabs button:not([data-menu-ui]),
+:root.left:not(.rtl) .after-tabs [role="button"]:not([data-menu-ui]),
+:root.right.rtl tab-item:not(.pinned) tab-item-substance,
+:root.right.rtl .after-tabs button:not([data-menu-ui]),
+:root.right.rtl .after-tabs [role="button"]:not([data-menu-ui]) {
   padding-inline-end: 0.35em;
 }
 
-:root.right tab-item:not(.pinned) tab-item-substance,
-:root.right .after-tabs button:not([data-menu-ui]),
-:root.right .after-tabs [role="button"]:not([data-menu-ui]) {
+:root.right:not(.rtl) tab-item:not(.pinned) tab-item-substance,
+:root.right:not(.rtl) .after-tabs button:not([data-menu-ui]),
+:root.right:not(.rtl) .after-tabs [role="button"]:not([data-menu-ui]),
+:root.left.rtl tab-item:not(.pinned) tab-item-substance,
+:root.left.rtl .after-tabs button:not([data-menu-ui]),
+:root.left.rtl .after-tabs [role="button"]:not([data-menu-ui]) {
   padding-inline-start: 0.35em;
 }
 
@@ -417,11 +423,13 @@ tab-item:not(.faviconized).subtree-collapsed.all-descendants-highlighted .highli
 
 /* contextual identity marker in tabs */
 
-:root.left tab-item:not(.faviconized) .contextual-identity-marker {
+:root.left:not(.rtl) tab-item:not(.faviconized) .contextual-identity-marker,
+:root.right.rtl tab-item:not(.faviconized) .contextual-identity-marker {
   inset-inline-end: calc(var(--tab-dropshadow-blur) - var(--tab-highlighter-size));
 }
 
-:root.right tab-item:not(.faviconized) .contextual-identity-marker {
+:root.right:not(.rtl) tab-item:not(.faviconized) .contextual-identity-marker,
+:root.left.rtl tab-item:not(.faviconized) .contextual-identity-marker {
   inset-inline-start: calc(var(--tab-dropshadow-blur) - var(--tab-highlighter-size));
 }
 

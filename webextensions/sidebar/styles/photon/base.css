@@ -22,11 +22,9 @@ tab-item,
   margin-block-end: -1px;
 }
 
-:root:not(.rtl) tab-item.pinned tab-item-substance {
-  border-width: 0 1px 1px 0;
-}
-:root.rtl tab-item.pinned tab-item-substance {
-  border-width: 0 0 1px 1px;
+tab-item.pinned tab-item-substance {
+  border-block-width: 0 1px;
+  border-inline-width: 0 1px;
 }
 
 
