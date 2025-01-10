@@ -76,9 +76,10 @@ const rules = {
 };
 
 const ESModuleFiles = [
-  "common/*.js",
-  "resources/module/*.js",
   "background/*.js",
+  "common/*.js",
+  "options/*.js",
+  "resources/module/*.js",
   "sidebar/*.js",
   "sidebar/components/*.js",
   "tests/*.js",
