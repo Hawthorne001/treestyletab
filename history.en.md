@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 4.1.1 (2025.1.10)
+   * Switch UI direction on RTL environments (using language with right-to-left direction, like Arabian.)
  - 4.1.0 (2024.12.25)
    * Reconstruct UI of the bookmarks creation dialog to simulate behaviors of the native one more.
    * Add ability to simulate tab preview panel on vertical tabs (requires the permission to run arbitrary scripts on webpages, aka "Access yuor data for all websites.")
