@@ -421,7 +421,7 @@ function preparePanel() {
   panel = createdPanel;
 }
 
-function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, rtl, scale, logging, animation, backgroundColor, borderColor, color } = {}) {
+function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, rtl, scale, logging, animation, backgroundColor, borderColor, color, widthInOuterWorld } = {}) {
   if (!panel)
     return;
 
@@ -432,7 +432,7 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
     hasPreview = hasLoadablePreviewURL;
 
   if (logging)
-    console.log('updatePanel ', { previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, rtl, scale });
+    console.log('updatePanel ', { previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, rtl, scale, widthInOuterWorld });
 
   panel.classList.add('updating');
   panel.classList.toggle('animation', animation);
@@ -452,13 +452,23 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   // from both the sidebar and the content area, because all contents
   // of the browser window can be scaled on a high-DPI display by the
   // platform.
-  scale = window.devicePixelRatio * (scale || 1);
+  const isResistFingerprintingMode = window.mozInnerScreenY == 0 && window.screenY == 0;
+  const devicePixelRatio = (widthInOuterWorld || window.innerWidth) / window.innerWidth;
+  if (logging)
+    console.log('updatePanel: isResistFingerprintingMode ', isResistFingerprintingMode, { devicePixelRatio });
+  // But window.devicePixelRatio is not available if privacy.resistFingerprinting=true,
+  // thus we need to calculate it based on tabs.Tab.width.
+  scale = devicePixelRatio * (scale || 1);
   document.documentElement.style.setProperty('--tab-preview-panel-scale', scale);
   const panelWidth = Math.min(window.innerWidth, BASE_PANEL_WIDTH / scale);
   panel.style.setProperty('--panel-width', `${panelWidth}px`);
 
-  const offsetFromWindowEdge = (window.mozInnerScreenY - window.screenY) * scale;
-  const sidebarContentsOffset = (offsetTop - offsetFromWindowEdge) / scale;
+  const offsetFromWindowEdge = isResistFingerprintingMode ?
+    0 :
+    (window.mozInnerScreenY - window.screenY) * scale;
+  const sidebarContentsOffset = isResistFingerprintingMode ?
+    0 :
+    (offsetTop - offsetFromWindowEdge) / scale;
 
   if (previewTabRect) {
     const panelTopEdge = windowId ? previewTabRect.bottom : previewTabRect.top;

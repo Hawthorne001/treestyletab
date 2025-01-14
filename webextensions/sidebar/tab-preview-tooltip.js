@@ -278,8 +278,9 @@ async function sendTabPreviewMessage(tabId, message, deferredResultResolver) {
 
   let frameId;
   let loadedInfo;
+  let rawTab;
   try {
-    const [gotFrameId, gotLoadedInfo] = await Promise.all([
+    const [gotFrameId, gotLoadedInfo, gotRawTab] = await Promise.all([
       browser.tabs.sendMessage(tabId, {
         type: 'treestyletab:ask-tab-preview-frame-id',
       }).catch(_error => {}),
@@ -287,9 +288,11 @@ async function sendTabPreviewMessage(tabId, message, deferredResultResolver) {
         type: 'treestyletab:ask-tab-preview-frame-loaded',
         tabId,
       }).catch(_error => {}),
+      browser.tabs.get(tabId),
     ]);
     frameId = gotFrameId;
     loadedInfo = gotLoadedInfo;
+    rawTab = gotRawTab;
     log(`sendTabPreviewMessage(${message.type}${retrying ? ', retrying' : ''}): response from the tab: `, { frameId, loadedInfo });
     if (!frameId &&
         (!loadedInfo ||
@@ -359,6 +362,7 @@ async function sendTabPreviewMessage(tabId, message, deferredResultResolver) {
       ...message,
       ...TabPreviewFrame.getColors(),
       ...(promisedPreviewURL ? { previewURL: null } : {}),
+      widthInOuterWorld: rawTab.width,
       animation: shouldApplyAnimation(),
       logging: configs.logFor['sidebar/tab-preview-tooltip'] && configs.debug,
     }, frameId ? { frameId } : {});
@@ -375,6 +379,7 @@ async function sendTabPreviewMessage(tabId, message, deferredResultResolver) {
           ...message,
           previewURL,
           ...TabPreviewFrame.getColors(),
+          widthInOuterWorld: rawTab.width,
           animation: shouldApplyAnimation(),
           logging: configs.logFor['sidebar/tab-preview-tooltip'] && configs.debug,
         }, frameId ? { frameId } : {});
