@@ -363,6 +363,7 @@ async function sendTabPreviewMessage(tabId, message, deferredResultResolver) {
       ...TabPreviewFrame.getColors(),
       ...(promisedPreviewURL ? { previewURL: null } : {}),
       widthInOuterWorld: rawTab.width,
+      fixedOffsetTop: configs.tabPreviewTooltipOffsetTop,
       animation: shouldApplyAnimation(),
       logging: configs.logFor['sidebar/tab-preview-tooltip'] && configs.debug,
     }, frameId ? { frameId } : {});
@@ -380,6 +381,7 @@ async function sendTabPreviewMessage(tabId, message, deferredResultResolver) {
           previewURL,
           ...TabPreviewFrame.getColors(),
           widthInOuterWorld: rawTab.width,
+          fixedOffsetTop: configs.tabPreviewTooltipOffsetTop,
           animation: shouldApplyAnimation(),
           logging: configs.logFor['sidebar/tab-preview-tooltip'] && configs.debug,
         }, frameId ? { frameId } : {});

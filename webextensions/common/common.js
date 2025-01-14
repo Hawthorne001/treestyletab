@@ -200,6 +200,7 @@ export const configs = new Configs({
   tabPreviewTooltip: false,
   tabPreviewTooltipInSidebar: true,
   tabPreviewTooltipDelayMsec: 500, // same as "ui.tooltip.delay_ms"
+  tabPreviewTooltipOffsetTop: 0, // See also https://github.com/piroor/treestyletab/issues/3698
   showOverflowTitleByTooltip: true,
   showCollapsedDescendantsByTooltip: true,
 

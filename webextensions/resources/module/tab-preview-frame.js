@@ -421,7 +421,7 @@ function preparePanel() {
   panel = createdPanel;
 }
 
-function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, rtl, scale, logging, animation, backgroundColor, borderColor, color, widthInOuterWorld } = {}) {
+function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, rtl, scale, logging, animation, backgroundColor, borderColor, color, widthInOuterWorld, fixedOffsetTop } = {}) {
   if (!panel)
     return;
 
@@ -432,7 +432,7 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
     hasPreview = hasLoadablePreviewURL;
 
   if (logging)
-    console.log('updatePanel ', { previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, rtl, scale, widthInOuterWorld });
+    console.log('updatePanel ', { previewTabId, title, url, tooltipHtml, hasPreview, previewURL, previewTabRect, offsetTop, align, rtl, scale, widthInOuterWorld, fixedOffsetTop });
 
   panel.classList.add('updating');
   panel.classList.toggle('animation', animation);
@@ -452,7 +452,7 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   // from both the sidebar and the content area, because all contents
   // of the browser window can be scaled on a high-DPI display by the
   // platform.
-  const isResistFingerprintingMode = window.mozInnerScreenY == 0 && window.screenY == 0;
+  const isResistFingerprintingMode = window.mozInnerScreenY == window.screenY;
   const devicePixelRatio = (widthInOuterWorld || window.innerWidth) / window.innerWidth;
   if (logging)
     console.log('updatePanel: isResistFingerprintingMode ', isResistFingerprintingMode, { devicePixelRatio });
@@ -467,7 +467,7 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
     0 :
     (window.mozInnerScreenY - window.screenY) * scale;
   const sidebarContentsOffset = isResistFingerprintingMode ?
-    0 :
+    (fixedOffsetTop || 0) :
     (offsetTop - offsetFromWindowEdge) / scale;
 
   if (previewTabRect) {
@@ -477,7 +477,7 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
     panel.style.maxHeight = `${panelMaxHeight}px`;
     panel.style.setProperty('--panel-max-height', `${panelMaxHeight}px`);
     if (logging)
-      console.log('updatePanel: limit panel height to ', panel.style.maxHeight, { previewTabRect, maxHeight: window.innerHeight, sidebarContentsOffset, offsetFromWindowEdge });
+      console.log('updatePanel: limit panel height to ', panel.style.maxHeight, { previewTabRect, maxHeight: window.innerHeight, sidebarContentsOffset, offsetFromWindowEdge, fixedOffsetTop });
   }
 
   panel.dataset.tabId = previewTabId;
