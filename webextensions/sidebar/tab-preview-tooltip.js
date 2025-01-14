@@ -88,6 +88,7 @@ const TAB_PREVIEW_FRAME_STYLE = `
   background: transparent;
   border: 0 none;
   bottom: 0;
+  color-scheme: light; /* "color-scheme:dark" (which can be applied by Firefox itself or the webpage) makes the background color of this element white and intransparent unexpectedly when the "Dark" theme is chosen on Firefox. We cannot override the white background color with the "background" declaration above, so we now override "color-scheme" instead. (Dark color scheme is injected by the caller, so we don't need to set "color-scheme:dark" here.) */
   height: 100%;
   left: 0;
   overflow: hidden;
