@@ -1,6 +1,11 @@
 # History
 
  - master/HEAD
+ - 4.1.2 (2025.1.14)
+   * Avoid unexpected white background in the content area, when the Dark theme of Firefox is chosen with activate tab preview panel.
+   * Apply uniform styling of the "sound playing" button on all themes including Photon.
+   * Size tab preview panel in the contents area correctly, even if privacy protection is enabled (ex. `privacy.resistFingerprinting`=`true`.)
+   * Add a new expert option to configure offset of the tab preview panel, for environments with enabled privacy protection.
  - 4.1.1 (2025.1.10)
    * Switch UI direction on RTL environments (using language with right-to-left direction, like Arabian.)
  - 4.1.0 (2024.12.25)
