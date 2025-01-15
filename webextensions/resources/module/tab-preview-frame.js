@@ -104,7 +104,8 @@ try{
         appearance: auto;
         -moz-default-appearance: menupopup;
         background-color: Menu;
-        --panel-background: none;
+        --panel-background: white /* https://searchfox.org/mozilla-central/rev/86c208f86f35d53dc824f18f8e540fe5b0663870/browser/themes/shared/browser-colors.css#89 https://searchfox.org/mozilla-central/rev/86c208f86f35d53dc824f18f8e540fe5b0663870/toolkit/themes/shared/global-shared.css#128
+ */;
         --panel-border-color: transparent;
         --panel-border-radius: calc(6px / var(--tab-preview-panel-scale));
       ${isMac ? '' : '*/'}
@@ -120,7 +121,7 @@ try{
 
 
       @media (prefers-color-scheme: dark) {
-        --panel-background: var(--dark-popup);
+        --panel-background: ${isMac ? 'rgb(66, 65, 77)' /* https://searchfox.org/mozilla-central/rev/86c208f86f35d53dc824f18f8e540fe5b0663870/browser/themes/shared/browser-colors.css#89 https://searchfox.org/mozilla-central/rev/86c208f86f35d53dc824f18f8e540fe5b0663870/toolkit/themes/shared/global-shared.css#128 */ : 'var(--dark-popup)'};
         --panel-color: var(--dark-popup-text);
         --panel-border-color: var(--dark-popup-border);
       }
