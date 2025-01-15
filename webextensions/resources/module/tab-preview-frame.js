@@ -453,7 +453,9 @@ function updatePanel({ previewTabId, title, url, tooltipHtml, hasPreview, previe
   // of the browser window can be scaled on a high-DPI display by the
   // platform.
   const isResistFingerprintingMode = window.mozInnerScreenY == window.screenY;
-  const devicePixelRatio = (widthInOuterWorld || window.innerWidth) / window.innerWidth;
+  const devicePixelRatio = window.devicePixelRatio != 1 ?
+    window.devicePixelRatio : // devicePixelRatio is always available on macOS with Retina
+    ((widthInOuterWorld || window.innerWidth) / window.innerWidth);
   if (logging)
     console.log('updatePanel: isResistFingerprintingMode ', isResistFingerprintingMode, { devicePixelRatio });
   // But window.devicePixelRatio is not available if privacy.resistFingerprinting=true,
