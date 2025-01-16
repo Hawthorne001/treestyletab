@@ -1,6 +1,9 @@
 # History
 
  - master/HEAD
+ - 4.1.3 (2025.1.16)
+   * Show tab preview panel with visible background color on macOS.
+   * Size tab preview panel in the contents area correctly on macOS Retina display. (regression on 4.1.2)
  - 4.1.2 (2025.1.14)
    * Avoid unexpected white background in the content area, when the Dark theme of Firefox is chosen with activate tab preview panel.
    * Apply uniform styling of the "sound playing" button on all themes including Photon.
@@ -736,7 +739,7 @@
  - 3.5.9 (2020.7.10)
    * Constantly promote tab by drag and drop after its present parent tab. (regression on recent versions)
  - 3.5.8 (2020.7.10)
-   * Fix incompatibility with [TST Hoverswitch](https://addons.mozilla.org/firefox/addon/tst-hoverswitch/) and other addons using `tab-mouseover` API [by Klemens Schölhorn, thanks!](https://github.com/piroor/treestyletab/pull/2633)
+   * Fix incompatibility with [TST Hoverswitch](https://addons.mozilla.org/firefox/addon/tst-hoverswitch/) and other addons using `tab-mouseover` API [by Klemens Schlhorn, thanks!](https://github.com/piroor/treestyletab/pull/2633)
    * Reduce needless confirmation about closing of multiple tabs triggered by actions from outside of TST.
    * Fix unexpected missing centering of the startup tab.
    * Update `ru` locale by [wvxwxvw](https://github.com/wvxwxvw). Thanks!
@@ -1319,7 +1322,7 @@
    * Activate context menu commands for selected tabs: "Reopen in Container" and "Duplicate Tabs".
    * Never detach dropped tabs to new window if the drag action is started just for bookmarks or links.
    * Automatically re-discard accidentaly restored tabs for Ctrl-Tab/Ctrl-Shift-Tab.
-   * On Firefox 64 and later at macOS, new style context menu is available for Control-click. (Opening context menu with pressed ⌘ key will show old style context menu. On Windows or Linux, pression Ctrl key works as.)
+   * On Firefox 64 and later at macOS, new style context menu is available for Control-click. (Opening context menu with pressed 丱 key will show old style context menu. On Windows or Linux, pression Ctrl key works as.)
    * Activate last active tab correctly when multiple active tabs are opened at a time.
    * Synchronize order of Firefox's native tabs and TST's sidebar more correctly when multiple tabs are opened at a time.
    * Fix impossibility of logging in to giffgaff.com and some websites. (again)
@@ -1779,8 +1782,8 @@
    * "Dragging" appearance of tabs are correctly cleared when the dragging is canceled.
    * Tabs were too easily detached from the window by drag and drop of a tab onto itself. Now dropping of a tab onto itself is simply ignored.
    * Fix missing translation in Japanese locale.
-   * Fix too large padding in tabs in the "Sidebar" theme (by Niklas Hambüchen. Thanks!)
-   * The option to control positioning of tabs opened by "New Tab" command is now applied for tabs opened by keyboard shortcut Ctrl-T (⌘-T), if they are opened with the URL "about:newtab". (But there are some problems. [See also technical details.](https://github.com/piroor/treestyletab/issues/1038#issuecomment-332711522))
+   * Fix too large padding in tabs in the "Sidebar" theme (by Niklas Hamb・chen. Thanks!)
+   * The option to control positioning of tabs opened by "New Tab" command is now applied for tabs opened by keyboard shortcut Ctrl-T (丱-T), if they are opened with the URL "about:newtab". (But there are some problems. [See also technical details.](https://github.com/piroor/treestyletab/issues/1038#issuecomment-332711522))
    * "Open as next sibling" choice for options to control new tab position works more correctly.
    * Focusing of tabs is controlled more correctly for closing current tab.
    * "Move Tab to New Window" in the sidebar context menu works correctly.
@@ -1845,7 +1848,7 @@
  - 0.18.2016090601
    * Isolate codes from `eval()` hack.
    * Drop support for Firefox 44 and older versions.
-   * Remove compatibility codes for unsupported/unpublished/obsolete addons: Google Toolbar, Snap Links, Highlander, PermaTabs, FullerScreen, DragNDrop Toolbars, Optimoz Tweaks, Tabberwocky, Super DragAndGo, Drag de Go, FLST, Mouse Gestures Redox, Aging Tabs, Autohide, Smoothly Close Tabs, IE Tab Plus, Locationbar², DomainTab and TotalToolbar
+   * Remove compatibility codes for unsupported/unpublished/obsolete addons: Google Toolbar, Snap Links, Highlander, PermaTabs, FullerScreen, DragNDrop Toolbars, Optimoz Tweaks, Tabberwocky, Super DragAndGo, Drag de Go, FLST, Mouse Gestures Redox, Aging Tabs, Autohide, Smoothly Close Tabs, IE Tab Plus, Locationbarｲ, DomainTab and TotalToolbar
    * Remove compatibility codes for Tab Mix Plus's custom session management system. Now it is strongly recommended you to use Firefox's built-in session management system. If you choose the TMP's session management, there is no guaranty about what happens.
  - 0.17.2016083101
    * Fix broken tab color of Firefox 51 and later (due to [bug 1297157](https://bugzilla.mozilla.org/show_bug.cgi?id=1297157).)
@@ -1893,7 +1896,7 @@
    * Tree of tabs are now always collapsable for both horizontal and vertical. Moreover, indentation of tabs also activated for the vertical tab bar always.
      There is no way to revoke those tree features.
      If you just require vertical tab bar without tree features, please try other alternative addons: [Vertical Tabs](https://addons.mozilla.org/firefox/addon/vertical-tabs/), [Vertical Tabs (Simplified)](https://addons.mozilla.org/firefox/addon/vertical-tabs-simplified/), [Side Tabs](https://addons.mozilla.org/firefox/addon/side-tabs/), or others.
-   * de-DE locale is updated by Björn Kautler. Thanks!
+   * de-DE locale is updated by Bjrn Kautler. Thanks!
    * ru locale is updated by Infocatcher. Thanks!
  - 0.16.2016021602
    * Attach new tabs only actually opened with `relatedToCurrent`=`true` option (or referrer) to the current tab, as the default behavior for compatibility with other addons.
@@ -1907,7 +1910,7 @@
    * Add secret preferences to disable expanding of the tab bar to feedback what's happen for each case: `extensions.treestyletab.tabbar.autoShow.feedback.opened`, `extensions.treestyletab.tabbar.autoShow.feedback.closed`, `extensions.treestyletab.tabbar.autoShow.feedback.moved`, `extensions.treestyletab.tabbar.autoShow.feedback.selected` and `extensions.treestyletab.tabbar.autoShow.feedback.titleChanged`.
    * When the tab bar is expanded for a feedback, the subject tab is now highlighted.
    * Add a new choice when a parent tab is closed: now you can replace the closed parent tab with a new group tab.
-   * de-DE locale is updated by Björn Kautler. Thanks!
+   * de-DE locale is updated by Bjrn Kautler. Thanks!
    * ru locale is updated by Infocatcher. Thanks!
  - 0.16.2016021201
    * Better compatibility with [Tab Badge](https://addons.mozilla.org/firefox/addon/tab-badge/) addon.
@@ -2021,7 +2024,7 @@
  - 0.14.2014051001
    * Show the navigation toolbar and the "private browsing" indicator in the titlebar correctly, on OS X. (regression)
    * Don't darken colors of websites with white background, in "auto hide tab bar" mode.
-   * [Czech locale is added by Vlastimil Ovčáčík. Thanks!](https://github.com/piroor/treestyletab/pull/714)
+   * [Czech locale is added by Vlastimil Ov香痼香塚k. Thanks!](https://github.com/piroor/treestyletab/pull/714)
  - 0.14.2014050601
    * Allow to hide the title bar if Tabs on Bottom addon is installed.
    * Open new tabs by [Tile Tabs](https://addons.mozilla.org/firefox/addon/tile-tabs/) as next sibling tab.
@@ -2320,7 +2323,7 @@
    * Improved: Optimization for performance issue about switching of tab groups (Panorama).
    * Improved: Optimization for startup time. (CSS refactorings, JavaScript code modules for shared codes, etc.)
    * Improved: Middle click on the "new tab" button and the "go" button should open the new tab as the child of the current tab. (They can be customized.)
-   * Improved: With [Locationbar²](https://addons.mozilla.org/ja/firefox/addon/locationbar%C2%B2/), new tabs from path segments are now opened as child tabs of the current tab.
+   * Improved: With [Locationbarｲ](https://addons.mozilla.org/ja/firefox/addon/locationbar%C2%B2/), new tabs from path segments are now opened as child tabs of the current tab.
    * Improved: New APIs for addons are available :  `TreeStyleTabService.readyToOpenChildTabNow()` ,  `TreeStyleTabService.readyToOpenNextSiblingTabNow()` , and  `TreeStyleTabService.readyToOpenNewTabGroupNow()` . They are useful for reservation of new child tab, if the new tab is possibly canceled by some reason. Reservations made by these new API are automatically canceled with delay, so you don't have to call  `TreeStyleTabService.stopToOpenChildTab()`  manually.
    * Fixed: Contents of textbox in toolbar items inserted into vertical tab bar were unexpectedly hidden.
    * Fixed: Vertical tab bar in popup windows should be hidden by `chromehidden` attribute.
@@ -2427,7 +2430,7 @@ ions/) correctly.
    * Fixed: On Minefield, the appearance of the tab bar was unexpectedly broken if [RequestPolicy](https://addons.mozilla.org/firefox/addon/requestpolicy/) is installed.
    * zh-CN locale is updated by hzhbest. Thanks!
    * es-ES locale is updated by Tito Bouzout. Thanks!
-   * sv-SE (Swedish) locale is available, translated by Mikael Hiort af Ornäs. Thanks!
+   * sv-SE (Swedish) locale is available, translated by Mikael Hiort af Orn艢s. Thanks!
  - 0.11.2011020402
    * Fixed: An error in the initialization process disappeared.
  - 0.11.2011020401
@@ -2685,7 +2688,7 @@ ions/) correctly.
    * Fixed: Internal operations ignore popups generated by SELECT elements in webpages correctoyl
    * Fixed: Works with [Smoothly Close Tabs](https://addons.mozilla.org/firefox/addon/71410). (maybe)
    * Fixed: Duplicated splitter disappeared when [Tab Kit](https://addons.mozilla.org/firefox/addon/5447) is installed.
-   * pl locale is updated by Leszek(teo)Życzkowski.
+   * pl locale is updated by Leszek(teo)禔yczkowski.
  - 0.9.2010020502
    * Fixed: Some images of built-in theme were not loaded. (regression)
  - 0.9.2010020501
@@ -2744,7 +2747,7 @@ ions/) correctly.
      *  `TreeStyleTabService.demoteTab(aTab)` 
      *  `TreeStyleTabService.demoteCurrentTab()` 
    * Improved: When you use "auto hide" feature of tab bar, then the status of the tab bar is stored to the  `treestyletab-tabbar-autohide-state`  attribute.
-   * pl-PL locale is updated by Jacek Chrząszcz.
+   * pl-PL locale is updated by Jacek Chrz・szcz.
  - 0.8.2009102801
    * Fixed: The restored tree was wrongly collapsed when a parent tab was reopened by "undo close tab" or "recently closed tabs".
  - 0.8.2009102701
