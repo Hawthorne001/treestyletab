@@ -9,12 +9,14 @@ tab-favicon {
   display: inline-block;
   font-size: var(--favicon-size);
   height: var(--favicon-size);
-  margin: 0;
+  margin-block: 0;
+  margin-inline: 0;
   max-height: var(--favicon-size);
   max-width: var(--favicon-size);
   min-height: var(--favicon-size);
   min-width: var(--favicon-size);
-  padding: 0;
+  padding-block: 0;
+  padding-inline: 0;
   position: relative;
   white-space: pre;
   width: var(--favicon-size);
@@ -47,7 +49,7 @@ tab-item tab-favicon * {
   fill: var(--tab-text);
   height: var(--svg-small-icon-size);
   line-height: 1;
-  margin-top: calc((var(--favicon-size) - var(--svg-small-icon-size)) / 2);
+  margin-block-start: calc((var(--favicon-size) - var(--svg-small-icon-size)) / 2);
   max-height: var(--favicon-size);
   max-width: var(--favicon-size);
   width: var(--svg-small-icon-size);
@@ -181,10 +183,10 @@ tab-item[data-current-favicon-uri="chrome://global/skin/icons/warning.svg"] .fav
 
 tab-item.group-tab tab-favicon:not(.error) .favicon-image[src] {
   bottom: 0;
+  inset-inline-end: 0;
   max-height: 10px;
   max-width: 10px;
   position: absolute;
-  right: 0;
   z-index: var(--favicon-preferred-image-z-index);
 }
 
@@ -252,9 +254,9 @@ tab-item.faviconized:not(.active):not(.loading).sharing-screen .favicon-builtin:
 
 .favicon-sharing-state {
   bottom: calc((var(--favicon-size) - var(--svg-small-icon-size)) / 2);
-  left: calc((var(--favicon-size) - var(--svg-small-icon-size)) / 2);
+  inset-inline-start: calc((var(--favicon-size) - var(--svg-small-icon-size)) / 2);
+  inset-inline-end: calc((var(--favicon-size) - var(--svg-small-icon-size)) / 2);
   position: absolute;
-  right: calc((var(--favicon-size) - var(--svg-small-icon-size)) / 2);
   top: calc((var(--favicon-size) - var(--svg-small-icon-size)) / 2);
 }
 
@@ -294,7 +296,7 @@ tab-item.faviconized.sharing-screen .favicon-sharing-state::before {
 
 .favicon-sticky-state {
   --svg-small-icon-size: 12px;
-  left: calc(var(--svg-small-icon-size) - var(--favicon-size));
+  inset-inline-start: calc(var(--svg-small-icon-size) - var(--favicon-size));
   position: absolute;
   top: calc(var(--svg-small-icon-size) - var(--favicon-size));
 }
@@ -305,7 +307,7 @@ tab-item.faviconized.sharing-screen .favicon-sharing-state::before {
   content: "";
   display: inline-block;
   height: var(--svg-small-icon-size);
-  left: -10%;
+  inset-inline-start: -10%;
   opacity: 0.75;
   position: absolute;
   top: 10%;

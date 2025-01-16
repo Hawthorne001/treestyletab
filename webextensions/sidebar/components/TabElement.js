@@ -5,9 +5,11 @@
 */
 
 import {
-  configs
+  configs,
+  sanitizeForHTMLText,
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
+import * as Permissions from '/common/permissions.js';
 import * as TabsStore from '/common/tabs-store.js';
 import Tab from '/common/Tab.js';
 
@@ -24,13 +26,17 @@ import { kTAB_CLOSE_BOX_ELEMENT_NAME } from './TabCloseBoxElement.js';
 export const kTAB_ELEMENT_NAME = 'tab-item';
 export const kTAB_SUBSTANCE_ELEMENT_NAME = 'tab-item-substance';
 
+export const kEVENT_TAB_SUBSTANCE_ENTER = 'tab-item-substance-enter';
+export const kEVENT_TAB_SUBSTANCE_LEAVE = 'tab-item-substance-leave';
+
 export const TabInvalidationTarget = Object.freeze({
   Twisty:      1 << 0,
   SoundButton: 1 << 1,
   CloseBox:    1 << 2,
   Tooltip:     1 << 3,
   SharingState: 1 << 4,
-  All:         1 << 0 | 1 << 1 | 1 << 2 | 1 << 3 | 1 << 4,
+  Overflow:    1 << 5,
+  All:         1 << 0 | 1 << 1 | 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5,
 });
 
 export const TabUpdateTarget = Object.freeze({
@@ -68,8 +74,11 @@ export class TabElement extends HTMLElement {
     super();
 
     // We should initialize private properties with blank value for better performance with a fixed shape.
+    this._tab = null;
     this._reservedUpdateTooltip = null;
     this.__onMouseOver = null;
+    this.__onMouseEnter = null;
+    this.__onMouseLeave = null;
     this.__onWindowResize = null;
     this.__onConfigChange = null;
   }
@@ -197,14 +206,15 @@ export class TabElement extends HTMLElement {
 
   disconnectedCallback() {
     if (this._reservedUpdateTooltip) {
-      this.addEventListener('mouseover', this._reservedUpdateTooltip);
+      this.removeEventListener('mouseover', this._reservedUpdateTooltip);
       this._reservedUpdateTooltip = null;
     }
     this._endListening();
+    this._tab = null;
   }
 
   get initialized() {
-    return !!this._substanceElement;
+    return !!this.substanceElement;
   }
 
   initializeContents() {
@@ -255,7 +265,7 @@ export class TabElement extends HTMLElement {
     return this._$TST = value;
   }
 
-  get _substanceElement() {
+  get substanceElement() {
     return this.querySelector(kTAB_SUBSTANCE_ELEMENT_NAME);
   }
 
@@ -293,14 +303,14 @@ export class TabElement extends HTMLElement {
     this.setAttribute('aria-selected', this.classList.contains(Constants.kTAB_STATE_HIGHLIGHTED) ? 'true' : 'false');
 
     // for convenience on customization with custom user styles
-    this._substanceElement.setAttribute(Constants.kAPI_TAB_ID, this.getAttribute(Constants.kAPI_TAB_ID));
-    this._substanceElement.setAttribute(Constants.kAPI_WINDOW_ID, this.getAttribute(Constants.kAPI_WINDOW_ID));
+    this.substanceElement.setAttribute(Constants.kAPI_TAB_ID, this.getAttribute(Constants.kAPI_TAB_ID));
+    this.substanceElement.setAttribute(Constants.kAPI_WINDOW_ID, this.getAttribute(Constants.kAPI_WINDOW_ID));
     this._labelElement.setAttribute(Constants.kAPI_TAB_ID, this.getAttribute(Constants.kAPI_TAB_ID));
     this._labelElement.setAttribute(Constants.kAPI_WINDOW_ID, this.getAttribute(Constants.kAPI_WINDOW_ID));
 
     if (this.tab)
       this.dataset.index =
-        this._substanceElement.dataset.index =
+        this.substanceElement.dataset.index =
           this._labelElement.dataset.index =this.tab.index;
 
     this._labelElement.applyAttributes();
@@ -310,41 +320,34 @@ export class TabElement extends HTMLElement {
     if (!this.initialized)
       return;
 
-    if (targets & TabInvalidationTarget.Twisty) {
-      const twisty = this.twisty;
-      if (twisty)
-        twisty.invalidate();
-    }
+    if (targets & TabInvalidationTarget.Twisty)
+      this.twisty?.invalidate();
 
-    if (targets & TabInvalidationTarget.SharingState) {
-      const sharingState = this._sharingStateElement;
-      if (sharingState)
-        sharingState.invalidate();
-    }
+    if (targets & TabInvalidationTarget.SharingState)
+      this._sharingStateElement?.invalidate();
 
-    if (targets & TabInvalidationTarget.SoundButton) {
-      const soundButton = this._soundButtonElement;
-      if (soundButton)
-        soundButton.invalidate();
-    }
+    if (targets & TabInvalidationTarget.SoundButton)
+      this._soundButtonElement?.invalidate();
 
-    if (targets & TabInvalidationTarget.CloseBox) {
-      const closeBox = this.closeBox;
-      if (closeBox)
-        closeBox.invalidate();
-    }
+    if (targets & TabInvalidationTarget.CloseBox)
+      this.closeBox?.invalidate();
 
     if (targets & TabInvalidationTarget.Tooltip)
       this.invalidateTooltip();
 
-    if (targets & TabInvalidationTarget.Overflow)
+    if (targets & TabInvalidationTarget.Overflow) {
+      this._labelElement.invalidateOverflow();
       this._needToUpdateOverflow = true;
+    }
   }
 
   invalidateTooltip() {
     if (this._reservedUpdateTooltip)
       return;
 
+    this.useTabPreviewTooltip = false;
+    this.hasCustomTooltip = false;
+    Permissions.isGranted(Permissions.ALL_URLS); // cache last state for the _updateTooltip()
     this._reservedUpdateTooltip = () => {
       this._reservedUpdateTooltip = null;
       this._updateTooltip();
@@ -356,11 +359,8 @@ export class TabElement extends HTMLElement {
     if (!this.initialized)
       return;
 
-    if (targets & TabUpdateTarget.Counter) {
-      const counter = this._counterElement;
-      if (counter)
-        counter.update();
-    }
+    if (targets & TabUpdateTarget.Counter)
+      this._counterElement?.update();
 
     if (targets & TabUpdateTarget.Overflow)
       this._updateOverflow();
@@ -376,16 +376,15 @@ export class TabElement extends HTMLElement {
   }
 
   updateOverflow() {
-    if (this._needToUpdateOverflow || configs.labelOverflowStyle == 'fade')
+    if (this._needToUpdateOverflow ||
+        configs.labelOverflowStyle == 'fade')
       this._updateOverflow();
     this.invalidateTooltip();
   }
 
   _updateOverflow() {
     this._needToUpdateOverflow = false;
-    const label = this._labelElement;
-    if (label)
-      label.updateOverflow();
+    this._labelElement?.updateOverflow();
   }
 
   _updateTooltip() {
@@ -397,8 +396,38 @@ export class TabElement extends HTMLElement {
     if (!tabElement)
       return;
 
+    // Priority of tooltip contents and methods
+    // 1. Is the tab preview panel activated by the user? (option)
+    //    * NO => Use legacy tooltip anyway.
+    //      - Set "title" attribute for the legacy tooltip, if the tab is faviconized,
+    //        or the tab has long title with overflow state, or custom tooltip.
+    //      - Otherwise remove "title" attribute to suppress the legacy tooltip.
+    //    * YES => Go ahead.
+    // 2. Can we show tab preview panel in the active tab? (permission)
+    //    * YES => Remove "title" attribute to suppress the legacy tooltip.
+    //             Tooltip will be shown with tab preview panel in the active tab.
+    //    * NO => Go ahead.
+    // 3. Do we have custom tooltip? (for collapsed tree, specified via API, etc.)
+    //    * YES => Set "title" attribute for the legacy tooltip with custom contents.
+    //    * NO => Go ahead for the default tooltip.
+    // 4. Can we show tab preview panel in the sidebar for the default tooltip? (option)
+    //    * YES => Remove "title" attribute to suppress the legacy tooltip.
+    //             The default tooltip will be shown with tab preview panel in the sidebar.
+    //    * NO => Set "title" attribute for the legacy tooltip, if the tab is faviconized,
+    //            or the tab has long title with overflow state.
+
+    const canRunScript = Permissions.isGrantedSync(Permissions.ALL_URLS);
+    const canInjectScriptToTab = Permissions.canInjectScriptToTabSync(Tab.getActiveTab(TabsStore.getCurrentWindowId()));
+    this.useTabPreviewTooltip = (
+      configs.tabPreviewTooltip &&
+      canRunScript &&
+      (canInjectScriptToTab ||
+       configs.tabPreviewTooltipInSidebar)
+    );
+
+    let debugTooltip;
     if (configs.debug) {
-      this.tooltip = `
+      debugTooltip = `
 ${tab.title}
 #${tab.id}
 (${tabElement.className})
@@ -408,41 +437,109 @@ restored = <${!!this.$TST.uniqueId.restored}>
 tabId = ${tab.id}
 windowId = ${tab.windowId}
 `.trim();
-      this.$TST.setAttribute('title', this.tooltip);
-      return;
+      this.$TST.setAttribute('title', debugTooltip);
+      if (!this.useTabPreviewTooltip) {
+        this.tooltip = debugTooltip;
+        this.tooltipHtml = `<pre>${sanitizeForHTMLText(debugTooltip)}</pre>`;
+        return;
+      }
     }
 
     this.tooltip                = this.$TST.generateTooltipText();
     this.tooltipWithDescendants = this.$TST.generateTooltipTextWithDescendants();
+    this.tooltipHtml            = this.$TST.generateTooltipHtml();
+    this.tooltipHtmlWithDescendants = this.$TST.generateTooltipHtmlWithDescendants();
 
+    const appliedTooltipText = this.appliedTooltipText;
+    this.hasCustomTooltip = (
+      appliedTooltipText !== null &&
+      appliedTooltipText != this.$TST.defaultTooltipText
+    );
+    //console.log('this.useTabPreviewTooltip ', { useTabPreviewTooltip: this.useTabPreviewTooltip, canRunScript, canInjectScriptToTab, hasCustomTooltip: this.hasCustomTooltip });
+
+    const tooltipText = configs.debug ?
+      debugTooltip :
+      (this.useTabPreviewTooltip &&
+       (canInjectScriptToTab ||
+        !this.hasCustomTooltip)) ?
+        null :
+        appliedTooltipText;
+    if (typeof tooltipText == 'string')
+      this.$TST.setAttribute('title', tooltipText);
+    else
+      this.$TST.removeAttribute('title');
+  }
+
+  get appliedTooltipText() {
     if (configs.showCollapsedDescendantsByTooltip &&
         this.$TST.subtreeCollapsed &&
         this.$TST.hasChild) {
-      this.$TST.setAttribute('title', this.tooltipWithDescendants);
-      return;
+      return this.tooltipWithDescendants;
     }
 
     const highPriorityTooltipText = this.$TST.getHighPriorityTooltipText();
     if (typeof highPriorityTooltipText == 'string') {
-      this.$TST.setAttribute('title', this.tooltip);
-      return;
+      if (highPriorityTooltipText)
+        return highPriorityTooltipText;
+
+      return null;
     }
 
+    let tooltip = null;
+
+    const tab = this.$TST.tab;
     if (this.classList.contains('faviconized') ||
         this.overflow ||
         this.tooltip != tab.title)
-      this.$TST.setAttribute('title', this.tooltip);
+      tooltip = this.tooltip;
     else
-      this.$TST.removeAttribute('title');
+      tooltip = null;
 
     const lowPriorityTooltipText = this.$TST.getLowPriorityTooltipText();
     if (typeof lowPriorityTooltipText == 'string' &&
         !this.getAttribute('title')) {
       if (lowPriorityTooltipText)
-        this.$TST.setAttribute('title', lowPriorityTooltipText);
+        tooltip = lowPriorityTooltipText;
       else
-        this.$TST.removeAttribute('title');
+        tooltip = null;
     }
+    return tooltip;
+  }
+
+  get appliedTooltipHtml() {
+    if (configs.showCollapsedDescendantsByTooltip &&
+        this.$TST.subtreeCollapsed &&
+        this.$TST.hasChild) {
+      return this.tooltipHtmlWithDescendants;
+    }
+
+    const highPriorityTooltipText = this.$TST.getHighPriorityTooltipText();
+    if (typeof highPriorityTooltipText == 'string') {
+      if (highPriorityTooltipText)
+        return sanitizeForHTMLText(highPriorityTooltipText);
+
+      return null;
+    }
+
+    let tooltip = null;
+
+    const tab = this.$TST.tab;
+    if (this.classList.contains('faviconized') ||
+        this.overflow ||
+        this.tooltip != tab.title)
+      tooltip = this.tooltipHtml;
+    else
+      tooltip = null;
+
+    const lowPriorityTooltipText = this.$TST.getLowPriorityTooltipText();
+    if (typeof lowPriorityTooltipText == 'string' &&
+        !this.getAttribute('title')) {
+      if (lowPriorityTooltipText)
+        tooltip = sanitizeForHTMLText(lowPriorityTooltipText);
+      else
+        tooltip = null;
+    }
+    return tooltip;
   }
 
   _initExtraItemsContainers() {
@@ -472,6 +569,10 @@ windowId = ${tab.windowId}
     if (this.__onMouseOver)
       return;
     this.addEventListener('mouseover', this.__onMouseOver = this._onMouseOver.bind(this));
+    this.addEventListener('mouseenter', this.__onMouseEnter = this._onMouseEnter.bind(this));
+    this.substanceElement?.addEventListener('mouseenter', this.__onMouseEnter);
+    this.addEventListener('mouseleave', this.__onMouseLeave = this._onMouseLeave.bind(this));
+    this.substanceElement?.addEventListener('mouseleave', this.__onMouseLeave);
     window.addEventListener('resize', this.__onWindowResize = this._onWindowResize.bind(this));
     configs.$addObserver(this.__onConfigChange = this._onConfigChange.bind(this));
   }
@@ -481,6 +582,12 @@ windowId = ${tab.windowId}
       return;
     this.removeEventListener('mouseover', this.__onMouseOver);
     this.__onMouseOver = null;
+    this.removeEventListener('mouseenter', this.__onMouseEnter);
+    this.substanceElement?.removeEventListener('mouseenter', this.__onMouseEnter);
+    this.__onMouseEnter = null;
+    this.removeEventListener('mouseleave', this.__onMouseLeave);
+    this.substanceElement?.removeEventListener('mouseleave', this.__onMouseLeave);
+    this.__onMouseLeave = null;
     window.removeEventListener('resize', this.__onWindowResize);
     this.__onWindowResize = null;
     configs.$removeObserver(this.__onConfigChange);
@@ -489,6 +596,36 @@ windowId = ${tab.windowId}
 
   _onMouseOver(_event) {
     this._updateTabAndAncestorsTooltip(this.$TST.tab);
+  }
+
+  _onMouseEnter(event) {
+    if (this.classList.contains('faviconized') != (event.target == this))
+      return;
+    if (this._reservedUpdateTooltip) {
+      this.removeEventListener('mouseover', this._reservedUpdateTooltip);
+      this._updateTooltip();
+    }
+    const tabSubstanceEnterEvent = new MouseEvent(kEVENT_TAB_SUBSTANCE_ENTER, {
+      ...event,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      screenX: event.screenX,
+      screenY: event.screenY,
+      bubbles: true,
+      composed: true,
+    });
+    this.dispatchEvent(tabSubstanceEnterEvent);
+  }
+
+  _onMouseLeave(event) {
+    if (this.classList.contains('faviconized') != (event.target == this))
+      return;
+    const tabSubstanceLeaveEvent = new UIEvent(kEVENT_TAB_SUBSTANCE_LEAVE, {
+      ...event,
+      bubbles: true,
+      composed: true,
+    });
+    this.dispatchEvent(tabSubstanceLeaveEvent);
   }
 
   _onWindowResize(_event) {
@@ -706,7 +843,9 @@ windowId = ${tab.windowId}
       return;
 
     this.invalidateTooltip();
-    if (this.$TST.collapsed)
+    if (this.$TST.collapsed) {
+      this._labelElement.invalidateOverflow();
       this._needToUpdateOverflow = true;
+    }
   }
 }

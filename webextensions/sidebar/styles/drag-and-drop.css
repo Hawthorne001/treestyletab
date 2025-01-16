@@ -39,26 +39,26 @@ tab-item[data-drop-position]:not([data-drop-position="self"]).faviconized tab-it
 }
 
 tab-item:not(.faviconized)[data-drop-position="before"] tab-item-substance::before {
-  left: 0;
-  right: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   top: 0;
 }
 
 tab-item:not(.faviconized)[data-drop-position="after"] tab-item-substance::before {
   bottom: 0;
-  left: 0;
-  right: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
 }
 
 tab-item.faviconized[data-drop-position="before"] tab-item-substance::before {
   bottom: 0;
-  left: 0;
+  inset-inline-start: 0;
   top: 0;
 }
 
 tab-item.faviconized[data-drop-position="after"] tab-item-substance::before {
   bottom: 0;
-  right: 0;
+  inset-inline-end: 0;
   top: 0;
 }
 
@@ -81,26 +81,26 @@ tab-item.faviconized[data-drop-position="after"] tab-item-substance::before {
 }
 
 .tab-drop-blocker#tab-drop-blocker-top {
-  left: 0;
-  right: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   top: 0;
 }
 
 .tab-drop-blocker#tab-drop-blocker-right {
   bottom: 0;
-  right: 0;
+  inset-inline-end: 0;
   top: 0;
 }
 
 .tab-drop-blocker#tab-drop-blocker-bottom {
   bottom: 0;
-  left: 0;
-  right: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
 }
 
 .tab-drop-blocker#tab-drop-blocker-left {
   bottom: 0;
-  left: 0;
+  inset-inline-start: 0;
   top: 0;
 }
 
@@ -113,6 +113,6 @@ tab-item.faviconized[data-drop-position="after"] tab-item-substance::before {
 }
 
 @keyframes marquee {
-    0% { left: 100%; transform: translateX(0); }
-  100% { left: 0;    transform: translateX(-100%); }
+    0% { inset-inline-start: 100%; transform: translateX(0); }
+  100% { inset-inline-start: 0;    transform: translateX(-100%); }
 }

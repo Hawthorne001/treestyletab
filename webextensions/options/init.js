@@ -18,6 +18,7 @@ import {
   loadUserStyleRules,
   saveUserStyleRules,
   sanitizeAccesskeyMark,
+  isRTL,
 } from '/common/common.js';
 
 import * as Constants from '/common/constants.js';
@@ -52,9 +53,12 @@ const options = new Options(configs, {
 });
 
 document.title = browser.i18n.getMessage('config_title');
-if ((location.hash && location.hash != '#') ||
+if ((location.hash &&
+     /^#!?$/.test(location.hash)) ||
     /independent=true/.test(location.search))
   document.body.classList.add('independent');
+
+document.documentElement.classList.toggle('rtl', isRTL());
 
 const CODEMIRROR_THEMES = `
 3024-day
@@ -136,6 +140,8 @@ let mUserStyleRulesFieldEditor;
 
 const mDarkModeMedia = window.matchMedia('(prefers-color-scheme: dark)');
 
+let mShowExpertOptionsTemporarily = false;
+
 function onConfigChanged(key) {
   const value = configs[key];
   switch (key) {
@@ -178,19 +184,24 @@ function onConfigChanged(key) {
       }
     }; break;
 
-    case 'showExpertOptions':
-      document.documentElement.classList.toggle('show-expert-options', configs.showExpertOptions);
+    case 'showExpertOptions': {
+      if (mShowExpertOptionsTemporarily && !configs.showExpertOptions)
+        document.querySelector('#showExpertOptions').checked = true;
+      const show = mShowExpertOptionsTemporarily || configs.showExpertOptions;
+      document.documentElement.classList.toggle('show-expert-options', show);
       for (const item of document.querySelectorAll('#parentTabOperationBehaviorModeGroup li li')) {
         const radio = item.querySelector('input[type="radio"]');
-        if (configs.showExpertOptions || radio.checked) {
+        if (show || radio.checked) {
           item.style.display =  '';
-          radio.style.display = configs.showExpertOptions ? '' : 'none';
+          radio.style.display = show || radio.checked ? '' : 'none';
         }
         else {
-          item.style.display =  radio.style.display = 'none';
+          item.style.display = radio.style.display = 'none';
         }
       }
-      break;
+      if (mShowExpertOptionsTemporarily && !configs.showExpertOptions)
+        mShowExpertOptionsTemporarily = false;
+    }; break;
 
     case 'syncDeviceInfo': {
       const name = (configs.syncDeviceInfo || {}).name || '';
@@ -357,15 +368,12 @@ async function updateBookmarksUI(enabled) {
       (await Bookmark.getItemById(configs.defaultBookmarkParentId)) ||
       (await Bookmark.getItemById(configs.$default.defaultBookmarkParentId))
     );
-    const defaultBookmarkParentChooser = document.getElementById('defaultBookmarkParentChooser');
-    Bookmark.initFolderChooser(defaultBookmarkParentChooser, {
+    document.querySelector('#defaultBookmarkParentChooserStyle').textContent = Bookmark.FOLDER_CHOOSER_STYLE;
+    Bookmark.initFolderChooser({
       defaultValue: defaultParentFolder.id,
-      onCommand:    (item, _event) => {
-        if (item.dataset.id)
-          configs.defaultBookmarkParentId = item.dataset.id;
-      },
       rootItems: (await browser.bookmarks.getTree().catch(ApiTabs.createErrorHandler()))[0].children,
-      incrementalSearchTimeout: configs.incrementalSearchTimeout,
+      container: document.querySelector('#defaultBookmarkParentGroup'),
+      inline: true,
     });
   }
   else {
@@ -611,6 +619,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     console.error(error);
   }
 
+  mShowExpertOptionsTemporarily = !!(
+    location.hash &&
+    !/^#!?$/.test(location.hash) &&
+    document.querySelector(`.expert #${location.hash.replace(/^#!?/, '')}, .expert#${location.hash.replace(/^#!?/, '')}`)
+  );
+
   try {
     options.buildUIForAllConfigs(document.querySelector('#group-allConfigs'));
     onConfigChanged('successorTabControlLevel');
@@ -772,12 +786,15 @@ function initPermissionOptions() {
 
   Permissions.bindToCheckbox(
     Permissions.ALL_URLS,
+    document.querySelector('#allUrlsPermissionGranted_tabPreviewTooltip')
+  );
+  Permissions.bindToCheckbox(
+    Permissions.ALL_URLS,
     document.querySelector('#allUrlsPermissionGranted_ctrlTabTracking'),
     {
-      onChanged: (granted) => {
-        configs.skipCollapsedTabsForTabSwitchingShortcuts = granted;
+      onChanged(granted) {
         updateCtrlTabSubItems(granted);
-      }
+      },
     }
   );
 
@@ -798,6 +815,9 @@ function initPermissionOptions() {
     Permissions.CLIPBOARD_READ,
     document.querySelector('#clipboardReadPermissionGranted_middleClickPasteURLOnNewTabButton'),
     {
+      onInitialized: (granted) => {
+        return granted && configs.middleClickPasteURLOnNewTabButton;
+      },
       onChanged: (granted) => {
         configs.middleClickPasteURLOnNewTabButton = granted;
       }
@@ -878,7 +898,7 @@ function initPreviews() {
             select.contains(event.target))
         return;
       const rect = select.getBoundingClientRect();
-      previewImage.style.left = `${rect.left}px`;
+      previewImage.style.insetInlineStart = `${isRTL() ? rect.right : rect.left}px`;
       previewImage.style.top  = `${rect.top - 5 - previewImage.offsetHeight}px`;
     });
     select.addEventListener('change', () => {

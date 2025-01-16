@@ -89,8 +89,14 @@ Background.onDestroy.addListener(() => {
 
 function onToolbarButtonClick(tab) {
   if (mInitializationPhase < PHASE_BACKGROUND_INITIALIZED ||
-      Permissions.requestPostProcess())
+      Permissions.requestPostProcess()) {
     return;
+  }
+
+  if (Migration.isInitialStartup()) {
+    Migration.openInitialStartupPage();
+    return;
+  }
 
   if (typeof browser.sidebarAction.toggle == 'function')
     browser.sidebarAction.toggle();
@@ -224,26 +230,28 @@ async function onShortcutCommand(command) {
       return;
 
     case 'focusPrevious':
-    case 'focusPreviousSilently': {
-      const nextActive = activeTab.$TST.nearestVisiblePrecedingTab ||
-        Tab.getLastVisibleTab(activeTab.windowId);
-      TabsInternalOperation.activateTab(nextActive, {
-        silently: /Silently/.test(command)
-      });
-    }; return;
+      focusPrevious(activeTab);
+      return;
+    case 'focusPreviousSilently':
+      focusPreviousSilently(activeTab);
+      return;
     case 'focusNext':
-    case 'focusNextSilently': {
-      const nextActive = activeTab.$TST.nearestVisibleFollowingTab ||
-        Tab.getFirstVisibleTab(activeTab.windowId);
-      TabsInternalOperation.activateTab(nextActive, {
-        silently: /Silently/.test(command)
-      });
-    }; return;
+      focusNext(activeTab);
+      return;
+    case 'focusNextSilently':
+      focusNextSilently(activeTab);
+      return;
     case 'focusParent':
       TabsInternalOperation.activateTab(activeTab.$TST.parent);
       return;
+    case 'focusParentOrCollapse':
+      collapseOrFocusToParent(activeTab);
+      return;
     case 'focusFirstChild':
       TabsInternalOperation.activateTab(activeTab.$TST.firstChild);
+      return;
+    case 'focusFirstChildOrExpand':
+      expandOrFocusToFirstChild(activeTab);
       return;
     case 'focusLastChild':
       TabsInternalOperation.activateTab(activeTab.$TST.lastChild);
@@ -259,6 +267,110 @@ async function onShortcutCommand(command) {
         activeTab.$TST.nextSiblingTab ||
           activeTab.$TST.parent && activeTab.$TST.parent.$TST.firstChild
       );
+      return;
+
+    case 'simulateUpOnTree':
+      if (SidebarConnection.isOpen(activeTab.windowId)) {
+        if (configs.faviconizePinnedTabs &&
+            (activeTab.pinned ||
+             activeTab == Tab.getFirstNormalTab(activeTab.windowId))) {
+          const nextActiveId = await browser.runtime.sendMessage({
+            type:     Constants.kCOMMAND_GET_ABOVE_TAB,
+            windowId: activeTab.windowId,
+            tabId:    activeTab.id,
+          });
+          log(`simulateUpOnTree: nextActiveId = ${nextActiveId}`);
+          const nextActive = (
+            nextActiveId && Tab.get(nextActiveId) ||
+            Tab.getLastVisibleTab(activeTab.windowId)
+          );
+          TabsInternalOperation.activateTab(nextActive, {
+            silently: true,
+          });
+        }
+        else {
+          focusPreviousSilently(activeTab);
+        }
+      }
+      else {
+        focusPrevious(activeTab);
+      }
+      return;
+    case 'simulateDownOnTree':
+      if (SidebarConnection.isOpen(activeTab.windowId)) {
+        if (configs.faviconizePinnedTabs &&
+            activeTab.pinned) {
+          const nextActiveId = await browser.runtime.sendMessage({
+            type:     Constants.kCOMMAND_GET_BELOW_TAB,
+            windowId: activeTab.windowId,
+            tabId:    activeTab.id,
+          });
+          log(`simulateDownOnTree: nextActiveId = ${nextActiveId}`);
+          const nextActive = (
+            nextActiveId && Tab.get(nextActiveId) ||
+            Tab.getFirstNormalTab(activeTab.windowId)
+          );
+          TabsInternalOperation.activateTab(nextActive, {
+            silently: true,
+          });
+        }
+        else {
+          focusNextSilently(activeTab);
+        }
+      }
+      else {
+        focusNext(activeTab);
+      }
+      return;
+    case 'simulateLeftOnTree':
+      if (SidebarConnection.isOpen(activeTab.windowId)) {
+        if (configs.faviconizePinnedTabs &&
+            activeTab.pinned) {
+          const nextActiveId = await browser.runtime.sendMessage({
+            type:     Constants.kCOMMAND_GET_LEFT_TAB,
+            windowId: activeTab.windowId,
+            tabId:    activeTab.id,
+          });
+          log(`simulateLeftOnTree: nextActiveId = ${nextActiveId}`);
+          TabsInternalOperation.activateTab(Tab.get(nextActiveId), {
+            silently: true,
+          });
+        }
+        else if (await isSidebarRightSide(activeTab.windowId)) {
+          expandOrFocusToFirstChild(activeTab);
+        }
+        else {
+          collapseOrFocusToParent(activeTab);
+        }
+      }
+      else {
+        focusPrevious(activeTab);
+      }
+      return;
+    case 'simulateRightOnTree':
+      if (SidebarConnection.isOpen(activeTab.windowId)) {
+        if (configs.faviconizePinnedTabs &&
+            activeTab.pinned) {
+          const nextActiveId = await browser.runtime.sendMessage({
+            type:     Constants.kCOMMAND_GET_RIGHT_TAB,
+            windowId: activeTab.windowId,
+            tabId:    activeTab.id,
+          });
+          log(`simulateRightOnTree: nextActiveId = ${nextActiveId}`);
+          TabsInternalOperation.activateTab(Tab.get(nextActiveId), {
+            silently: true,
+          });
+        }
+        else if (await isSidebarRightSide(activeTab.windowId)) {
+          collapseOrFocusToParent(activeTab);
+        }
+        else {
+          expandOrFocusToFirstChild(activeTab);
+        }
+      }
+      else {
+        focusNext(activeTab);
+      }
       return;
 
     case 'tabbarUp':
@@ -343,6 +455,62 @@ async function onShortcutCommand(command) {
       });
       return;
   }
+}
+
+function focusPrevious(activeTab) {
+  const nextActive = activeTab.$TST.nearestVisiblePrecedingTab ||
+    (!SidebarConnection.isOpen(activeTab.windowId) && activeTab.$TST.previousTab) ||
+    Tab.getLastVisibleTab(activeTab.windowId);
+  TabsInternalOperation.activateTab(nextActive);
+}
+
+function focusPreviousSilently(activeTab) {
+  const nextActive = activeTab.$TST.nearestVisiblePrecedingTab ||
+    (!SidebarConnection.isOpen(activeTab.windowId) && activeTab.$TST.previousTab) ||
+    Tab.getLastVisibleTab(activeTab.windowId);
+  TabsInternalOperation.activateTab(nextActive, {
+    silently: true,
+  });
+}
+
+function focusNext(activeTab) {
+  const nextActive = activeTab.$TST.nearestVisibleFollowingTab ||
+    (!SidebarConnection.isOpen(activeTab.windowId) && activeTab.$TST.nextTab) ||
+    Tab.getFirstVisibleTab(activeTab.windowId);
+  TabsInternalOperation.activateTab(nextActive);
+}
+
+function focusNextSilently(activeTab) {
+  const nextActive = activeTab.$TST.nearestVisibleFollowingTab ||
+    (!SidebarConnection.isOpen(activeTab.windowId) && activeTab.$TST.nextTab) ||
+    Tab.getFirstVisibleTab(activeTab.windowId);
+  TabsInternalOperation.activateTab(nextActive, {
+    silently: true,
+  });
+}
+
+async function isSidebarRightSide(windowId) {
+  const position = await browser.runtime.sendMessage({
+    type: Constants.kCOMMAND_GET_SIDEBAR_POSITION,
+    windowId,
+  });
+  return position == Constants.kTABBAR_POSITION_RIGHT;
+}
+
+function collapseOrFocusToParent(activeTab) {
+  if (!activeTab.$TST.subtreeCollapsed && activeTab.$TST.hasChild)
+    Commands.collapseTree(activeTab);
+  else
+    TabsInternalOperation.activateTab(activeTab.$TST.parent);
+}
+
+function expandOrFocusToFirstChild(activeTab) {
+  if (activeTab.$TST.subtreeCollapsed && activeTab.$TST.hasChild)
+    Commands.expandTree(activeTab);
+  else
+    TabsInternalOperation.activateTab(activeTab.$TST.firstChild, {
+      silently: true,
+    });
 }
 
 // This must be synchronous and return Promise on demando, to avoid
@@ -795,9 +963,27 @@ function onMessageExternal(message, sender) {
     case TSTAPI.kGROUP_TABS:
       return (async () => {
         const tabs = await TSTAPI.getTargetTabs(message, sender);
+        const temporaryStateParams = (message.temporary && !message.temporaryAggressive) ?
+          {
+            temporary:           true,
+            temporaryAggressive: false,
+          } :
+          (!message.temporary && message.temporaryAggressive) ?
+            {
+              temporary:           false,
+              temporaryAggressive: true,
+            } :
+            (message.temporaryAggressive === false && message.temporary === false) ?
+              {
+                temporary:           false,
+                temporaryAggressive: false,
+              } :
+              {};
         const tab = await TabsGroup.groupTabs(Array.from(tabs), {
           title:     message.title,
           broadcast: true,
+          ...TabsGroup.temporaryStateParams(configs.groupTabTemporaryStateForAPI),
+          ...temporaryStateParams,
         });
         if (!tab)
           return null;

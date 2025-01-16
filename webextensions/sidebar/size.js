@@ -9,7 +9,8 @@ import EventListenerManager from '/extlib/EventListenerManager.js';
 
 import {
   log as internalLogger,
-  configs
+  configs,
+  isRTL,
 } from '/common/common.js';
 
 function log(...args) {
@@ -25,8 +26,8 @@ const mTabBar           = document.querySelector('#tabbar');
 let mTabHeight          = 0;
 let mTabXOffset         = 0;
 let mTabYOffset         = 0;
-let mTabMarginTop       = 0;
-let mTabMarginBottom    = 0;
+let mTabMarginBlockStart = 0;
+let mTabMarginBlockEnd  = 0;
 let mFavIconSize        = 0;
 let mFavIconizedTabSize = 0;
 let mFavIconizedTabWidth = 0;
@@ -55,12 +56,12 @@ export function getTabYOffset() {
   return mTabYOffset;
 }
 
-export function getTabMarginTop() {
-  return mTabMarginTop;
+export function getTabMarginBlockStart() {
+  return mTabMarginBlockStart;
 }
 
-export function getTabMarginBottom() {
-  return mTabMarginBottom;
+export function getTabMarginBlockEnd() {
+  return mTabMarginBlockEnd;
 }
 
 export function getFavIconSize() {
@@ -133,26 +134,26 @@ export function updateTabs() {
   mFavIconizedTabWidth  = dummyFaviconizedTab.offsetWidth;
   mFavIconizedTabHeight = dummyFaviconizedTab.offsetHeight;
   // simulating margin collapsing
-  const favIconizedMarginLeft  = parseFloat(faviconizedTabStyle.marginLeft);
-  const favIconizedMarginRight = parseFloat(faviconizedTabStyle.marginRight);
-  mFavIconizedTabXOffset = (favIconizedMarginLeft > 0 && favIconizedMarginRight > 0) ?
-    Math.max(favIconizedMarginLeft, favIconizedMarginRight) :
-    favIconizedMarginLeft + favIconizedMarginRight;
-  const favIconizedMarginTop    = parseFloat(faviconizedTabStyle.marginTop);
-  const favIconizedMarginBottom = parseFloat(faviconizedTabStyle.marginBottom);
-  mFavIconizedTabYOffset = (favIconizedMarginTop > 0 && favIconizedMarginBottom > 0) ?
-    Math.max(favIconizedMarginTop, favIconizedMarginBottom) :
-    favIconizedMarginTop + favIconizedMarginBottom;
+  const favIconizedMarginInlineStart = parseFloat(faviconizedTabStyle.marginInlineStart);
+  const favIconizedMarginInlineEnd   = parseFloat(faviconizedTabStyle.marginInlineEnd);
+  mFavIconizedTabXOffset = (favIconizedMarginInlineStart > 0 && favIconizedMarginInlineEnd > 0) ?
+    Math.max(favIconizedMarginInlineStart, favIconizedMarginInlineEnd) :
+    favIconizedMarginInlineStart + favIconizedMarginInlineEnd;
+  const favIconizedMarginBlockStart = parseFloat(faviconizedTabStyle.marginBlockStart);
+  const favIconizedMarginBlockEnd   = parseFloat(faviconizedTabStyle.marginBlockEnd);
+  mFavIconizedTabYOffset = (favIconizedMarginBlockStart > 0 && favIconizedMarginBlockEnd > 0) ?
+    Math.max(favIconizedMarginBlockStart, favIconizedMarginBlockEnd) :
+    favIconizedMarginBlockStart + favIconizedMarginBlockEnd;
 
   const dummyTab = document.querySelector('#dummy-tab');
   const tabStyle  = window.getComputedStyle(dummyTab);
-  mTabXOffset = parseFloat(tabStyle.marginLeft) + parseFloat(tabStyle.marginRight);
+  mTabXOffset = parseFloat(tabStyle.marginInlineStart) + parseFloat(tabStyle.marginInlineEnd);
   // simulating margin collapsing
-  mTabMarginTop    = parseFloat(tabStyle.marginTop);
-  mTabMarginBottom = parseFloat(tabStyle.marginBottom);
-  mTabYOffset = (mTabMarginTop > 0 && mTabMarginBottom > 0) ?
-    Math.max(mTabMarginTop, mTabMarginBottom) :
-    mTabMarginTop + mTabMarginBottom;
+  mTabMarginBlockStart = parseFloat(tabStyle.marginBlockStart);
+  mTabMarginBlockEnd   = parseFloat(tabStyle.marginBlockEnd);
+  mTabYOffset = (mTabMarginBlockStart > 0 && mTabMarginBlockEnd > 0) ?
+    Math.max(mTabMarginBlockStart, mTabMarginBlockEnd) :
+    mTabMarginBlockStart + mTabMarginBlockEnd;
 
   const substanceRect = dummyTab.querySelector('tab-item-substance').getBoundingClientRect();
   const uiRect = dummyTab.querySelector('tab-item-substance > .ui').getBoundingClientRect();
@@ -179,12 +180,12 @@ export function updateTabs() {
     --tab-x-offset: ${mTabXOffset}px;
     --tab-y-offset: ${mTabYOffset}px;
     --tab-height: var(--tab-size); /* for backward compatibility of custom user styles */
-    --tab-favicon-start-offset: ${favIconRect.left - baseLeft}px;
-    --tab-favicon-end-offset: ${baseRight - favIconRect.right}px;
-    --tab-label-start-offset: ${labelRect.left - baseLeft}px;
-    --tab-label-end-offset: ${baseRight - labelRect.right}px;
-    --tab-closebox-start-offset: ${closeBoxRect.left - baseLeft}px;
-    --tab-closebox-end-offset: ${baseRight - closeBoxRect.right}px;
+    --tab-favicon-start-offset: ${isRTL() ? baseRight - favIconRect.right : favIconRect.left - baseLeft}px;
+    --tab-favicon-end-offset: ${isRTL() ? favIconRect.left - baseLeft : baseRight - favIconRect.right}px;
+    --tab-label-start-offset: ${isRTL() ? baseRight - labelRect.right : labelRect.left - baseLeft}px;
+    --tab-label-end-offset: ${isRTL() ? labelRect.left - baseLeft : baseRight - labelRect.right}px;
+    --tab-closebox-start-offset: ${isRTL() ? baseRight - closeBoxRect.right : closeBoxRect.left - baseLeft}px;
+    --tab-closebox-end-offset: ${isRTL() ? closeBoxRect.left - baseLeft : baseRight - closeBoxRect.right}px;
 
     --tab-burst-duration: ${configs.burstDuration}ms;
     --indent-duration:    ${configs.indentDuration}ms;
@@ -220,13 +221,18 @@ export function updateTabs() {
 }
 
 export function updateContainers() {
+  let modifiedCount = 0;
+
   mPinnedTabsScrollBoxRect = mPinnedScrollBox.getBoundingClientRect();
   mNormalTabsScrollBoxRect = mNormalScrollBox.getBoundingClientRect();
 
   const pinnedContainerBox     = mPinnedScrollBox.querySelector('.tabs');
   const pinnedContainerBoxRect = pinnedContainerBox.getBoundingClientRect();
   const pinnedContainerStyle   = window.getComputedStyle(pinnedContainerBox, null);
-  mPinnedTabsContainerWidth    = pinnedContainerBoxRect.width - parseFloat(pinnedContainerStyle.paddingLeft) - parseFloat(pinnedContainerStyle.borderLeftWidth) - parseFloat(pinnedContainerStyle.paddingRight) - parseFloat(pinnedContainerStyle.borderRightWidth);
+  const newPinnedTabsContainerWidth = pinnedContainerBoxRect.width - parseFloat(pinnedContainerStyle.paddingInlineStart) - parseFloat(pinnedContainerStyle.borderInlineStartWidth) - parseFloat(pinnedContainerStyle.paddingInlineEnd) - parseFloat(pinnedContainerStyle.borderInlineEndWidth);
+  if (newPinnedTabsContainerWidth != mPinnedTabsContainerWidth)
+    modifiedCount++;
+  mPinnedTabsContainerWidth    = newPinnedTabsContainerWidth;
 
   const range = document.createRange();
   //range.selectNodeContents(mTabBar);
@@ -235,10 +241,19 @@ export function updateContainers() {
   range.selectNodeContents(mTabBar);
   range.setStartAfter(mNormalScrollBox);
   const normalTabsViewPortFollowingAreaSize = range.getBoundingClientRect().height;
-  mNormalTabsViewPortSize = mTabBar.offsetHeight - normalTabsViewPortPrecedingAreaSize - normalTabsViewPortFollowingAreaSize;
+  const newNormalTabsViewportSize = mTabBar.offsetHeight - normalTabsViewPortPrecedingAreaSize - normalTabsViewPortFollowingAreaSize;
   range.detach();
+  if (newNormalTabsViewportSize != mNormalTabsViewPortSize)
+    modifiedCount++;
+  mNormalTabsViewPortSize = newNormalTabsViewportSize;
 
-  mAllTabsAreaSize = mTabBar.parentNode.offsetHeight;
+  const newAllTabsAreaSize = mTabBar.parentNode.offsetHeight;
+  if (newAllTabsAreaSize != mAllTabsAreaSize)
+    modifiedCount++;
+  mAllTabsAreaSize = newAllTabsAreaSize;
+
+  if (modifiedCount > 0)
+    onUpdated.dispatch();
 }
 
 export function calc(expression) {
@@ -246,7 +261,7 @@ export function calc(expression) {
   const box = document.createElement('span');
   const style = box.style;
   style.display       = 'inline-block';
-  style.left          = 0;
+  style.insetInlineStart = 0;
   style.height        = 0;
   style.overflow      = 'hidden';
   style.pointerEvents = 'none';
@@ -257,7 +272,7 @@ export function calc(expression) {
   const innerBox = box.appendChild(document.createElement('span'));
   const innerStyle = innerBox.style;
   innerStyle.display       = 'inline-block';
-  innerStyle.left          = 0;
+  innerStyle.insetInlineStart = 0;
   innerStyle.height        = 0;
   innerStyle.pointerEvents = 'none';
   innerStyle.position      = 'fixed';

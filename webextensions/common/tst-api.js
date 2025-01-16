@@ -134,6 +134,7 @@ export const kNOTIFY_TRY_COLLAPSE_TREE_FROM_COLLAPSE_COMMAND = 'try-collapse-tre
 export const kNOTIFY_TRY_COLLAPSE_TREE_FROM_COLLAPSE_ALL_COMMAND = 'try-collapse-tree-from-collapse-all-command';
 export const kNOTIFY_TRY_FIXUP_TREE_ON_TAB_MOVED = 'try-fixup-tree-on-tab-moved';
 export const kNOTIFY_TRY_HANDLE_NEWTAB = 'try-handle-newtab';
+export const kNOTIFY_TRY_SCROLL_TO_ACTIVATED_TAB = 'try-scroll-to-activated-tab';
 export const kGET_TREE              = 'get-tree';
 export const kGET_LIGHT_TREE        = 'get-light-tree';
 export const kATTACH                = 'attach';
@@ -272,6 +273,11 @@ export function clearCache(cache) {
 // bacause instances of the class will be very short-life and increases RAM usage on
 // massive tabs case.
 export async function exportTab(sourceTab, { addonId, light, isContextTab, interval, permissions, cache, cacheKey } = {}) {
+  const normalizedSourceTab = Tab.get(sourceTab);
+  if (!normalizedSourceTab)
+    throw new Error(`Fatal error: tried to export not a tab. ${sourceTab}`);
+  sourceTab = normalizedSourceTab;
+
   if (!interval)
     interval = 0;
   if (!cache)
@@ -321,14 +327,19 @@ function registerAddon(id, addon) {
   // inherit properties from last effective value
   const oldAddon = getAddon(id);
   if (oldAddon) {
-    if (!('listeningTypes' in addon) && 'listeningTypes' in oldAddon)
-      addon.listeningTypes = oldAddon.listeningTypes;
-    if (!('style' in addon) && 'style' in oldAddon)
-      addon.style = oldAddon.style;
-    if (!('allowBulkMessaging' in addon) && 'allowBulkMessaging' in oldAddon)
-      addon.allowBulkMessaging = oldAddon.allowBulkMessaging;
-    if (!('lightTree' in addon) && 'lightTree' in oldAddon)
-      addon.lightTree = oldAddon.lightTree;
+    for (const param of [
+      'name',
+      'icons',
+      'listeningTypes',
+      'allowBulkMessaging',
+      'lightTree',
+      'style',
+      'permissions',
+    ]) {
+      if (!(param in addon) && param in oldAddon) {
+        addon[param] = oldAddon[param];
+      }
+    }
   }
 
   if (!addon.listeningTypes) {

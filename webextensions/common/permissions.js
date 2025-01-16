@@ -28,13 +28,47 @@ export function clearRequest() {
   configs.requestingPermissions = null;
 }
 
-export function isGranted(permissions) {
+
+const cachedGranted = new Map();
+
+export async function isGranted(permissions) {
   try {
-    return browser.permissions.contains(permissions).catch(ApiTabs.createErrorHandler());
+    const granted = await browser.permissions.contains(permissions).catch(ApiTabs.createErrorHandler());
+    cachedGranted.set(JSON.stringify(permissions), granted);
+    return granted;
   }
-  catch(_e) {
+  catch(error) {
+    console.error(error);
     return Promise.reject(new Error('unsupported permission'));
   }
+}
+
+export function isGrantedSync(permissions) {
+  return cachedGranted.get(JSON.stringify(permissions));
+}
+
+// cache last state
+for (const permissions of [ALL_URLS, BOOKMARKS, CLIPBOARD_READ, TAB_HIDE]) {
+  isGranted(permissions);
+}
+
+
+const CUSTOM_PANEL_AVAILABLE_URLS_MATCHER = new RegExp(`^((https?|data):|moz-extension://${location.host}/)`);
+
+export async function canInjectScriptToTab(tab) {
+  if (!tab ||
+      !CUSTOM_PANEL_AVAILABLE_URLS_MATCHER.test(tab.url))
+    return false;
+
+  return isGranted(ALL_URLS);
+}
+
+export function canInjectScriptToTabSync(tab) {
+  if (!tab ||
+      !CUSTOM_PANEL_AVAILABLE_URLS_MATCHER.test(tab.url))
+    return false;
+
+  return isGrantedSync(ALL_URLS);
 }
 
 
@@ -63,6 +97,9 @@ browser.runtime.onMessage.addListener((message, _sender) => {
     return;
 
   const permissions = JSON.stringify(message.permissions);
+
+  isGranted(message.permissions); // to cache latest state
+
   const requests = mRequests.get(permissions);
   if (!requests)
     return;
@@ -71,9 +108,10 @@ browser.runtime.onMessage.addListener((message, _sender) => {
 
   for (const request of requests) {
     const { onChanged, checkbox } = destroyRequest(request);
-    if (onChanged)
-      onChanged(true);
-    checkbox.checked = true;
+    const checked =onChanged ?
+      onChanged(true) :
+      undefined;
+    checkbox.checked = checked !== undefined ? !!checked : true;
   }
 });
 
@@ -114,7 +152,12 @@ export function bindToCheckbox(permissions, checkbox, options = {}) {
 
   isGranted(permissions)
     .then(granted => {
-      checkbox.checked = granted;
+      const checked = options.onInitialized ?
+        options.onInitialized(granted) :
+        checkbox.dataset.relatedConfigKey ?
+          configs[checkbox.dataset.relatedConfigKey] :
+          undefined;
+      checkbox.checked = checked !== undefined ? !!checked : granted;
     })
     .catch(_error => {
       checkbox.setAttribute('readonly', true);
@@ -139,47 +182,81 @@ export function bindToCheckbox(permissions, checkbox, options = {}) {
   mRequests.set(key, requests);
 
   checkbox.requestPermissions = async () => {
+    log('permission requested: ', permissions);
     const checkboxes = checkboxesForPermission.get(permissions);
     try {
+      log('checkboxes: ', checkboxes);
+      log('checkbox.checked: ', checkbox.checked);
       if (!checkbox.checked) {
-        await browser.permissions.remove(permissions).catch(ApiTabs.createErrorSuppressor());
-        for (const checkbox of checkboxes) {
-          checkbox.checked = false;
-        }
+        if (checkbox.dataset.relatedConfigKey)
+          configs[checkbox.dataset.relatedConfigKey] = false;
         if (options.onChanged)
           options.onChanged(false);
+        const canRevoke = Array.from(checkboxes, checkbox => checkbox.dataset.relatedConfigKey ? configs[checkbox.dataset.relatedConfigKey] : null).filter(state => state !== null).every(state => !state);
+        log('canRevoke: ', canRevoke);
+        if (!canRevoke)
+          return;
+        log('revoking the permission');
+        await browser.permissions.remove(permissions).catch(ApiTabs.createErrorSuppressor());
+        for (const otherCheckbox of checkboxes) {
+          if (otherCheckbox != checkbox &&
+              otherCheckbox.dataset.relatedConfigKey)
+            continue;
+          otherCheckbox.checked = false;
+        }
         return;
       }
 
-      for (const checkbox of checkboxes) {
-        checkbox.checked = false;
+      for (const otherCheckbox of checkboxes) {
+        if (otherCheckbox != checkbox &&
+            otherCheckbox.dataset.relatedConfigKey)
+          continue;
+        otherCheckbox.checked = false;
       }
 
       if (configs.requestingPermissionsNatively)
         return;
 
+      log('requesting the permission');
       configs.requestingPermissionsNatively = permissions;
       let granted = await browser.permissions.request(permissions).catch(ApiTabs.createErrorHandler());
       configs.requestingPermissionsNatively = null;
 
-      if (granted === undefined)
+      log('granted: ', granted);
+      if (granted === undefined) {
         granted = await isGranted(permissions);
-      else if (!granted)
+        log('granted (retry): ', granted);
+      }
+      else if (!granted) {
+        log('not granted: cacneled');
         return;
+      }
 
       if (granted) {
-        for (const checkbox of checkboxes) {
-          checkbox.checked = true;
+        if (checkbox.dataset.relatedConfigKey)
+          configs[checkbox.dataset.relatedConfigKey] = true;
+        const configValue = checkbox.dataset.relatedConfigKey ? true : null;
+        const onChangedResult = options.onChanged && options.onChanged(true);
+        const checked = configValue !== null ? configValue :
+          options.onChanged ?
+            onChangedResult :
+            undefined;
+        log('update checkboxes with checked state ', checked);
+        for (const otherCheckbox of checkboxes) {
+          if (otherCheckbox != checkbox &&
+              otherCheckbox.dataset.relatedConfigKey)
+            continue;
+          otherCheckbox.checked = checked !== undefined ? !!checked : true;
         }
-        if (options.onChanged)
-          options.onChanged(true);
         browser.runtime.sendMessage({
           type: Constants.kCOMMAND_NOTIFY_PERMISSIONS_GRANTED,
           permissions
         }).catch(_error => {});
+        log('finish');
         return;
       }
 
+      log('fallback to the failsafe method');
       configs.requestingPermissions = permissions;
       browser.browserAction.setBadgeText({ text: '!' });
       browser.browserAction.setPopup({ popup: '' });

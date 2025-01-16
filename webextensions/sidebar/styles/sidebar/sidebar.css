@@ -14,7 +14,7 @@
  * The Original Code is the SidebarStyleTab.
  * 
  * The Initial Developer of the Original Code is YUKI "Piro" Hiroshi.
- * Portions created by the Initial Developer are Copyright (C) 2010-2024
+ * Portions created by the Initial Developer are Copyright (C) 2010-2025
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s): Philipp von Weitershausen <philipp@weitershausen.de>
@@ -78,18 +78,22 @@ body,
 }
 
 /* Use the splitter to display the border of tab-items */
-:root.left {
-  border-right: 1px solid var(--shadow-color);
+:root.left:not(.rtl),
+:root.right.rtl {
+  border-inline-end: 1px solid var(--shadow-color);
 }
-:root:not(.active).left {
-  border-right-color: var(--shadow-color-inactive);
+:root:not(.active).left:not(.rtl),
+:root:not(.active).right.rtl {
+  border-inline-end-color: var(--shadow-color-inactive);
 }
 
-:root.right {
-  border-left: 1px solid var(--shadow-color);
+:root.right:not(.rtl),
+:root.left.rtl {
+  border-inline-start: 1px solid var(--shadow-color);
 }
-:root:not(.active).right {
-  border-left-color: var(--shadow-color-inactive);
+:root:not(.active).right:not(.rtl),
+:root:not(.active).left.rtl {
+  border-inline-start-color: var(--shadow-color-inactive);
 }
 
 
@@ -122,9 +126,10 @@ body,
 
 /* Style tabs themselves.  Get rid of most of the initial XUL styling */
 tab-item-substance {
-  border-top: 1px solid transparent;
+  border-block-start: 1px solid transparent;
   min-height: 2.2em;     /* height including border! */
-  padding: var(--tab-vertical-padding) 3px var(--tab-vertical-padding) 2px;
+  padding-block: var(--tab-vertical-padding) var(--tab-vertical-padding);
+  padding-inline: 2px 3px;
   z-index: 0;
 }
 
@@ -133,7 +138,7 @@ tab-item.active {
 }
 tab-item.active tab-item-substance {
   background: var(--tab-surface);
-  border-top: 1px solid var(--tab-surface-active-color);
+  border-block-start: 1px solid var(--tab-surface-active-color);
 }
 
 tab-item.bundled-active {
@@ -141,7 +146,7 @@ tab-item.bundled-active {
 }
 tab-item.bundled-active tab-item-substance {
   background: var(--tab-surface);
-  border-top: 1px solid var(--tab-surface-active-color-pale);
+  border-block-start: 1px solid var(--tab-surface-active-color-pale);
 }
 
 :root:not(.active) tab-item.active {
@@ -149,7 +154,7 @@ tab-item.bundled-active tab-item-substance {
 }
 :root:not(.active) tab-item.active tab-item-substance {
   background: var(--tab-surface);
-  border-top: 1px solid var(--tab-surface-active-color-inactive);
+  border-block-start: 1px solid var(--tab-surface-active-color-inactive);
 }
 
 .sticky-tabs-container tab-item:not(.active):not(.bundled-active) .background.base {
@@ -169,7 +174,7 @@ tab-closebox {
   width: 1.5em;
   min-width: 1.5em;
   height: 1.5em;
-  margin-left: 3px;
+  margin-inline-start: 3px;
   background: url("closetab.png") center center no-repeat;
   opacity: 0.27;  /* turn black into #b9b9b9 */
   border: 0 none;
@@ -199,9 +204,10 @@ tab-item tab-label .label-content {
   color: var(--tab-text);
   text-align: start;
   text-shadow: none;
-  margin-bottom: 1px;
-  margin-left: 0.25em;
-  padding: 0 0 0.25em 0;
+  margin-block-end: 1px;
+  margin-inline-start: 0.25em;
+  padding-block: 0 0.25em;
+  padding-inline: 0;
 }
 
 tab-item.active tab-label .label-content {
@@ -229,7 +235,8 @@ tab-item.active tab-twisty {
   font-size: 85%;
   font-weight: bold;
   min-width: 1em;
-  padding: 0.25em;
+  padding-block: 0.25em;
+  padding-inline: 0.25em;
   text-shadow: none;
   text-align: center;
 }
@@ -256,7 +263,8 @@ tab-item[data-drop-position="self"] tab-item-substance {
   background: var(--dropmarker-bg-color);
   border: 2px solid var(--dropmarker-border-color); /* not OSX's colour but Firefox's */
   border-radius: 0.3em;
-  padding: 0 1px 0 8px;
+  padding-block: 0;
+  padding-inline: 8px 1px;
   outline: none !important;
 }
 
@@ -318,11 +326,11 @@ tab-item:not(.active)[multipletab-ready-to-close="true"] tab-item-substance:not(
   bottom: 0;
   content: " ";
   display: block;
-  left: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   opacity: var(--multiselected-color-opacity);
   pointer-events: none;
   position: absolute;
-  right: 0;
   top: 0;
   z-index: 10;
 }

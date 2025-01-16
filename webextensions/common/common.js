@@ -62,6 +62,7 @@ const localKeys = DEVICE_SPECIFIC_CONFIG_KEYS.concat(mapAndFilter(`
   optionsExpandedGroups
   optionsExpandedSections
   outOfScreenTabsRenderingPages
+  rtl,
   sidebarPosition
   sidebarVirtuallyClosedWindows
   sidebarVirtuallyOpenedWindows
@@ -125,6 +126,30 @@ export const obsoleteConfigs = new Set(mapAndFilter(`
   return key && key.indexOf('//') != 0 && key;
 }));
 
+
+const RTL_LANGUAGES = new Set([
+  'ar',
+  'he',
+  'fa',
+  'ur',
+  'ps',
+  'sd',
+  'ckb',
+  'prs',
+  'rhg',
+]);
+
+export function isRTL() {
+  const lang = (
+    navigator.language ||
+    navigator.userLanguage ||
+    //(new Intl.DateTimeFormat()).resolvedOptions().locale ||
+    ''
+  ).split('-')[0];
+  return RTL_LANGUAGES.has(lang);
+}
+
+
 export const configs = new Configs({
   optionsExpandedSections: [
     'section-appearance',
@@ -142,6 +167,7 @@ export const configs = new Configs({
   sidebarPosition: Constants.kTABBAR_POSITION_AUTO,
   sidebarPositionRighsideNotificationShown: false,
   sidebarPositionOptionNotificationTimeout: 20 * 1000,
+  rtl: isRTL(),
 
   style: /^Mac/i.test(navigator.platform) ? 'sidebar' : 'proton',
   colorScheme: /^Linux/i.test(navigator.platform) ? 'system-color' : 'photon' ,
@@ -171,6 +197,10 @@ export const configs = new Configs({
   showNewTabActionSelector: true,
   longPressOnNewTabButton: Constants.kCONTEXTUAL_IDENTITY_SELECTOR,
   zoomable: false,
+  tabPreviewTooltip: false,
+  tabPreviewTooltipInSidebar: true,
+  tabPreviewTooltipDelayMsec: 500, // same as "ui.tooltip.delay_ms"
+  tabPreviewTooltipOffsetTop: 0, // See also https://github.com/piroor/treestyletab/issues/3698
   showOverflowTitleByTooltip: true,
   showCollapsedDescendantsByTooltip: true,
 
@@ -260,6 +290,8 @@ export const configs = new Configs({
   autoExpandOnLongHoverDelay: 500,
   autoExpandOnLongHoverRestoreIniitalState: true,
 
+  autoCreateFolderForBookmarksFromTree: true,
+
   accelKey: '',
 
   skipCollapsedTabsForTabSwitchingShortcuts: false,
@@ -298,11 +330,13 @@ export const configs = new Configs({
   groupTabTemporaryStateForChildrenOfPinned: Constants.kGROUP_TAB_TEMPORARY_STATE_PASSIVE,
   groupTabTemporaryStateForChildrenOfFirefoxView: Constants.kGROUP_TAB_TEMPORARY_STATE_PASSIVE,
   groupTabTemporaryStateForOrphanedTabs: Constants.kGROUP_TAB_TEMPORARY_STATE_AGGRESSIVE,
+  groupTabTemporaryStateForAPI: Constants.kGROUP_TAB_TEMPORARY_STATE_NOTHING,
   renderTreeInGroupTabs: true,
   warnOnAutoGroupNewTabs: true,
   warnOnAutoGroupNewTabsWithListing: true,
   warnOnAutoGroupNewTabsWithListingMaxRows: 5,
   showAutoGroupOptionHint: true,
+  showAutoGroupOptionHintWithOpener: true,
 
 
   // behavior around newly opened tabs
@@ -349,12 +383,15 @@ export const configs = new Configs({
   moveParentBehavior_outsideSidebar_expanded:   Constants.kPARENT_TAB_OPERATION_BEHAVIOR_PROMOTE_FIRST_CHILD,
   moveParentBehavior_noSidebar_collapsed:       Constants.kPARENT_TAB_OPERATION_BEHAVIOR_PROMOTE_FIRST_CHILD,
   moveParentBehavior_noSidebar_expanded:        Constants.kPARENT_TAB_OPERATION_BEHAVIOR_PROMOTE_FIRST_CHILD,
+  closeParentBehavior_replaceWithGroup_thresholdToPrevent: 1, // negative value means "never prevent"
   moveTabsToBottomWhenDetachedFromClosedParent: false,
   promoteAllChildrenWhenClosedParentIsLastChild: true,
   successorTabControlLevel: Constants.kSUCCESSOR_TAB_CONTROL_IN_TREE,
   simulateSelectOwnerOnClose: true,
   simulateLockTabSizing: true,
+  deferScrollingToOutOfViewportSuccessor: true,
   simulateTabsLoadInBackgroundInverted: false,
+  tabsLoadInBackgroundDiscarded: false,
   supportTabsMultiselect: typeof browser.menus.overrideContext == 'function',
   warnOnCloseTabs: true,
   warnOnCloseTabsNotificationTimeout: 20 * 1000,
@@ -392,7 +429,6 @@ export const configs = new Configs({
   exposeUnblockAutoplayFeatures: false,
   bookmarkTreeFolderName: browser.i18n.getMessage('bookmarkFolder_label_default', ['%TITLE%', '%YEAR%', '%MONTH%', '%DATE%']),
   defaultBookmarkParentId: 'toolbar_____', // 'unfiled_____' for Firefox 83 and olders,
-  incrementalSearchTimeout: 1000, // same to the default value of Firefox's "ui.menu.incremental_search.timeout"
   defaultSearchEngine: 'https://www.google.com/search?q=%s',
   acceleratedTabOperations: true,
   acceleratedTabCreation: false,
@@ -576,6 +612,7 @@ export const configs = new Configs({
     'sidebar/size': false,
     'sidebar/subpanel': false,
     'sidebar/tab-context-menu': false,
+    'sidebar/tab-preview-tooltip': false,
     'sidebar/tst-api-frontend': false,
   },
   loggingConnectionMessages: false,
@@ -802,6 +839,20 @@ export function nextFrame() {
   });
 }
 
+export async function asyncRunWithTimeout({ task, timeout, onTimedOut }) {
+  let succeeded = false;
+  return Promise.race([
+    task().then(result => {
+      succeeded = true;
+      return result;
+    }),
+    wait(timeout).then(() => {
+      if (!succeeded)
+        return onTimedOut();
+    }),
+  ]);
+}
+
 
 const mNotificationTasks = new Map();
 
@@ -1022,7 +1073,7 @@ export function watchOverflowStateChange({ target, moreResizeTargets, onOverflow
   };
 
   let resizeObserver/*, mutationObserver*/;
-  if (useLegacyOverflowEvents) {
+  if (!useLegacyOverflowEvents) {
     const resizeTargets = new Set([target, ...(moreResizeTargets || [])]);
     resizeObserver = new ResizeObserver(entries => {
       for (const entry of entries) {

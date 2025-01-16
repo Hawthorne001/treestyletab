@@ -405,7 +405,7 @@
         "hash": "09e664f9f430af59dcb48c23949ebde0"
     },
     "bookmarkDialog_title": {
-        "message": "제목:",
+        "message": "제목",
         "hash": "bcc9f177b0a20c395aac47bd88204419"
     },
     "bookmarkDialog_title_accessKey": {
@@ -413,16 +413,20 @@
         "hash": "b45c6754f808b40779ef29b3c6160e8b"
     },
     "bookmarkDialog_url": {
-        "message": "주소:",
+        "message": "URL",
         "hash": "d3304a6af52921ec7fbf6469ba358327"
     },
     "bookmarkDialog_url_accessKey": {
-        "message": "l",
+        "message": "u",
         "hash": "f539fdab7bdf9f622c08ef48c391feb9"
     },
     "bookmarkDialog_parentId": {
-        "message": "폴더:",
-        "hash": "5f43a7c36ca597f9151fdc6df9e1b8a5"
+        "message": "주소",
+        "hash": "d3304a6af52921ec7fbf6469ba358327"
+    },
+    "bookmarkDialog_parentId_accessKey": {
+        "message": "l",
+        "hash": "f539fdab7bdf9f622c08ef48c391feb9"
     },
     "bookmarkDialog_saveContainerRedirectKey": {
         "message": "컨테이너의 정보를 Container Bookmarks 형식으로 저장",
@@ -600,14 +604,16 @@
         "message": "⚠아래 기능에는 추기적인 권한이 필요합니다. 이 기능을 원하시는 경우에만 권한을 부여해주세요.",
         "hash": "579d612ed89439363c1b15dc629175bc"
     },
-    "message_startup_requestPermissions_bookmarks": {
-        "message": "콘텍스트 메뉴인 \"이 트리를 북마크\"나 다른 환경에서 내보내진 북마크 내부 URL을 자동으로 옮기고, 북마크가 열려있는 탭 검출(북마크 편집 허가 필요)",
-        "hash": "0cd09f626c61edcb5e506f2a5d27d0ac"
-    },
-    "message_startup_requestPermissions_allUrls": {
-        "message": "키보드 단축키에서 탭 전환 중, 접혀있는 하위 항목을 넘기고, 트리도 펼치지 않음 / Don't restore blank window which was for a closed dialog, by actions to restore closed tabs.",
-        "hash": "6277b31e6f8bad41fbd31bbb26e4bbe7"
-    },
+    "message_startup_requestPermissions_bookmarks": { "message": "북마크 편집 허가" },
+    "message_startup_requestPermissions_bookmarks_contextMenuItems": { "message": "콘텍스트 메뉴인 \"이 트리를 북마크\"나 다른 환경에서 내보내진 북마크 내부 URL을 자동으로 옮기고, 북마크가 열려있는 탭 검출" },
+    "_message_startup_requestPermissions_bookmarks_migrationForImportedBookmarks": { "message": "" },
+    "_message_startup_requestPermissions_bookmarks_detectTabsFromBookmarks": { "message": "" },
+    "_message_startup_requestPermissions_allUrls":   { "message": "" },
+    "_message_startup_requestPermissions_allUrls_tabPreviewPanel":   { "message": "" },
+    "message_startup_requestPermissions_allUrls_skipCollapsedTabsWithCtrlTab":   { "message": "키보드 단축키에서 탭 전환 중, 접혀있는 하위 항목을 넘기고, 트리도 펼치지 않음" },
+    "_message_startup_requestPermissions_allUrls_preventBlankDialogRestoration":   { "message": "" },
+    "_message_startup_requestPermissions_clipboardRead": { "message": "" },
+    "_message_startup_requestPermissions_clipboardRead_newTabButtonMiddleClick": { "message": "" },
     "message_startup_userChromeCss_notify": {
         "message": "탭 바와 사이드 바의 헤더를 숨기고 싶은 경우",
         "hash": "991184685e856081ec9ee06431fda2d2"
@@ -1428,6 +1434,10 @@
     "config_insertDroppedTabsAt_end": {
         "message": "트리의 마지막",
         "hash": "fb8149b1acff1a3722270b8ba8d4f816"
+    },
+    "config_tabsLoadInBackgroundDiscarded_label": {
+        "message": "읽기를 보류하고 탭을 열기.",
+        "hash": "509c995c21ab51263ec0f69c24e360b5"
     },
     "config_groupTab_caption": {
         "message": "탭을 자동으로 묶기",
@@ -2328,6 +2338,7 @@
         "message": "공유(&H)",
         "hash": "df8b33491eb3e9891938f9a912053e8b"
     },
+    "tabContextMenu_closeDuplicatedTabs_label": { "message": "중복 탭 닫기(&U)" },
     "tabContextMenu_closeMultipleTabs_label": {
         "message": "여러 탭 닫기(&M)",
         "hash": "b421f1bac322ed85eaef8ff036b5a3d2"

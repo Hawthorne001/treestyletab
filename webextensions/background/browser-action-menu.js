@@ -126,6 +126,15 @@ const mItems = [
         expert: true
       },
       {
+        title: browser.i18n.getMessage('config_tabPreviewTooltip_label'),
+        key:   'tabPreviewTooltip',
+        type:  'checkbox',
+        permissions: Permissions.ALL_URLS,
+        get canRevoke() {
+          return !configs.tabPreviewTooltip && !configs.skipCollapsedTabsForTabSwitchingShortcuts;
+        },
+      },
+      {
         title: browser.i18n.getMessage('config_showCollapsedDescendantsByTooltip_label'),
         key:   'showCollapsedDescendantsByTooltip',
         type:  'checkbox',
@@ -1304,8 +1313,32 @@ const mItems = [
             type:  'radio'
           }
         ]
-      }
-    ]
+      },
+      {
+        title: indent() + browser.i18n.getMessage('config_groupTabTemporaryStateForAPI_label'),
+        expert: true,
+        children: [
+          {
+            title: browser.i18n.getMessage('config_groupTabTemporaryState_option_default'),
+            key:   'groupTabTemporaryStateForAPI',
+            value: Constants.kGROUP_TAB_TEMPORARY_STATE_NOTHING,
+            type:  'radio'
+          },
+          {
+            title: `${browser.i18n.getMessage('config_groupTabTemporaryState_option_checked_before')}${browser.i18n.getMessage('groupTab_temporary_label')}${browser.i18n.getMessage('config_groupTabTemporaryState_option_checked_after')}`,
+            key:   'groupTabTemporaryStateForAPI',
+            value: Constants.kGROUP_TAB_TEMPORARY_STATE_PASSIVE,
+            type:  'radio'
+          },
+          {
+            title: `${browser.i18n.getMessage('config_groupTabTemporaryState_option_checked_before')}${browser.i18n.getMessage('groupTab_temporaryAggressive_label')}${browser.i18n.getMessage('config_groupTabTemporaryState_option_checked_after')}`,
+            key:   'groupTabTemporaryStateForAPI',
+            value: Constants.kGROUP_TAB_TEMPORARY_STATE_AGGRESSIVE,
+            type:  'radio'
+          },
+        ],
+      },
+    ],
   },
   {
     title:    browser.i18n.getMessage('config_treeBehavior_caption'),
@@ -1348,8 +1381,12 @@ const mItems = [
       },
       {
         title:       browser.i18n.getMessage('config_requestPermissions_allUrls_ctrlTabTracking'),
+        key:         'skipCollapsedTabsForTabSwitchingShortcuts',
         type:        'checkbox',
-        permissions: Permissions.ALL_URLS
+        permissions: Permissions.ALL_URLS,
+        get canRevoke() {
+          return !configs.tabPreviewTooltip && !configs.skipCollapsedTabsForTabSwitchingShortcuts;
+        },
       },
       {
         dynamicTitle: true,
@@ -2062,6 +2099,12 @@ const mItems = [
         key:   'simulateTabsLoadInBackgroundInverted',
         expert:  true,
       },
+      {
+        title: indent(2) + browser.i18n.getMessage('config_tabsLoadInBackgroundDiscarded_label'),
+        type:  'checkbox',
+        key:   'tabsLoadInBackgroundDiscarded',
+        expert:  true,
+      },
       //{ type: 'separator', expert: true },
       {
         title:   indent() + browser.i18n.getMessage('config_insertDroppedTabsAt_caption'),
@@ -2304,10 +2347,11 @@ if (browser.action/* Manifest V2 */ || browser.browserAction/* Manifest V3 */) {
         if (item.permissions) {
           Permissions.isGranted(item.permissions)
             .then(async granted => {
-              if (item.checked == granted)
+              const checked = granted && (!('key' in item) || checkedFromConfigs);
+              if (checked == granted)
                 return;
-              item.checked = granted && (!('key' in item) || checkedFromConfigs);
-              await browser.menus.update(item.id, { checked: granted }).catch(ApiTabs.createErrorSuppressor());
+              item.checked = checked;
+              await browser.menus.update(item.id, { checked }).catch(ApiTabs.createErrorSuppressor());
               await browser.menus.refresh().catch(ApiTabs.createErrorSuppressor());
             });
           delete params.checked;
@@ -2334,11 +2378,16 @@ if (browser.action/* Manifest V2 */ || browser.browserAction/* Manifest V3 */) {
       browser.tabs.create({ url: item.url });
       return;
     }
+    if (item.key) {
+      if (info.checked)
+        configs[item.key] = 'value' in item ? item.value : true;
+      else if (!('value' in item))
+        configs[item.key] = false;
+    }
     if (item.permissions) {
-      if (item.checked) {
-        browser.permissions.remove(item.permissions).catch(ApiTabs.createErrorSuppressor());
-        if (item.key && !('value' in item))
-          configs[item.key] = false;
+      if (!info.checked) {
+        if (item.canRevoke !== false)
+          browser.permissions.remove(item.permissions).catch(ApiTabs.createErrorSuppressor());
       }
       else {
         browser.permissions.request(item.permissions)
@@ -2350,21 +2399,10 @@ if (browser.action/* Manifest V2 */ || browser.browserAction/* Manifest V3 */) {
                 type:        Constants.kCOMMAND_NOTIFY_PERMISSIONS_GRANTED,
                 permissions: item.permissions
               }).catch(_error => {});
-              if (item.key)
-                configs[item.key] = 'value' in item ? item.value : granted;
-            }
-            else {
-              if (item.key && !('value' in item))
-                configs[item.key] = false;
             }
           })
           .catch(ApiTabs.createErrorHandler());
       }
-      return;
-    }
-    if (item.key) {
-      configs[item.key] = 'value' in item ? item.value : !configs[item.key];
-      return;
     }
   });
 

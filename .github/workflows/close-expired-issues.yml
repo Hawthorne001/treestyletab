@@ -94,7 +94,7 @@ jobs:
       uses: piroor/auto-mark-as-stale-issues@main
       env:
         LABEL: "stale"
-        EXCEPTION_LABELS: "needs-triage"
+        EXCEPTION_LABELS: "in-progress, needs-triage"
         CANDIDATE_LABELS: "help wanted"
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         EXPIRE_DAYS: 30
@@ -104,7 +104,7 @@ jobs:
       uses: piroor/auto-mark-as-stale-issues@main
       env:
         LABEL: "stale"
-        EXCEPTION_LABELS: "needs-triage"
+        EXCEPTION_LABELS: "in-progress, needs-triage"
         CANDIDATE_LABELS: "Firefox-issue"
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         EXPIRE_DAYS: 365

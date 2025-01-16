@@ -172,11 +172,12 @@
 
   "bookmarkDialog_dialogTitle_single":   { "message": "Neues Lesezeichen" },
   "bookmarkDialog_dialogTitle_multiple": { "message": "Neue Lesezeichen" },
-  "bookmarkDialog_title":    { "message": "Name:" },
+  "bookmarkDialog_title":    { "message": "Name" },
   "bookmarkDialog_title_accessKey": { "message": "n" },
-  "bookmarkDialog_url":      { "message": "Ort:" },
-  "bookmarkDialog_url_accessKey": { "message": "l" },
-  "bookmarkDialog_parentId": { "message": "Ordner:" },
+  "bookmarkDialog_url":      { "message": "URL" },
+  "bookmarkDialog_url_accessKey": { "message": "u" },
+  "bookmarkDialog_parentId":      { "message": "Ort" },
+  "bookmarkDialog_parentId_accessKey": { "message": "l" },
   "bookmarkDialog_saveContainerRedirectKey": { "message": "Umgebungs-Informationen für Container Bookmarks speichern" },
   "bookmarkDialog_accept":   { "message": "Speichern" },
   "bookmarkDialog_cancel":   { "message": "Abbrechen" },
@@ -256,9 +257,17 @@
   "message_startup_history_after":      { "message": " für weitere Informationen." },
 
   "message_startup_requestPermissions_description": { "message": "⚠Für einige Funktionen sind zusätzliche Berechtigungen erforderlich. Falls du sie aktivieren möchtest, erteile bitte manuell die Berechtigungen." },
-  "message_startup_requestPermissions_bookmarks": { "message": "\"Lesezeichen für diesen Zweig erstellen\" im Kontextmenü von Tabs (benötigt Zugriff auf Lesezeichen.)" },
-  "message_startup_requestPermissions_allUrls":   { "message": "Beim Auswählen von Tabs per Tastatur zugeklappte Zweige nicht ausklappen und zugeklappte untergeordnete Tabs überspringen / Don't restore blank window which was for a closed dialog, by actions to restore closed tabs." },
-  "message_startup_requestPermissions_clipboardRead": { "message": "Allow to open a new tab with the URL in the clipboard, by middle click on the \"New Tab\" button (*you may need to activate \"dom.events.asyncClipboard.clipboardItem\")" },
+  "message_startup_requestPermissions_bookmarks": { "message": "Zugriff auf Lesezeichen" },
+  "message_startup_requestPermissions_bookmarks_contextMenuItems": { "message": "\"Lesezeichen für diesen Zweig erstellen\" im Kontextmenü von Tabs." },
+  "_message_startup_requestPermissions_bookmarks_migrationForImportedBookmarks": { "message": "" },
+  "_message_startup_requestPermissions_bookmarks_detectTabsFromBookmarks": { "message": "" },
+  "_message_startup_requestPermissions_allUrls":   { "message": "" },
+  "_message_startup_requestPermissions_allUrls_tabPreviewPanel":   { "message": "" },
+  "message_startup_requestPermissions_allUrls_skipCollapsedTabsWithCtrlTab":   { "message": "Beim Auswählen von Tabs per Tastatur zugeklappte Zweige nicht ausklappen und zugeklappte untergeordnete Tabs überspringen." },
+  "message_startup_requestPermissions_allUrls_preventBlankDialogRestoration":   { "message": "Don't restore blank window which was for a closed dialog, by actions to restore closed tabs." },
+  "_message_startup_requestPermissions_clipboardRead": { "message": "" },
+  "_message_startup_requestPermissions_clipboardRead_newTabButtonMiddleClick": { "message": "" },
+
 
   "message_startup_userChromeCss_notify": { "message": "Wie kann man die Tableiste und die Überschrift der Seitenleiste ausblenden?" },
   "message_startup_userChromeCss_description_1": { "message": "Aufgrund von Beschränkungen für WebExtensions, hat Tree Style Tab keine Kontrolle über die Tableiste und die Seitenleiste-Überschriften von Firefox. Um sie zu verändern, siehe " },
@@ -718,6 +727,7 @@
   "config_dropLinksOnTabBehavior_load":    { "message": "In diesem Tab öffnen" },
   "config_dropLinksOnTabBehavior_newtab":  { "message": "In einem neuen untergeordneten Tab öffnen" },
   "config_simulateTabsLoadInBackgroundInverted_label": { "message": "When you open a dropped link in a new tab, switch to it immediately (*simulation of the browser's built-in option \"When you open a link, image or media in a new tab, switch to it immediately\" (\"browser.tabs.loadInBackground\"))" },
+  "config_tabsLoadInBackgroundDiscarded_label": { "message": "Tabs ausstehend lassen bis sie aktiv werden" },
 
   "config_insertDroppedTabsAt_caption": { "message": "Einfügeposition von Tabs, die auf übergeordnete Tabs abgelegt werden" },
   "config_insertDroppedTabsAt_inherit": { "message": "Wie neue untergeordnete Tab behandeln" },
@@ -886,6 +896,7 @@
   "tabContextMenu_shareTabURL_more_label":   { "message": "Mehr…" },
 
 
+  "tabContextMenu_closeDuplicatedTabs_label": { "message": "&Doppelte Tabs schließen" },
   "tabContextMenu_closeMultipleTabs_label":  { "message": "&Mehrere Tabs schließen" },
   "tabContextMenu_closeTabsToTop_label":  { "message": "Tabs nach &oben schließen" },
   "tabContextMenu_closeTabsToBottom_label":  { "message": "Tabs nach un&ten schließen" },

@@ -418,19 +418,22 @@
     "message": "新建书签项"
   },
   "bookmarkDialog_title": {
-    "message": "名称："
+    "message": "名称"
   },
   "bookmarkDialog_title_accessKey": {
     "message": "n"
   },
   "bookmarkDialog_url": {
-    "message": "位置："
+    "message": "URL"
   },
   "bookmarkDialog_url_accessKey": {
-    "message": "l"
+    "message": "u"
   },
   "bookmarkDialog_parentId": {
-    "message": "文件夹："
+    "message": "位置"
+  },
+  "bookmarkDialog_parentId_accessKey": {
+    "message": "l"
   },
   "bookmarkDialog_saveContainerRedirectKey": {
     "message": "为身份书签项保存身份信息"
@@ -624,18 +627,16 @@
   "message_startup_history_after": {
     "message": "了解更多细节。"
   },
-  "message_startup_requestPermissions_description": {
-    "message": "⚠有些功能需要额外的权限。如果要开启它们，请手动授予权限。"
-  },
-  "message_startup_requestPermissions_bookmarks": {
-    "message": "标签页上下文菜单中的 “将此标签树添加到书签” ，对从其它环境导入、已被添加到书签的那些内部网址的自动迁移，以及从书签项打开的标签页的检测（需要有访问书签项的权限）"
-  },
-  "message_startup_requestPermissions_allUrls": {
-    "message": "当通过键盘快捷键切换标签页焦点时，不展开已折叠标签树并跳过已折叠后代项 / 在恢复已关闭标签页时，不要恢复那些用于已关闭对话框的空白窗口。"
-  },
-  "message_startup_requestPermissions_clipboardRead": {
-    "message": "允许在使用中键点击 \"新建标签页 \" 按钮时用新标签页打开剪贴板中的地址（ * 您可能需要开启 \"dom.events.asyncClipboard.clipboardItem\"）"
-  },
+  "message_startup_requestPermissions_bookmarks": { "message": "访问书签项的权限" },
+  "message_startup_requestPermissions_bookmarks_contextMenuItems": { "message": "标签页上下文菜单中的 “将此标签树添加到书签” ，对从其它环境导入、已被添加到书签的那些内部网址的自动迁移，以及从书签项打开的标签页的检测" },
+  "_message_startup_requestPermissions_bookmarks_migrationForImportedBookmarks": { "message": "" },
+  "_message_startup_requestPermissions_bookmarks_detectTabsFromBookmarks": { "message": "" },
+  "_message_startup_requestPermissions_allUrls":   { "message": "" },
+  "_message_startup_requestPermissions_allUrls_tabPreviewPanel":   { "message": "" },
+  "message_startup_requestPermissions_allUrls_skipCollapsedTabsWithCtrlTab":   { "message": "当通过键盘快捷键切换标签页焦点时，不展开已折叠标签树并跳过已折叠后代项" },
+  "message_startup_requestPermissions_allUrls_preventBlankDialogRestoration":   { "message": "在恢复已关闭标签页时，不要恢复那些用于已关闭对话框的空白窗口" },
+  "_message_startup_requestPermissions_clipboardRead": { "message": "" },
+  "message_startup_requestPermissions_clipboardRead_newTabButtonMiddleClick": { "message": "允许在使用中键点击 \"新建标签页 \" 按钮时用新标签页打开剪贴板中的地址（ * 您可能需要开启 \"dom.events.asyncClipboard.clipboardItem\"）" },
   "message_startup_userChromeCss_notify": {
     "message": "如何隐藏顶部的标签栏和侧栏的标题？"
   },
@@ -1802,6 +1803,9 @@
   "config_simulateTabsLoadInBackgroundInverted_label": {
     "message": "当您用新标签页打开拖放的链接时，立即切换过去 (* 模拟 Firefox 的内置选项 \"新建标签页打开链接、图像、媒体时，立即切换过去\" (\"browser.tabs.loadInBackground\"))"
   },
+  "config_tabsLoadInBackgroundDiscarded_label": {
+    "message": "让这些标签页在变为活动状态前始终保持休眠"
+  },
   "config_insertDroppedTabsAt_caption": {
     "message": "被拖放至父项上的子项的插入位置"
   },
@@ -2195,6 +2199,7 @@
   "tabContextMenu_shareTabURL_more_label": {
     "message": "更多…"
   },
+  "tabContextMenu_closeDuplicatedTabs_label": { "message": "关闭重复标签页(&U)" },
   "tabContextMenu_closeMultipleTabs_label": {
     "message": "关闭多个标签页(&M)"
   },

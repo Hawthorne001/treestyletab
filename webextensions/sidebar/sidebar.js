@@ -16,6 +16,7 @@ import {
   shouldApplyAnimation,
   loadUserStyleRules,
   isMacOS,
+  isRTL,
   notify,
 } from '/common/common.js';
 import * as ApiTabs from '/common/api-tabs.js';
@@ -91,6 +92,7 @@ const mContextualIdentitiesStyle  = document.querySelector('#contextual-identity
 // allow customiation for platform specific styles with selectors like `:root[data-user-agent*="Windows NT 10"]`
 document.documentElement.dataset.userAgent = navigator.userAgent;
 document.documentElement.classList.toggle('platform-mac', isMacOS());
+document.documentElement.classList.toggle('rtl', isRTL());
 
 {
   const url = new URL(location.href);
@@ -582,6 +584,9 @@ async function rebuildAll(importedTabs) {
   }
   MetricsData.add('rebuildAll: end (from scratch)');
 
+  document.documentElement.classList.toggle(Constants.kTABBAR_STATE_MULTIPLE_HIGHLIGHTED, Tab.getHighlightedTabs(mTargetWindow).length > 1);
+  SidebarTabs.reserveToUpdateLoadingState();
+
   importedTabs = null; // wipe it out from the RAM.
   return false;
 }
@@ -794,12 +799,22 @@ function updateTabbarLayout({ reason, reasons, timeout, justNow } = {}) {
     Scroll.reserveToRenderVirtualScrollViewport({ trigger: 'resized' });
 
   if (SidebarTabs.normalContainer.classList.contains(Constants.kTABBAR_STATE_OVERFLOW)) {
+    const updatedAt = updateTabbarLayout.lastScrollbarAutohideUpdatedAt = Date.now();
     window.requestAnimationFrame(() => {
+      if (updatedAt != updateTabbarLayout.lastScrollbarAutohideUpdatedAt ||
+          !SidebarTabs.normalContainer.classList.contains(Constants.kTABBAR_STATE_OVERFLOW))
+        return;
+
       // scrollbar is shown only when hover on Windows 11, Linux, and macOS.
       const virtualScrollContainer = document.querySelector('.virtual-scroll-container');
       const scrollbarOffset = mTabBar.offsetWidth - virtualScrollContainer.offsetWidth;
-      mTabBar.classList.toggle(Constants.kTABBAR_STATE_SCROLLBAR_AUTOHIDE, scrollbarOffset == 0);
 
+      const lastState = mTabBar.classList.contains(Constants.kTABBAR_STATE_SCROLLBAR_AUTOHIDE);
+      const newState = scrollbarOffset == 0;
+      if (lastState == newState)
+        return;
+
+      mTabBar.classList.toggle(Constants.kTABBAR_STATE_SCROLLBAR_AUTOHIDE, newState);
       onLayoutUpdated.dispatch()
     });
   }
@@ -810,6 +825,7 @@ function updateTabbarLayout({ reason, reasons, timeout, justNow } = {}) {
     PinnedTabs.reserveToReposition({ reasons, timeout, justNow });
 }
 updateTabbarLayout.lastUpdateReasons = 0;
+updateTabbarLayout.lastScrollbarAutohideUpdatedAt = 0;
 
 
 Scroll.onNormalTabsOverflow.addListener(() => {
@@ -1004,6 +1020,7 @@ async function isSidebarRightSide() {
   const mayBeRight = window.mozInnerScreenX - window.screenX > (window.outerWidth - window.innerWidth) / 2;
   if (configs.sidebarPosition == Constants.kTABBAR_POSITION_AUTO &&
       mayBeRight &&
+      !isRTL() &&
       !configs.sidebarPositionRighsideNotificationShown) {
     if (mTargetWindow != (await browser.windows.getLastFocused({})).id)
       return;
@@ -1039,7 +1056,7 @@ async function isSidebarRightSide() {
     }
   }
   return configs.sidebarPosition == Constants.kTABBAR_POSITION_AUTO ?
-    mayBeRight :
+    (mayBeRight || isRTL()) :
     configs.sidebarPosition == Constants.kTABBAR_POSITION_RIGHT;
 }
 
@@ -1074,6 +1091,11 @@ function onMessage(message, _sender, _respond) {
           UserOperationBlocker.unblockIn(mTargetWindow, message.userOperationBlockerParams || {});
         }
       });
+
+    case Constants.kCOMMAND_GET_SIDEBAR_POSITION:
+      return Promise.resolve(document.documentElement.classList.contains('right') ?
+        Constants.kTABBAR_POSITION_RIGHT :
+        Constants.kTABBAR_POSITION_LEFT);
 
     // for automated tests
     case Constants.kCOMMAND_GET_BOUNDING_CLIENT_RECT: {

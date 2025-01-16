@@ -156,11 +156,12 @@
   
     "bookmarkDialog_dialogTitle_single":   { "message": "新書籤" },
     "bookmarkDialog_dialogTitle_multiple": { "message": "新書籤" },
-    "bookmarkDialog_title":    { "message": "名字：" },
+    "bookmarkDialog_title":    { "message": "名字" },
     "bookmarkDialog_title_accessKey": { "message": "n" },
-    "bookmarkDialog_url":      { "message": "網址：" },
-    "bookmarkDialog_url_accessKey": { "message": "l" },
-    "bookmarkDialog_parentId": { "message": "資料夾：" },
+    "bookmarkDialog_url":      { "message": "URL" },
+    "bookmarkDialog_url_accessKey": { "message": "u" },
+    "bookmarkDialog_parentId":      { "message": "網址" },
+    "bookmarkDialog_parentId_accessKey": { "message": "l" },
     "bookmarkDialog_saveContainerRedirectKey": { "message": "Save container information for Container Bookmarks" },
     "bookmarkDialog_accept":   { "message": "儲存" },
     "bookmarkDialog_cancel":   { "message": "取消" },
@@ -240,8 +241,16 @@
     "message_startup_history_after":      { "message": " 以了解更多資訊。" },
   
     "message_startup_requestPermissions_description": { "message": "⚠下列功能需要額外權限，給予額外的權限以使用。" },
-    "message_startup_requestPermissions_bookmarks": { "message": "右鍵選單中「此樹加入書籤」(需要允許書籤存取)。" },
-    "message_startup_requestPermissions_allUrls":   { "message": "以快捷鍵切換分頁時，不要展開折疊的樹。 / Don't restore blank window which was for a closed dialog, by actions to restore closed tabs." },
+    "message_startup_requestPermissions_bookmarks": { "message": "許書籤存取" },
+    "message_startup_requestPermissions_bookmarks_contextMenuItems": { "message": "右鍵選單中「此樹加入書籤」" },
+    "message_startup_requestPermissions_bookmarks_migrationForImportedBookmarks": { "message": "" },
+    "message_startup_requestPermissions_bookmarks_detectTabsFromBookmarks": { "message": "" },
+    "_message_startup_requestPermissions_allUrls":   { "message": "" },
+    "_message_startup_requestPermissions_allUrls_tabPreviewPanel":   { "message": "" },
+    "message_startup_requestPermissions_allUrls_skipCollapsedTabsWithCtrlTab":   { "message": "以快捷鍵切換分頁時，不要展開折疊的樹。" },
+    "_message_startup_requestPermissions_allUrls_preventBlankDialogRestoration":   { "message": "" },
+    "_message_startup_requestPermissions_clipboardRead": { "message": "" },
+    "_message_startup_requestPermissions_clipboardRead_newTabButtonMiddleClick": { "message": "" },
   
     "message_startup_userChromeCss_notify": { "message": "想要隱藏分頁列及側邊欄標題列？" },
     "message_startup_userChromeCss_description_1": { "message": "由於 WebExtensions 限制，Tree Style Tab 無法控制分頁列及側邊欄標題列，若想隱藏詳見" },
@@ -776,6 +785,7 @@
     "tabContextMenu_shareTabURL_label":   { "message": "分享 (&H)" },
 
 
+    "tabContextMenu_closeDuplicatedTabs_label": { "message": "關閉重複的分頁(&U)" },
     "tabContextMenu_closeMultipleTabs_label":  { "message": "關閉多個分頁 (&M)" },
     "tabContextMenu_closeTabsToTop_label":  { "message": "Close Tabs to the &Top" },
     "tabContextMenu_closeTabsToBottom_label":  { "message": "關閉下方分頁(&B)" },

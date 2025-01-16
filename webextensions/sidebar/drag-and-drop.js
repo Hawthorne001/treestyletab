@@ -14,7 +14,7 @@
  * The Original Code is the Tree Style Tab.
  *
  * The Initial Developer of the Original Code is YUKI "Piro" Hiroshi.
- * Portions created by the Initial Developer are Copyright (C) 2010-2024
+ * Portions created by the Initial Developer are Copyright (C) 2010-2025
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s): YUKI "Piro" Hiroshi <piro.outsider.reflex@gmail.com>
@@ -36,6 +36,7 @@ import {
   sha1sum,
   isMacOS,
   isLinux,
+  isRTL,
   dumpTab,
 } from '/common/common.js';
 import * as ApiTabs from '/common/api-tabs.js';
@@ -368,13 +369,14 @@ function getDropAction(event) {
     after: `> ${targetTabCoordinate + targetTabSize - beforeOrAfterDropAreaSize}`,
   });
   */
+  const shouldInvertArea = onFaviconizedTab && isRTL();
   if (eventCoordinate < targetTabCoordinate + beforeOrAfterDropAreaSize) {
-    info.dropPosition = kDROP_BEFORE;
+    info.dropPosition = shouldInvertArea ? kDROP_AFTER : kDROP_BEFORE;
     info.insertBefore = info.firstTargetTab;
   }
   else if (dropAreasCount == 2 ||
            eventCoordinate > targetTabCoordinate + targetTabSize - beforeOrAfterDropAreaSize) {
-    info.dropPosition = kDROP_AFTER;
+    info.dropPosition = shouldInvertArea ? kDROP_BEFORE : kDROP_AFTER;
     info.insertAfter  = info.lastTargetTab;
   }
   else {
@@ -572,6 +574,7 @@ async function handleDroppedNonTabItems(event, dropActionInfo) {
       });
     }
   }
+  const active = !!configs.simulateTabsLoadInBackgroundInverted;
   BackgroundConnection.sendMessage({
     type:           Constants.kCOMMAND_NEW_TABS,
     uris,
@@ -579,7 +582,8 @@ async function handleDroppedNonTabItems(event, dropActionInfo) {
     parentId:       dropActionInfo.parent && dropActionInfo.parent.id,
     insertBeforeId: dropActionInfo.insertBefore && dropActionInfo.insertBefore.id,
     insertAfterId:  dropActionInfo.insertAfter && dropActionInfo.insertAfter.id,
-    active:         configs.simulateTabsLoadInBackgroundInverted,
+    active,
+    discarded:      !active && configs.tabsLoadInBackgroundDiscarded,
   });
 }
 
@@ -789,6 +793,7 @@ function onDragStart(event, options = {}) {
   }).catch(ApiTabs.createErrorSuppressor());
 
   if (!dataOverridden) {
+    const urls    = [];
     const mozUrl  = [];
     const urlList = [];
     for (const draggedTab of dragData.tabs) {
@@ -796,16 +801,20 @@ function onDragStart(event, options = {}) {
       TabsStore.addDraggingTab(draggedTab);
       if (!dragData.individualOnOutside ||
           mozUrl.length == 0) {
+        urls.push(draggedTab.url);
         mozUrl.push(`${draggedTab.url}\n${draggedTab.title}`);
         urlList.push(`#${draggedTab.title}\n${draggedTab.url}`);
       }
     }
+    mCurrentDragDataForExternals[RetrieveURL.kTYPE_PLAIN_TEXT] = urls.join('\n');
     mCurrentDragDataForExternals[RetrieveURL.kTYPE_X_MOZ_URL] = mozUrl.join('\n');
     mCurrentDragDataForExternals[RetrieveURL.kTYPE_URI_LIST] = urlList.join('\n');
     if (allowBookmark) {
-      log('set kTYPE_X_MOZ_URL');
+      log('set kTYPE_PLAIN_TEXT ', mCurrentDragDataForExternals[RetrieveURL.kTYPE_PLAIN_TEXT]);
+      dt.setData(RetrieveURL.kTYPE_PLAIN_TEXT, mCurrentDragDataForExternals[RetrieveURL.kTYPE_PLAIN_TEXT]);
+      log('set kTYPE_X_MOZ_URL ', mCurrentDragDataForExternals[RetrieveURL.kTYPE_X_MOZ_URL]);
       dt.setData(RetrieveURL.kTYPE_X_MOZ_URL, mCurrentDragDataForExternals[RetrieveURL.kTYPE_X_MOZ_URL]);
-      log('set kTYPE_URI_LIST');
+      log('set kTYPE_URI_LIST ', mCurrentDragDataForExternals[RetrieveURL.kTYPE_URI_LIST]);
       dt.setData(RetrieveURL.kTYPE_URI_LIST, mCurrentDragDataForExternals[RetrieveURL.kTYPE_URI_LIST]);
     }
   }
@@ -985,12 +994,12 @@ function onDragOver(event) {
 
   let dragData = dt.getData(kTREE_DROP_TYPE);
   dragData = (dragData && JSON.parse(dragData)) || mCurrentDragData;
-  const sessionId = dragData && dragData.sessionId || '';
-  log(`onDragOver: sessionId=${sessionId}, types=${dt.types}, dropEffect=${dt.dropEffect}, effectAllowed=${dt.effectAllowed}`);
+  const sessionId = dragData?.sessionId || '';
+  log(`onDragOver: sessionId=${sessionId}, types=${dt.types}, dropEffect=${dt.dropEffect}, effectAllowed=${dt.effectAllowed}, tab=`, dragData?.tab);
 
   if (isEventFiredOnTabDropBlocker(event) ||
       !info.canDrop) {
-    log(`onDragOver: not droppable ${sessionId}`);
+    log(`onDragOver: not droppable sessionId=${sessionId}`);
     dt.dropEffect = 'none';
     if (mLastDropPosition)
       clearDropPosition();
@@ -998,11 +1007,20 @@ function onDragOver(event) {
     return;
   }
 
+  if (EventUtils.isEventFiredOnNewTabButton(event)) {
+    log(`onDragOver: dragging something on the new tab button sessionId=${sessionId}`);
+    dt.dropEffect = 'move';
+    if (mLastDropPosition)
+      clearDropPosition();
+    mLastDropPosition = null;
+    return;
+  }
+
   let dropPositionTargetTab = info.targetTab;
-  if (dropPositionTargetTab && dropPositionTargetTab.$TST.collapsed)
+  if (dropPositionTargetTab?.$TST.collapsed)
     dropPositionTargetTab = info.targetTab.$TST.nearestVisiblePrecedingTab || info.targetTab;
   if (!dropPositionTargetTab) {
-    log(`onDragOver: no drop target tab ${sessionId}`);
+    log(`onDragOver: no drop target tab sessionId=${sessionId}`);
     dt.dropEffect = 'none';
     mLastDropPosition = null;
     return;
@@ -1012,7 +1030,7 @@ function onDragOver(event) {
       dropPositionTargetTab.id != info.draggedTab.id) {
     const dropPosition = `${dropPositionTargetTab.id}:${info.dropPosition}`;
     if (dropPosition == mLastDropPosition) {
-      log(`onDragOver: no move ${sessionId}`);
+      log(`onDragOver: no move sessionId=${sessionId}`);
       return;
     }
     clearDropPosition();
@@ -1024,7 +1042,7 @@ function onDragOver(event) {
       mDropPositionHolderTabs.add(info.substanceTargetTab);
     }
     mLastDropPosition = dropPosition;
-    log(`onDragOver: set drop position to ${dropPosition}, ${sessionId}`);
+    log(`onDragOver: set drop position to ${dropPosition}, sessionId=${sessionId}`);
   }
   else {
     mLastDropPosition = null;
@@ -1356,7 +1374,7 @@ function sanitizeDraggedTabs({ draggedTabs, structure, insertBefore, insertAfter
 }
 
 async function onDragEnd(event) {
-  log('onDragEnd, ', { event, mDraggingOnSelfWindow, mDraggingOnDraggedTabs, dropEffect: event.dataTransfer.dropEffect });
+  log('onDragEnd, ', { event, mDraggingOnSelfWindow, mDraggingOnDraggedTabs, dropEffect: event.dataTransfer?.dropEffect });
   if (!mLastDragEventCoordinates) {
     console.error(new Error('dragend is handled after finishDrag'));
     return;
@@ -1366,7 +1384,7 @@ async function onDragEnd(event) {
   const lastDragEventCoordinatesTimestamp = mLastDragEventCoordinates.timestamp;
   const droppedOnSidebarArea = !!configs.lastDragOverSidebarOwnerWindowId;
 
-  let dragData = event.dataTransfer.getData(kTREE_DROP_TYPE);
+  let dragData = event.dataTransfer?.getData(kTREE_DROP_TYPE);
   dragData = (dragData && JSON.parse(dragData)) || mCurrentDragData;
   if (dragData) {
     dragData.tab  = dragData.tab && Tab.get(dragData.tab.id) || dragData.tab;
@@ -1386,9 +1404,9 @@ async function onDragEnd(event) {
       !(dragData.behavior & Constants.kDRAG_BEHAVIOR_TEAR_OFF))
     return;
 
-  let handledBySomeone = event.dataTransfer.dropEffect != 'none';
+  let handledBySomeone = event.dataTransfer?.dropEffect != 'none';
 
-  if (event.dataTransfer.getData(RetrieveURL.kTYPE_URI_LIST)) {
+  if (event.dataTransfer?.getData(RetrieveURL.kTYPE_URI_LIST)) {
     log('do nothing by TST for dropping just for bookmarking or linking');
     return;
   }
@@ -1413,9 +1431,9 @@ async function onDragEnd(event) {
     configs.workaroundForBug1548949DroppedTabs = null;
   }
 
-  if (event.dataTransfer.mozUserCancelled ||
+  if (event.dataTransfer?.mozUserCancelled ||
       handledBySomeone) {
-    log('dragged items are processed by someone: ', event.dataTransfer.dropEffect);
+    log('dragged items are processed by someone: ', event.dataTransfer?.dropEffect);
     return;
   }
 

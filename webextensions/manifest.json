@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "__MSG_extensionName__",
-  "version": "4.0.15",
+  "version": "4.1.3",
   "author": "YUKI \"Piro\" Hiroshi",
   "description": "__MSG_extensionDescription__",
   "permissions": [
@@ -158,8 +158,14 @@
     "focusParent": {
       "description": "__MSG_command_focusParent__"
     },
+    "focusParentOrCollapse": {
+      "description": "__MSG_command_focusParentOrCollapse__"
+    },
     "focusFirstChild": {
       "description": "__MSG_command_focusFirstChild__"
+    },
+    "focusFirstChildOrExpand": {
+      "description": "__MSG_command_focusFirstChildOrExpand__"
     },
     "focusLastChild": {
       "description": "__MSG_command_focusLastChild__"
@@ -170,16 +176,44 @@
     "focusNextSibling": {
       "description": "__MSG_command_focusNextSibling__"
     },
+    "simulateUpOnTree": {
+      "description": "__MSG_command_simulateUpOnTree__",
+      "suggested_key": {
+        "default": "Alt+Shift+Up",
+        "mac":     "MacCtrl+Shift+Up"
+      }
+    },
+    "simulateDownOnTree": {
+      "description": "__MSG_command_simulateDownOnTree__",
+      "suggested_key": {
+        "default": "Alt+Shift+Down",
+        "mac":     "MacCtrl+Shift+Down"
+      }
+    },
+    "simulateLeftOnTree": {
+      "description": "__MSG_command_simulateLeftOnTree__",
+      "suggested_key": {
+        "default": "Alt+Shift+Left",
+        "mac":     "MacCtrl+Shift+Left"
+      }
+    },
+    "simulateRightOnTree": {
+      "description": "__MSG_command_simulateRightOnTree__",
+      "suggested_key": {
+        "default": "Alt+Shift+Right",
+        "mac":     "MacCtrl+Shift+Right"
+      }
+    },
     "tabbarUp": {
       "description": "__MSG_command_tabbarUp__",
       "suggested_key": {
-        "default": "Alt+Shift+Up"
+        "default": "Alt+Up"
       }
     },
     "tabbarPageUp": {
       "description": "__MSG_command_tabbarPageUp__",
       "suggested_key": {
-        "default": "Alt+Shift+PageUp"
+        "default": "Alt+PageUp"
       }
     },
     "tabbarHome": {
@@ -191,19 +225,19 @@
     "tabbarDown": {
       "description": "__MSG_command_tabbarDown__",
       "suggested_key": {
-        "default": "Alt+Shift+Down"
+        "default": "Alt+Down"
       }
     },
     "tabbarPageDown": {
       "description": "__MSG_command_tabbarPageDown__",
       "suggested_key": {
-        "default": "Alt+Shift+PageDown"
+        "default": "Alt+PageDown"
       }
     },
     "tabbarEnd": {
       "description": "__MSG_command_tabbarEnd__",
       "suggested_key": {
-        "default": "Alt+Shift+End"
+        "default": "Alt+End"
       }
     },
     "toggleSubPanel": {
@@ -227,7 +261,11 @@
     "browser_style": false
   },
   "web_accessible_resources": [
-    "/resources/group-tab.html*"
+    "/resources/blank.html",
+    "/resources/group-tab.html*",
+    "/resources/tab-preview-frame.html*",
+    "/resources/icons/*",
+    "/sidebar/styles/icons/*"
   ],
   "protocol_handlers": [
     { "protocol":    "ext+treestyletab",

@@ -12,10 +12,10 @@
   --favicon-size: 16px;
   --tab-size: unset;
   --tab-indent: 0px;
-  --tab-margin-bottom: 0px;
-  --tab-margin-left: 0px;
-  --tab-margin-right: 0px;
-  --tab-margin-top: 0px;
+  --tab-margin-block-start: 0px;
+  --tab-margin-block-end: 0px;
+  --tab-margin-inline-start: 0px;
+  --tab-margin-inline-end: 0px;
   --faviconized-tab-size: 28px;
   --svg-small-icon-size: 16px;
   --new-tab-button-anchor-size: 1.5em;
@@ -31,21 +31,23 @@
   --collapse-animation: var(--collapse-duration) ease-out;
   --tab-basic-animation: background    var(--color-animation),
                          color         var(--color-animation),
-                         left          var(--collapse-animation),
-                         margin-bottom var(--collapse-animation),
-                         margin-top    var(--collapse-animation),
+                         inset-inline-start var(--collapse-animation),
+                         inset-inline-end   var(--collapse-animation),
+                         margin-block-start var(--collapse-animation),
+                         margin-block-end   var(--collapse-animation),
                          max-height    var(--collapse-animation),
                          max-width     var(--collapse-animation),
                          min-height    var(--collapse-animation),
                          min-width     var(--collapse-animation),
                          opacity       var(--collapse-animation),
-                         padding       var(--collapse-animation), /* for extra margin on overlay-scrollbar mode */
-                         right         var(--collapse-animation);
+                         /* for extra margin on overlay-scrollbar mode */
+                         padding-inline-start var(--collapse-animation),
+                         padding-inline-end   var(--collapse-animation);
   --tab-animation: var(--tab-basic-animation),
                    background    var(--color-animation),
                    top           var(--collapse-animation);
-  --tab-indent-animation: margin-left   var(--indent-animation),
-                          margin-right  var(--indent-animation);
+  --tab-indent-animation: margin-inline-start var(--indent-animation),
+                          margin-inline-end   var(--indent-animation);
 
   --button-opacity: 0.75;
   --button-hover-opacity: 1;
@@ -73,7 +75,8 @@
   --over-tabs-z-index:       200; /* buttons after tabs, pinned tabs (required to make pinned tabs clickable) */
   --over-buttons-z-index:    300; /* buttons on buttons after tabs */
   --notification-ui-z-index: 9000;
-  --blocking-ui-z-index:     10000; /* frontmost of others */
+  --tooltip-ui-z-index:      10000;
+  --blocking-ui-z-index:     20000; /* frontmost of others */
 
   --tab-background-z-index:            10;
   --tab-extra-contents-behind-z-index: 20;
@@ -90,6 +93,30 @@
   --visual-gap-offset: 0px;
   --visual-gap-animation: top var(--collapse-animation);
   --visual-gap-hover-animation: top var(--collapse-animation) var(--visual-gap-hover-animation-delay);
+}
+/* Some users may use physical properties to customize tab margins, so we should map them to logical propertis for better compatibility.
+   https://github.com/piroor/treestyletab/wiki/Code-snippets-for-custom-style-rules#change-tab-margin */
+:root:not(.rtl),
+:root:not(.rtl) tab-item {
+  --tab-margin-block-start: var(--tab-margin-top, 0px);
+  --tab-margin-block-end: var(--tab-margin-bottom, 0px);
+  --tab-margin-inline-start: var(--tab-margin-left, 0px);
+  --tab-margin-inline-end: var(--tab-margin-right, 0px);
+}
+:root.rtl,
+:root.rtl tab-item {
+  --tab-margin-block-start: var(--tab-margin-top, 0px);
+  --tab-margin-block-end: var(--tab-margin-bottom, 0px);
+  --tab-margin-inline-start: var(--tab-margin-right, 0px);
+  --tab-margin-inline-end: var(--tab-margin-left, 0px);
+}
+
+
+body {
+  margin-block: 0;
+  margin-inline: 0;
+  padding-block: 0;
+  padding-inline: 0;
 }
 
 tab-item {
@@ -148,12 +175,12 @@ tab-item.faviconized:focus tab-favicon {
 :root.debug tab-item::after {
   bottom: 0;
   content: attr(data-tab-id) !important; /* override definition for the highlighting marker */
+  inset-inline-end: 0;
   opacity: 0.65;
   overflow: hidden;
   pointer-events: none;
   position: absolute;
-  right: 0;
-  text-align: right;
+  text-align: end;
   z-index: var(--tab-favicon-z-index);
 }
 
@@ -209,12 +236,14 @@ tab-sound-button */ {
 #background,
 #subpanel-container {
   bottom: 0;
-  left: 0;
-  margin: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
+  margin-block: 0;
+  margin-inline: 0;
   overflow: hidden;
-  padding: 0;
+  padding-block: 0;
+  padding-inline: 0;
   position: fixed;
-  right: 0;
   top: 0;
   z-index: var(--accessible-ui-z-index);
 }
@@ -234,10 +263,15 @@ tab-sound-button */ {
 }
 
 #normal-tabs-container {
-  margin-top: var(--pinned-tabs-area-size);
+  margin-block-start: var(--pinned-tabs-area-size);
   max-height: 100%;
   min-height: 0;
   overflow: hidden;
+}
+
+:root.rtl,
+:root.rtl tab-item-substance .caption {
+  direction: rtl;
 }
 
 .virtual-scroll-container {
@@ -266,8 +300,8 @@ tab-sound-button */ {
   background-repeat: no-repeat;
   opacity: 0;
   position: fixed;
-  left: 0;
-  right: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   pointer-events: none;
   z-index: var(--over-tabs-z-index);
 }
@@ -293,11 +327,11 @@ tab-sound-button */ {
 }
 
 .sticky-tabs-container {
-  left: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   min-height: 0;
   pointer-events: none;
   position: fixed;
-  right: 0;
   z-index: var(--tab-ui-z-index);
 }
 .sticky-tabs-container.above {
@@ -320,7 +354,7 @@ tab-sound-button */ {
 }
 
 :root.animation:not(.minimized) #tabbar {
-  transition: margin-top var(--collapse-animation);
+  transition: margin-block-start var(--collapse-animation);
 }
 
 #background {
@@ -329,13 +363,17 @@ tab-sound-button */ {
   z-index: var(--background-z-index);
 }
 
-/* put scrollbar leftside */
-:root.left #tabbar {
+/* put scrollbar farside from the content area */
+:root.left:not(.rtl) #tabbar,
+:root.right.rtl #pinned-tabs-container > *,
+:root.right.rtl #normal-tabs-container > *,
+:root.right.rtl #tabbar .after-tabs {
   direction: rtl;
 }
-:root.left #pinned-tabs-container > *,
-:root.left #normal-tabs-container > *,
-:root.left #tabbar .after-tabs {
+:root.right.rtl #tabbar,
+:root.left:not(.rtl) #pinned-tabs-container > *,
+:root.left:not(.rtl) #normal-tabs-container > *,
+:root.left:not(.rtl) #tabbar .after-tabs {
   direction: ltr;
 }
 
@@ -348,8 +386,10 @@ tab-sound-button */ {
 ul {
   flex-grow: 1;
   list-style: none;
-  margin: 0;
-  padding: 0;
+  margin-block: 0;
+  margin-inline: 0;
+  padding-block: 0;
+  padding-inline: 0;
 }
 
 
@@ -357,11 +397,11 @@ ul {
 
 #dummy-tabs {
   bottom: 0;
-  left: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   overflow-y: scroll;
   pointer-events: none;
   position: fixed;
-  right: 0;
   z-index: var(--dummy-element-z-index); /* Put it below the background. See also: https://github.com/piroor/treestyletab/issues/1703#issuecomment-354646405 */
 }
 :root:not(.have-unsynchronized-throbber) #dummy-tabs {
@@ -404,7 +444,8 @@ tab-item,
   justify-content: stretch;
   line-height: 1;
   list-style: none;
-  margin: 0;
+  margin-block: 0;
+  margin-inline: 0;
   max-width: 100%;
   /*overflow: hidden;*/ /* we should not apply overflow:hidden here to allow rendering box-shadow of contents */
   pointer-events: none;
@@ -418,7 +459,8 @@ tab-item-substance {
   flex-wrap: nowrap;
   justify-content: flex-start;
   line-height: 1;
-  margin: var(--tab-margin-top) var(--tab-margin-right) var(--tab-margin-bottom) var(--tab-margin-left);
+  margin-block: var(--tab-margin-block-start) var(--tab-margin-block-end);
+  margin-inline: var(--tab-margin-inline-start) var(--tab-margin-inline-end);
   max-width: 100%;
   min-height: 0;
   /*overflow: hidden;*/ /* we should not apply overflow:hidden here to allow rendering box-shadow of contents */
@@ -445,7 +487,8 @@ tab-item-substance .caption {
   flex-wrap: nowrap;
   justify-content: flex-start;
   line-height: 1;
-  margin: 0;
+  margin-block: 0;
+  margin-inline: 0;
   width: 100%;
   max-height: var(--tab-size); /* Limit tab contents height for tabs customized as thinner. See also https://github.com/piroor/treestyletab/issues/3478 */
   min-height: 0;
@@ -453,32 +496,46 @@ tab-item-substance .caption {
   position: static;
 }
 
-:root.left tab-item:not(.pinned) tab-item-substance {
-  margin-left: calc(var(--tab-margin-left) + var(--tab-indent));
+:root:not(.rtl).left tab-item:not(.pinned) tab-item-substance,
+:root.rtl.right tab-item:not(.pinned) tab-item-substance {
+  margin-inline-start: calc(var(--tab-margin-inline-start) + var(--tab-indent));
 }
 
 /* auto-hidden scrollbar placeholder workaround */
-:root.left.shift-tabs-for-scrollbar-only-on-hover.on-scrollbar-area:hover
+:root:not(.rtl).left.shift-tabs-for-scrollbar-only-on-hover.on-scrollbar-area:hover
   #tabbar.scrollbar-autohide
   #normal-tabs-container.overflow tab-item:not(.pinned) tab-item-substance,
-:root.left:not(.shift-tabs-for-scrollbar-only-on-hover)
+:root:not(.rtl).left:not(.shift-tabs-for-scrollbar-only-on-hover)
+  #tabbar.scrollbar-autohide
+  #normal-tabs-container.overflow tab-item:not(.pinned) tab-item-substance,
+:root.rtl.right.shift-tabs-for-scrollbar-only-on-hover.on-scrollbar-area:hover
+  #tabbar.scrollbar-autohide
+  #normal-tabs-container.overflow tab-item:not(.pinned) tab-item-substance,
+:root.rtl.right:not(.shift-tabs-for-scrollbar-only-on-hover)
   #tabbar.scrollbar-autohide
   #normal-tabs-container.overflow tab-item:not(.pinned) tab-item-substance {
-  margin-left: calc(var(--tab-margin-left) + var(--tab-indent) + var(--shift-tabs-for-scrollbar-distance));
+  margin-inline-start: calc(var(--tab-margin-inline-start) + var(--tab-indent) + var(--shift-tabs-for-scrollbar-distance));
 }
 
-:root.right tab-item:not(.pinned) tab-item-substance {
-  margin-right: calc(var(--tab-margin-right) + var(--tab-indent));
+:root:not(.rtl).right tab-item:not(.pinned) tab-item-substance,
+:root.rtl.left tab-item:not(.pinned) tab-item-substance {
+  margin-inline-end: calc(var(--tab-margin-inline-end) + var(--tab-indent));
 }
 
 /* auto-hidden scrollbar placeholder workaround */
-:root.right.shift-tabs-for-scrollbar-only-on-hover.on-scrollbar-area:hover
+:root:not(.rtl).right.shift-tabs-for-scrollbar-only-on-hover.on-scrollbar-area:hover
   #tabbar.scrollbar-autohide
   #normal-tabs-container.overflow tab-item:not(.pinned) tab-item-substance,
-:root.right:not(.shift-tabs-for-scrollbar-only-on-hover)
+:root:not(.rtl).right:not(.shift-tabs-for-scrollbar-only-on-hover)
+  #tabbar.scrollbar-autohide
+  #normal-tabs-container.overflow tab-item:not(.pinned) tab-item-substance,
+:root.rtl.left.shift-tabs-for-scrollbar-only-on-hover.on-scrollbar-area:hover
+  #tabbar.scrollbar-autohide
+  #normal-tabs-container.overflow tab-item:not(.pinned) tab-item-substance,
+:root.rtl.left:not(.shift-tabs-for-scrollbar-only-on-hover)
   #tabbar.scrollbar-autohide
   #normal-tabs-container.overflow tab-item:not(.pinned) tab-item-substance {
-  margin-right: calc(var(--tab-margin-right) + var(--tab-indent) + var(--shift-tabs-for-scrollbar-distance));
+  margin-inline-end: calc(var(--tab-margin-inline-end) + var(--tab-indent) + var(--shift-tabs-for-scrollbar-distance));
 }
 
 tab-item,
@@ -517,13 +574,13 @@ tab-item.duplicating {
 tab-item.removing:not(.pinned.faviconized),
 tab-item:not(.pinned.faviconized).collapsed,
 tab-item.duplicating {
-  margin-top: calc(0px - var(--tab-current-size) - var(--tab-margin-bottom));
+  margin-block-start: calc(0px - var(--tab-current-size) - var(--tab-margin-block-end));
 }
 :root.left tab-item.removing.pinned.faviconized {
-  margin-left: calc(0px - var(--tab-current-size) - var(--tab-margin-right));
+  margin-inline-start: calc(0px - var(--tab-current-size) - var(--tab-margin-inline-end));
 }
 :root.right tab-item.removing.pinned.faviconized {
-  margin-right: calc(0px - var(--tab-current-size) - var(--tab-margin-left));
+  margin-inline-end: calc(0px - var(--tab-current-size) - var(--tab-margin-inline-start));
 }
 tab-item.removing tab-item-substance,
 tab-item:not(.pinned).collapsed tab-item-substance,
@@ -541,17 +598,21 @@ tab-item.duplicating tab-item-substance {
 }
 
 
-:root.left tab-item tab-twisty {
+:root.left:not(.rtl) tab-item tab-twisty,
+:root.right.rtl tab-item tab-twisty {
   order: -1;
 }
-:root.left tab-item tab-closebox {
+:root.left:not(.rtl) tab-item tab-closebox,
+:root.right.rtl tab-item tab-closebox {
   order: 10000;
 }
 
-:root.right tab-item tab-twisty {
+:root.right:not(.rtl) tab-item tab-twisty,
+:root.left.rtl tab-item tab-twisty {
   order: 10000;
 }
-:root.right tab-item tab-closebox {
+:root.right:not(.rtl) tab-item tab-closebox,
+:root.left.rtl tab-item tab-closebox {
   order: -1;
 }
 
@@ -565,10 +626,10 @@ tab-item .extra-items-container.behind,
 tab-item .extra-items-container.front,
 .newtab-button .extra-items-container {
   bottom: 0;
-  left: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   pointer-events: none;
   position: absolute;
-  right: 0;
   top: 0;
 }
 tab-item .extra-items-container.above,
@@ -602,23 +663,20 @@ tab-item .extra-items-container.indent {
   #normal-tabs-container.overflow tab-item .extra-items-container.indent{
   width: calc(var(--tab-indent) + var(--shift-tabs-for-scrollbar-distance));
 }
-:root.left tab-item .extra-items-container.indent {
-  right: auto;
-}
-:root.right tab-item .extra-items-container.indent {
-  left: auto;
+tab-item .extra-items-container.indent {
+  inset-inline-end: auto;
 }
 
 tab-item .extra-items-container.front {
+  inset-inline-start: var(--tab-label-start-offset);
+  inset-inline-end: var(--tab-label-end-offset);
   justify-content: flex-end;
-  left: var(--tab-label-start-offset);
   pointer-events: auto;
-  right: var(--tab-label-end-offset);
   z-index: var(--tab-extra-contents-front-z-index);
 }
 tab-item.faviconized .extra-items-container.front {
-  left: var(--faviconized-tab-padding);
-  right: var(--faviconized-tab-padding);
+  inset-inline-start: var(--faviconized-tab-padding);
+  inset-inline-end: var(--faviconized-tab-padding);
 }
 
 tab-item:not(.bursting) .burster {
@@ -638,8 +696,8 @@ tab-item.attention tab-favicon::before {
   bottom: auto;
   content: '';
   height: var(--tab-current-size);
-  left: var(--attention-marker-x-offset);
-  right: auto;
+  inset-inline-start: var(--attention-marker-x-offset);
+  inset-inline-end: auto;
   top: var(--attention-marker-y-offset);
   width: var(--tab-current-size);
 }
@@ -670,14 +728,11 @@ tab-item .extra-items-container.behind {
   .extra-items-container,
 :root:not(.newtab-action-selectable).contextual-identity-selectable:not(.incognito)
   .newtab-button
-  .extra-items-container {
-  right: var(--new-tab-button-anchor-size);
-}
-
+  .extra-items-container,
 :root.newtab-action-selectable.contextual-identity-selectable:not(.incognito)
   .newtab-button
   .extra-items-container {
-  left: var(--new-tab-button-anchor-size);
+  inset-inline-end: var(--new-tab-button-anchor-size);
 }
 
 
@@ -713,8 +768,8 @@ tab-item .extra-items-container.behind {
   flex-grow: 0;
   flex-wrap: wrap;
   justify-content: flex-start;
-  padding-right: max(1px, calc(100% - (var(--pinned-tab-width, 100%) * var(--pinned-tabs-max-column, 99999)) - (var(--pinned-tab-width, 100%) / 2)));
-  transition: padding-right var(--collapse-animation);
+  padding-inline-end: max(1px, calc(100% - (var(--pinned-tab-width, 100%) * var(--pinned-tabs-max-column, 99999)) - (var(--pinned-tab-width, 100%) / 2)));
+  transition: padding-inline-end var(--collapse-animation);
 }
 
 :root.faviconize-pinned-tabs .tabs.pinned {
@@ -729,7 +784,7 @@ tab-item .extra-items-container.behind {
 :root.left:not(.shift-tabs-for-scrollbar-only-on-hover)
   #tabbar.scrollbar-autohide
   #pinned-tabs-container.overflow .tabs.pinned {
-  padding-left: var(--shift-tabs-for-scrollbar-distance);
+  padding-inline-start: var(--shift-tabs-for-scrollbar-distance);
 }
 :root.right.shift-tabs-for-scrollbar-only-on-hover.on-scrollbar-area:hover
   #tabbar.scrollbar-autohide
@@ -737,7 +792,7 @@ tab-item .extra-items-container.behind {
 :root.right:not(.shift-tabs-for-scrollbar-only-on-hover)
   #tabbar.scrollbar-autohide
   #pinned-tabs-container.overflow .tabs.pinned {
-  padding-right: var(--shift-tabs-for-scrollbar-distance);
+  padding-inline-end: var(--shift-tabs-for-scrollbar-distance);
 }
 
 :root.hover-on-top-edge:hover .tabs.pinned {
@@ -753,16 +808,19 @@ tab-item.faviconized {
   --faviconized-tab-padding: calc((var(--tab-current-size) - var(--favicon-size)) / 2);
   --tab-current-size: var(--faviconized-tab-size);
   height: var(--tab-current-size);
-  margin: 0;
+  margin-block: 0;
+  margin-inline: 0;
   max-height: var(--tab-current-size);
   max-width: var(--tab-current-size);
   width: var(--tab-current-size);
 }
 tab-item.faviconized tab-item-substance {
-  border-top: none;
-  border-left: none;
-  margin: 0;
-  padding: var(--faviconized-tab-padding);
+  border-block-start: none;
+  border-inline-start: none;
+  margin-block: 0;
+  margin-inline: 0;
+  padding-block: var(--faviconized-tab-padding);
+  padding-inline: var(--faviconized-tab-padding);
 }
 
 tab-item.pinned tab-closebox,
@@ -779,11 +837,11 @@ tab-item.faviconized tab-label,
 tab-item.faviconized tab-label * {
   bottom: 0;
   display: flex;
-  left: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   opacity: 0;
   overflow: hidden;
   position: absolute;
-  right: 0;
   top: 0;
 }
 
@@ -929,24 +987,17 @@ tab-item:not(.collapsed) tab-closebox:active {
 tab-item:not(.faviconized) .contextual-identity-marker {
   --contextual-identity-marker-margin: min(calc((var(--tab-current-size) - var(--favicon-size)) / 2), calc(var(--tab-current-size) * 0.15));
   bottom: var(--contextual-identity-marker-margin);
+  inset-inline-end: 0;
   top: var(--contextual-identity-marker-margin);
   width: var(--contextual-identity-marker-width);
-}
-
-:root.left tab-item:not(.faviconized) .contextual-identity-marker {
-  right: 0;
-}
-
-:root.right tab-item:not(.faviconized) .contextual-identity-marker {
-  left: 0;
 }
 
 tab-item.faviconized .contextual-identity-marker {
   --contextual-identity-marker-margin: min(calc((var(--tab-current-size) - var(--favicon-size)) / 2), calc(var(--tab-current-size) * 0.33));
   bottom: 0;
   height: var(--contextual-identity-marker-width);
-  left: var(--contextual-identity-marker-margin);
-  right: var(--contextual-identity-marker-margin);
+  inset-inline-start: var(--contextual-identity-marker-margin);
+  inset-inline-end: var(--contextual-identity-marker-margin);
 }
 
 
@@ -956,10 +1007,10 @@ tab-item.faviconized .contextual-identity-marker {
 #tabbar-bottom,
 #tabbar ~ .after-tabs {
   height: 0;
-  left: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   overflow: visible;
   position: absolute;
-  right: 0;
   z-index: var(--over-tabs-z-index);
 }
 
@@ -990,7 +1041,8 @@ tab-item.faviconized .contextual-identity-marker {
 
 .newtab-button {
   background: none transparent;
-  margin: 0;
+  margin-block: 0;
+  margin-inline: 0;
   text-align: center;
 }
 
@@ -1038,7 +1090,8 @@ tab-item.faviconized .contextual-identity-marker {
   max-width: var(--new-tab-button-anchor-size);
   opacity: 0;
   overflow: hidden;
-  padding: calc((var(--new-tab-button-anchor-size) - var(--svg-small-icon-size)) / 2);
+  padding-block: calc((var(--new-tab-button-anchor-size) - var(--svg-small-icon-size)) / 2);
+  padding-inline: calc((var(--new-tab-button-anchor-size) - var(--svg-small-icon-size)) / 2);
   pointer-events: none;
   position: absolute;
   top: 0;
@@ -1047,20 +1100,17 @@ tab-item.faviconized .contextual-identity-marker {
 }
 :root.contextual-identity-selectable
   .after-tabs
-  .newtab-action-selector-anchor {
-  border-width: 0 1px 0 0;
-  display: flex;
-  left: 0;
-}
+  .newtab-action-selector-anchor,
 :root:not(.contextual-identity-selectable)
   .after-tabs
   .newtab-action-selector-anchor,
 :root.contextual-identity-selectable
   .after-tabs
   .contextual-identities-selector-anchor {
-  border-width: 0 0 0 1px;
+  border-width: 0;
+  border-inline-end-width: 1px;
   display: flex;
-  right: 0;
+  inset-inline-start: 0;
 }
 
 .newtab-action-selector-anchor::-moz-focus-inner,
@@ -1071,7 +1121,8 @@ tab-item.faviconized .contextual-identity-marker {
 #subpanel-toggler::before {
   content: "▼";
   font-size: 0.65em;
-  margin: 0.125em;
+  margin-block: 0.125em;
+  margin-inline: 0.125em;
 }
 
 .newtab-action-selector-anchor::after,
@@ -1084,7 +1135,7 @@ tab-item.faviconized .contextual-identity-marker {
   fill: var(--tab-text);
   height: var(--svg-small-icon-size);
   line-height: 1;
-  margin-top: calc((var(--favicon-size) - var(--svg-small-icon-size)) / 2);
+  margin-block-start: calc((var(--favicon-size) - var(--svg-small-icon-size)) / 2);
   max-height: var(--favicon-size);
   max-width: var(--favicon-size);
   width: var(--svg-small-icon-size);
@@ -1105,7 +1156,7 @@ tab-item.faviconized .contextual-identity-marker {
                       transparent 100%
                     );
   display: none;
-  margin-top: calc(0 - var(--tab-size));
+  margin-block-start: calc(0 - var(--tab-size));
   min-height: var(--tab-size);
   pointer-events: none;
   position: relative;
@@ -1133,14 +1184,15 @@ tab-item.faviconized .contextual-identity-marker {
   color: var(--tab-text);
   font-size: var(--svg-small-icon-size);
   height: calc(var(--svg-small-icon-size) * 1.5);
-  left: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   line-height: 1;
   opacity: 0;
-  padding: calc(var(--svg-small-icon-size) * 0.25) 0;
+  padding-block: calc(var(--svg-small-icon-size) * 0.25);
+  padding-inline: 0;
   pointer-events: none;
   position: fixed;
   transition: opacity var(--collapse-animation);
-  right: 0;
   z-index: var(--notification-ui-z-index);
 }
 
@@ -1162,7 +1214,7 @@ tab-item.faviconized .contextual-identity-marker {
   background-repeat: no-repeat;
   background-size: 100% 0.2em;
   font: message-box;
-  padding-bottom: 0.25em;
+  padding-block-end: 0.25em;
   width: 100%;
 }
 
@@ -1181,31 +1233,35 @@ tab-item.faviconized .contextual-identity-marker {
 iframe#subpanel {
   border: none;
   height: var(--subpanel-content-size);
-  margin: 0;
+  margin-block: 0;
+  margin-inline: 0;
   max-height: none;
   max-width: 100%;
   min-height: 0;
   min-width: 0;
-  padding: 0;
+  padding-block: 0;
+  padding-inline: 0;
   width: 100%;
 }
 
 #subpanel-header {
   background: var(--tab-surface);
-  border-top: 1px solid var(--tab-border);
+  border-block-start: 1px solid var(--tab-border);
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   line-height: 1;
-  margin: 0;
-  padding: 0.3em 0.2em 0.2em;
+  margin-block: 0;
+  margin-inline: 0;
+  padding-block: 0.3em 0.2em;
+  padding-inline: 0.2em;
 }
 #subpanel-header.resizable {
   cursor: ns-resize;
 }
 
 #subpanel-container:not(.collapsed) #subpanel-header {
-  border-bottom: 1px solid var(--tab-border);
+  border-block-end: 1px solid var(--tab-border);
 }
 
 #subpanel-header-main {
@@ -1225,7 +1281,8 @@ iframe#subpanel {
   display: flex;
   flex-direction: row;
   font: -moz-button;
-  padding: 0 0 0 0.5em;
+  padding-block: 0;
+  padding-inline: 0.5em 0;
 }
 
 #subpanel-selector-anchor {
@@ -1253,12 +1310,13 @@ iframe#subpanel {
 }
 
 #subpanel-selector span.icon {
-  margin-right: 0.25em;
+  margin-inline-end: 0.25em;
 }
 
 #subpanel-toggler {
   cursor: default;
-  padding: 0 0.5em;
+  padding-block: 0;
+  padding-inline: 0.5em;
   max-width: 1.5em;
 }
 
@@ -1288,9 +1346,9 @@ iframe#subpanel {
 #blocking-screen {
   bottom: 0;
   display: none;
-  left: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   position: fixed;
-  right: 0;
   top: 0;
   z-index: var(--blocking-ui-z-index);
 }

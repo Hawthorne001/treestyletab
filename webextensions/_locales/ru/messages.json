@@ -172,11 +172,12 @@
 
   "bookmarkDialog_dialogTitle_single":   { "message": "Новая закладка" },
   "bookmarkDialog_dialogTitle_multiple": { "message": "Новые закладки" },
-  "bookmarkDialog_title":    { "message": "Заголовок:" },
+  "bookmarkDialog_title":    { "message": "Заголовок" },
   "bookmarkDialog_title_accessKey": { "message": "n" },
-  "bookmarkDialog_url":      { "message": "Адрес:" },
-  "bookmarkDialog_url_accessKey": { "message": "l" },
-  "bookmarkDialog_parentId": { "message": "Папка:" },
+  "bookmarkDialog_url":      { "message": "URL" },
+  "bookmarkDialog_url_accessKey": { "message": "u" },
+  "bookmarkDialog_parentId": { "message": "Адрес" },
+  "bookmarkDialog_parentId_accessKey": { "message": "l:" },
   "bookmarkDialog_saveContainerRedirectKey": { "message": "Сохранить информацию о контейнере для закладок из контейнера" },
   "bookmarkDialog_accept":   { "message": "Сохранить" },
   "bookmarkDialog_cancel":   { "message": "Отмена" },
@@ -256,9 +257,16 @@
   "message_startup_history_after":      { "message": "." },
 
   "message_startup_requestPermissions_description": { "message": "⚠Есть некоторые функции, требующие дополнительных разрешений. Если вы хотите их активировать, дайте разрешения вручную." },
-  "message_startup_requestPermissions_bookmarks": { "message": "\"Это дерево в закладки…\" в контекстном меню на вкладках (нужен доступ к закладкам.)" },
-  "message_startup_requestPermissions_allUrls":   { "message": "Не разворачивать свернутое дерево и пропускать свернутые дочерние вкладки при переключении фокуса вкладок горячими клавишами. / Don't restore blank window which was for a closed dialog, by actions to restore closed tabs." },
-  "message_startup_requestPermissions_clipboardRead": { "message": "Разрешить открывать новую вкладку по ссылке из буфера обмена, при нажатии колесиком мышки на кнопке \"Новая вкладка\" (*может понадобится активация \"dom.events.asyncClipboard.clipboardItem\")" },
+  "message_startup_requestPermissions_bookmarks": { "message": "Доступ к закладкам" },
+  "message_startup_requestPermissions_bookmarks_contextMenuItems": { "message": "\"Это дерево в закладки…\" в контекстном меню на вкладках" },
+  "_message_startup_requestPermissions_bookmarks_migrationForImportedBookmarks": { "message": "" },
+  "_message_startup_requestPermissions_bookmarks_detectTabsFromBookmarks": { "message": "" },
+  "_message_startup_requestPermissions_allUrls":   { "message": "" },
+  "_message_startup_requestPermissions_allUrls_tabPreviewPanel":   { "message": "" },
+  "message_startup_requestPermissions_allUrls_skipCollapsedTabsWithCtrlTab":   { "message": "Не разворачивать свернутое дерево и пропускать свернутые дочерние вкладки при переключении фокуса вкладок горячими клавишами." },
+  "_message_startup_requestPermissions_allUrls_preventBlankDialogRestoration":   { "message": "" },
+  "_message_startup_requestPermissions_clipboardRead": { "message": "" },
+  "message_startup_requestPermissions_clipboardRead_newTabButtonMiddleClick": { "message": "Разрешить открывать новую вкладку по ссылке из буфера обмена, при нажатии колесиком мышки на кнопке \"Новая вкладка\" (*может понадобится активация \"dom.events.asyncClipboard.clipboardItem\")" },
 
   "message_startup_userChromeCss_notify": { "message": "Как скрывать верхнюю панель вкладок и заголовок боковой панели?" },
   "message_startup_userChromeCss_description_1": { "message": "Из-за ограничений WebExtensions, TST не может контролировать верхнюю панель вкладок и заголовок боковой панели. Если вам нужно настроить их, см. " },
@@ -718,6 +726,7 @@
   "config_dropLinksOnTabBehavior_load":    { "message": "Загрузить во вкладке" },
   "config_dropLinksOnTabBehavior_newtab":  { "message": "Открыть новую дочернюю вкладку" },
   "config_simulateTabsLoadInBackgroundInverted_label": { "message": "При открытии ссылки в новой вкладке, переключатся на эту вкладку (* имитация параметра Firefox \"Переключаться на открываемую ссылку, изображение или медиа\" (\"browser.tabs.loadInBackground\"))" },
+  "config_tabsLoadInBackgroundDiscarded_label": { "message": "Открывать незагруженными" },
 
   "config_insertDroppedTabsAt_caption": { "message": "Позиция вставки дочерних элементов, перетянутых на родителя" },
   "config_insertDroppedTabsAt_inherit": { "message": "Рассматривать как новые дочерние, открытые из родителя" },
@@ -886,6 +895,7 @@
   "tabContextMenu_shareTabURL_more_label":   { "message": "Далее…" },
 
 
+  "tabContextMenu_closeDuplicatedTabs_label": { "message": "дублирующиеся вкладки(&г)" },
   "tabContextMenu_closeMultipleTabs_label":  { "message": "&Закрыть несколько вкладок" },
   "tabContextMenu_closeTabsToTop_label":  { "message": "Закрыть вкладки с&верху" },
   "tabContextMenu_closeTabsToBottom_label":  { "message": "Закрыть вкладки с&низу" },

@@ -348,15 +348,15 @@
     "hash": "c304183c3a6fde7c2ae13d76974ea17a"
   },
   "bookmarkDialog_title": {
-    "message": "Titre :",
+    "message": "Titre",
     "hash": "bcc9f177b0a20c395aac47bd88204419"
   },
   "bookmarkDialog_url": {
-    "message": "Adresse :",
+    "message": "URL",
     "hash": "d3304a6af52921ec7fbf6469ba358327"
   },
   "bookmarkDialog_parentId": {
-    "message": "Dossier :",
+    "message": "Adresse",
     "hash": "5f43a7c36ca597f9151fdc6df9e1b8a5"
   },
   "bookmarkDialog_accept": {
@@ -399,14 +399,16 @@
     "message": "⚠Quelques fonctionnalités requièrent des permissions supplémentaires. Si vous voulez les utiliser, acceptez les permissions manuellement.",
     "hash": "579d612ed89439363c1b15dc629175bc"
   },
-  "message_startup_requestPermissions_bookmarks": {
-    "message": "« Ajouter cet arbre aux marque-pages » dans le menu contextuel sur les onglets (requiert l'accès aux marque-pages)",
-    "hash": "0cd09f626c61edcb5e506f2a5d27d0ac"
-  },
-  "message_startup_requestPermissions_allUrls": {
-    "message": "Ne pas déplier les arbres repliés et ignorer les descendants repliés lorsque vous changez d'onglet courant via des raccourcis claviers / Don't restore blank window which was for a closed dialog, by actions to restore closed tabs.",
-    "hash": "6277b31e6f8bad41fbd31bbb26e4bbe7"
-  },
+  "message_startup_requestPermissions_bookmarks": { "message": "l'accès aux marque-pages" },
+  "message_startup_requestPermissions_bookmarks_contextMenuItems": { "message": "« Ajouter cet arbre aux marque-pages » dans le menu contextuel sur les onglets" },
+  "_message_startup_requestPermissions_bookmarks_migrationForImportedBookmarks": { "message": "" },
+  "_message_startup_requestPermissions_bookmarks_detectTabsFromBookmarks": { "message": "" },
+  "_message_startup_requestPermissions_allUrls":   { "message": "" },
+  "_message_startup_requestPermissions_allUrls_tabPreviewPanel":   { "message": "" },
+  "message_startup_requestPermissions_allUrls_skipCollapsedTabsWithCtrlTab":   { "message": "Ne pas déplier les arbres repliés et ignorer les descendants repliés lorsque vous changez d'onglet courant via des raccourcis claviers" },
+  "_message_startup_requestPermissions_allUrls_preventBlankDialogRestoration":   { "message": "" },
+  "_message_startup_requestPermissions_clipboardRead": { "message": "" },
+  "_message_startup_requestPermissions_clipboardRead_newTabButtonMiddleClick": { "message": "" },
   "message_startup_userChromeCss_notify": {
     "message": "Comment cacher la barre d'onglets du haut et l'entête du panneau latéral ?",
     "hash": "991184685e856081ec9ee06431fda2d2"
@@ -1483,6 +1485,7 @@
     "message": "Déplacer dans une &nouvelle fenêtre",
     "hash": "e73bb254e78fb1b2a161d4c3961065a9"
   },
+  "tabContextMenu_closeDuplicatedTabs_label": { "message": "Fermer les onglets en do&uble" },
   "tabContextMenu_closeMultipleTabs_label": {
     "message": "Fer&mer plusieurs onglets",
     "hash": "b421f1bac322ed85eaef8ff036b5a3d2"

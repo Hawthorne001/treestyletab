@@ -57,6 +57,18 @@
   --non-lwt-selected-tab-background-color-proton: transparent;
 }
 
+:root[data-user-agent*="Win"] {
+  --toolbar-non-lwt-textcolor: rgb(21, 20, 26);
+  --tabbar-bg: rgb(240, 240, 244); /* Windows 11, Light, active */
+}
+/* Firefox does not apply pale color to tabs in inactive windows when tabs are placed not in the titlebar, so we follow the decision. */
+/*
+:root[data-user-agent*="Win"]:-moz-window-inactive {
+  --toolbar-non-lwt-textcolor: rgb(31, 30, 37);
+  --tabbar-bg: rgb(235, 235, 239); /* Windows 11, Light, inactive * /
+}
+*/
+
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -65,15 +77,27 @@
     --tab-highlighted-glow: rgb(84, 255, 189); /* https://searchfox.org/mozilla-central/rev/74f3c420ee54001059e1850bef3be876749ff873/browser/themes/shared/tabs.inc.css#931 */
     --toolbar-non-lwt-bgcolor: rgb(66,65,77) /* https://searchfox.org/mozilla-central/rev/0c7c41109902cb8967ec3ef2c0ddb326701cfbee/toolkit/mozapps/extensions/default-theme/manifest.json#23 */;
   }
+
+  :root[data-user-agent*="Win"] {
+    --toolbar-non-lwt-textcolor: rgb(251, 251, 254);
+    --tabbar-bg: var(--browser-bg-darker, rgb(28, 27, 34)); /* Windows 11, Dark, active */
+  }
+  /* Firefox does not apply pale color to tabs in inactive windows when tabs are placed not in the titlebar, so we follow the decision. */
+  /*
+  :root[data-user-agent*="Win"]:-moz-window-inactive {
+    --toolbar-non-lwt-textcolor: rgb(235, 235, 239);
+    --tabbar-bg: var(--browser-bg-darker, rgb(31, 30, 37)); /* Windows 11, Dark, inactive * /
+  }
+  */
 }
 
 :root[color-scheme="system-color"][data-user-agent*="Linux"] {
   --toolbar-non-lwt-textcolor: -moz-dialogtext;
   --toolbar-non-lwt-bgcolor: -moz-dialog;
-  --in-content-box-border-color-mixed: ThreeDShadow;
+  --in-content-box-border-color-mixed: var(--ThreeDShadow);
 }
 :root[color-scheme="system-color"][data-user-agent*="Linux"] #background {
-  --tabbar-bg: AppWorkspace;
+  --tabbar-bg: var(--AppWorkspace);
 }
 
 @media not (prefers-color-scheme: dark) {
@@ -92,8 +116,8 @@
     #subpanel-selector-anchor,
   :root[color-scheme="system-color"][data-user-agent*="Linux"]
     #background {
-    --toolbar-non-lwt-bgcolor: MenuText;
-    --toolbar-non-lwt-textcolor: Menu;
+    --toolbar-non-lwt-bgcolor: var(--MenuText);
+    --toolbar-non-lwt-textcolor: var(--Menu);
     --tabbar-bg: var(--toolbar-non-lwt-bgcolor);
     /* these colors need to redefined here to apply new --toolbar-non-lwt-textcolor */
     --tab-text-regular: var(--browser-fg, var(--toolbar-non-lwt-textcolor));
@@ -127,11 +151,11 @@ body,
 }
 .overflow-indicator.start {
   background-position: 0 -0.3em;
-  border-top: 0.05em solid rgba(255, 255, 255, 0.2);
+  border-block-start: 0.05em solid rgba(255, 255, 255, 0.2);
 }
 .overflow-indicator.end {
   background-position: 0 0.3em;
-  border-bottom: 0.05em solid rgba(255, 255, 255, 0.2);
+  border-block-end: 0.05em solid rgba(255, 255, 255, 0.2);
 }
 :root.left .overflow-indicator.start,
 :root.left .overflow-indicator.end {
@@ -211,7 +235,8 @@ tab-item:not(.active):not(.bundled-active):not(.highlighted):hover,
 }
 
 tab-item-substance {
-  padding: var(--tab-vertical-padding) 0.25em;
+  padding-block: var(--tab-vertical-padding);
+  padding-inline: 0.25em;
   /* Transparent tabs are shown above solid tabs.
      We have to set z-index to show all tabs in the same layer. */
   z-index: auto;
@@ -220,20 +245,27 @@ tab-item-substance {
 .after-tabs button,
 .after-tabs [role="button"] {
   --tab-like-button-padding: 0.2em;
-  padding: calc(var(--tab-dropshadow-blur) + var(--tab-like-button-padding)) 0;
+  padding-block: calc(var(--tab-dropshadow-blur) + var(--tab-like-button-padding));
+  padding-inline: 0;
   z-index: 100;
 }
 
-:root.left tab-item:not(.pinned) tab-item-substance,
-:root.left .after-tabs button:not([data-menu-ui]),
-:root.left .after-tabs [role="button"]:not([data-menu-ui]) {
-  padding-right: 0.35em;
+:root.left:not(.rtl) tab-item:not(.pinned) tab-item-substance,
+:root.left:not(.rtl) .after-tabs button:not([data-menu-ui]),
+:root.left:not(.rtl) .after-tabs [role="button"]:not([data-menu-ui]),
+:root.right.rtl tab-item:not(.pinned) tab-item-substance,
+:root.right.rtl .after-tabs button:not([data-menu-ui]),
+:root.right.rtl .after-tabs [role="button"]:not([data-menu-ui]) {
+  padding-inline-end: 0.35em;
 }
 
-:root.right tab-item:not(.pinned) tab-item-substance,
-:root.right .after-tabs button:not([data-menu-ui]),
-:root.right .after-tabs [role="button"]:not([data-menu-ui]) {
-  padding-left: 0.35em;
+:root.right:not(.rtl) tab-item:not(.pinned) tab-item-substance,
+:root.right:not(.rtl) .after-tabs button:not([data-menu-ui]),
+:root.right:not(.rtl) .after-tabs [role="button"]:not([data-menu-ui]),
+:root.left.rtl tab-item:not(.pinned) tab-item-substance,
+:root.left.rtl .after-tabs button:not([data-menu-ui]),
+:root.left.rtl .after-tabs [role="button"]:not([data-menu-ui]) {
+  padding-inline-start: 0.35em;
 }
 
 
@@ -260,8 +292,8 @@ tab-item .background,
 .after-tabs button:hover::before,
 .after-tabs [role="button"]:hover::before {
   bottom: var(--tab-dropshadow-padding);
-  left: var(--tab-dropshadow-padding);
-  right: var(--tab-dropshadow-padding);
+  inset-inline-start: var(--tab-dropshadow-padding);
+  inset-inline-end: var(--tab-dropshadow-padding);
   top: var(--tab-dropshadow-padding);
 }
 
@@ -271,8 +303,8 @@ tab-item.faviconized .background {
 
 #subpanel-selector-anchor:hover::before {
   bottom: 0;
-  left: 0;
-  right: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   top: 0;
 }
 
@@ -328,55 +360,55 @@ tab-item * {
 }
 
 tab-item tab-label {
-  margin-left: 0.25em;
-  padding: 0 0 0.25em 0;
+  margin-inline-start: 0.25em;
+  padding-block: 0 0.25em;
+  padding-inline: 0;
 }
 
 tab-item tab-favicon {
-  margin-bottom: 0.25em;
-  margin-top: 0.25em;
+  margin-block: 0.25em;
 }
 
 /* expand closebox to fill full height of tab */
 tab-item tab-closebox {
   background: none transparent;
   border: none 0 transparent;
-  margin: var(--tab-closebox-negative-offset) 0;
-  padding: var(--tab-closebox-offset) 0.25em;
+  margin-block: var(--tab-closebox-negative-offset);
+  margin-inline: 0;
+  padding-block: var(--tab-closebox-offset);
+  padding-inline: 0.25em;
 }
 
-tab-item tab-closebox::before,
-tab-item:not(.faviconized) tab-sound-button::before {
+tab-item tab-closebox::before {
   border-radius: 10%;
   content: "";
   display: inline-block;
   height: calc(var(--svg-small-icon-size) + 0.2em);
-  margin-left: -0.1em;
-  margin-top: -0.1em;
+  margin-block-start: -0.1em;
+  margin-inline-start: -0.1em;
   width: calc(var(--svg-small-icon-size) + 0.2em);
   position: absolute;
 }
 
-tab-item tab-closebox:hover::before,
-tab-item:not(.faviconized) tab-sound-button:hover::before {
+tab-item tab-closebox:hover::before {
   background: var(--tab-text);
   box-shadow: 0 0 0.1em rgba(255, 255, 255, 0.3);
   opacity: 0.1;
 }
 
-tab-item tab-closebox:active::before,
-tab-item:not(.faviconized) tab-sound-button:active::before {
+tab-item tab-closebox:active::before {
   opacity: 0.2;
 }
 
-tab-item.active tab-closebox:hover::before,
-tab-item:not(.faviconized).active tab-sound-button:hover::before {
+tab-item.active tab-closebox:hover::before {
   background: var(--tab-text);
 }
 
 tab-item tab-closebox::after {
   position: relative;
 }
+
+
 
 tab-item .burster {
   --throbber-color: var(--tab-loading-fill);
@@ -391,12 +423,14 @@ tab-item:not(.faviconized).subtree-collapsed.all-descendants-highlighted .highli
 
 /* contextual identity marker in tabs */
 
-:root.left tab-item:not(.faviconized) .contextual-identity-marker {
-  right: calc(var(--tab-dropshadow-blur) - var(--tab-highlighter-size));
+:root.left:not(.rtl) tab-item:not(.faviconized) .contextual-identity-marker,
+:root.right.rtl tab-item:not(.faviconized) .contextual-identity-marker {
+  inset-inline-end: calc(var(--tab-dropshadow-blur) - var(--tab-highlighter-size));
 }
 
-:root.right tab-item:not(.faviconized) .contextual-identity-marker {
-  left: calc(var(--tab-dropshadow-blur) - var(--tab-highlighter-size));
+:root.right:not(.rtl) tab-item:not(.faviconized) .contextual-identity-marker,
+:root.left.rtl tab-item:not(.faviconized) .contextual-identity-marker {
+  inset-inline-start: calc(var(--tab-dropshadow-blur) - var(--tab-highlighter-size));
 }
 
 tab-item.faviconized .contextual-identity-marker {
@@ -406,5 +440,5 @@ tab-item.faviconized .contextual-identity-marker {
 
 .after-tabs button.newtab-action-selector-anchor::after,
 .after-tabs button.contextual-identities-selector-anchor::after {
-    margin-top: calc((var(--favicon-size) - var(--svg-small-icon-size)) / 2 + var(--tab-dropshadow-blur) + var(--tab-like-button-padding));
+  margin-block-start: calc((var(--favicon-size) - var(--svg-small-icon-size)) / 2 + var(--tab-dropshadow-blur) + var(--tab-like-button-padding));
 }

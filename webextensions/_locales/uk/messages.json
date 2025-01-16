@@ -93,8 +93,16 @@
   "migrateSessions_link_uri": { "message": "https://github.com/piroor/treestyletab/wiki/How-to-convert-session-information-from-old-TST-0.19.x-to-new-TST-2.x" },
 
   "message_startup_requestPermissions_description": { "message": "⚠Є деякі функції, що потребують додаткових дозволів. Якщо ви хочете активувати їх, отримайте дозволи вручну." },
-  "message_startup_requestPermissions_bookmarks": { "message": "\"Додати дерево до закладок\" у контекстному меню на вкладках (потрібен доступ до закладок)." },
-  "message_startup_requestPermissions_allUrls":   { "message": "Не розгортати згорнуте дерево і пропускати згорнуті нащадки, перемикаючи фокус вкладок з допомогою гарячих клавіш. / Don't restore blank window which was for a closed dialog, by actions to restore closed tabs." },
+  "message_startup_requestPermissions_bookmarks": { "message": "доступ до закладок" },
+  "message_startup_requestPermissions_bookmarks_contextMenuItems": { "message": "\"Додати дерево до закладок\" у контекстному меню на вкладках" },
+  "_message_startup_requestPermissions_bookmarks_migrationForImportedBookmarks": { "message": "" },
+  "_message_startup_requestPermissions_bookmarks_detectTabsFromBookmarks": { "message": "" },
+  "_message_startup_requestPermissions_allUrls":   { "message": "" },
+  "_message_startup_requestPermissions_allUrls_tabPreviewPanel":   { "message": "" },
+  "message_startup_requestPermissions_allUrls_skipCollapsedTabsWithCtrlTab":   { "message": "Не розгортати згорнуте дерево і пропускати згорнуті нащадки, перемикаючи фокус вкладок з допомогою гарячих клавіш." },
+  "_message_startup_requestPermissions_allUrls_preventBlankDialogRestoration":   { "message": "" },
+  "_message_startup_requestPermissions_clipboardRead": { "message": "" },
+  "_message_startup_requestPermissions_clipboardRead_newTabButtonMiddleClick": { "message": "" },
 
   "message_startup_userChromeCss_notify": { "message": "Як приховати верхню панель вкладок і заголовок бічної панелі?" },
   "message_startup_userChromeCss_description_1": { "message": "Через обмеження WebExtensions, TST не може контролювати верхню панель вкладок і заголовок бічної панелі. Якщо вам потрібно налаштувати їх, див. " },
@@ -358,6 +366,7 @@
   "tabContextMenu_duplicate_label":   { "message": "Дублювати вкладку" },
   "tabContextMenu_tearOff_label":     { "message": "Перенести у нове вікно" },
 
+  "tabContextMenu_closeDuplicatedTabs_label": { "message": "Закрити ду&блікати вкладок" },
   "tabContextMenu_closeAfter_label":  { "message": "Закрити вкладки що праворуч" },
   "tabContextMenu_closeOther_label":  { "message": "Закрити інші вкладки" },
 

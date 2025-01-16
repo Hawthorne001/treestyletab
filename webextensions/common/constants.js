@@ -34,6 +34,7 @@ export const kCOMMAND_CONFIRM_TO_CLOSE_TABS          = 'treestyletab:confirm-to-
 export const kCOMMAND_SHOW_DIALOG                    = 'treestyletab:show-dialog';
 export const kCOMMAND_NOTIFY_BACKGROUND_READY        = 'treestyletab:notify-background-ready';
 export const kCOMMAND_NOTIFY_CONNECTION_READY        = 'treestyletab:notify-connection-ready';
+export const kCOMMAND_NOTIFY_SIDEBAR_CLOSED          = 'treestyletab:notify-sidebar-closed';
 export const kCOMMAND_NOTIFY_TAB_CREATING            = 'treestyletab:notify-tab-creating';
 export const kCOMMAND_NOTIFY_TAB_CREATED             = 'treestyletab:notify-tab-created';
 export const kCOMMAND_NOTIFY_TAB_UPDATED             = 'treestyletab:notify-tab-updated';
@@ -91,6 +92,11 @@ export const kCOMMAND_NOTIFY_CONTEXT_OVERRIDDEN      = 'treestyletab:notify-cont
 export const kCOMMAND_AUTODETECT_DUPLICATED_TAB_DETECTION_DELAY = 'treestyletab:autodetect-duplicated-tab-detection-delay';
 export const kCOMMAND_TEST_DUPLICATED_TAB_DETECTION             = 'treestyletab:test-duplicated-tab-detection';
 export const kCOMMAND_WAIT_UNTIL_SUCCESSORS_UPDATED = 'treestyletab:wait-until-successors-updated';
+export const kCOMMAND_GET_SIDEBAR_POSITION          = 'treestyletab:get-sidebar-position';
+export const kCOMMAND_GET_ABOVE_TAB                 = 'treestyletab:get-above-tab';
+export const kCOMMAND_GET_BELOW_TAB                 = 'treestyletab:get-below-tab';
+export const kCOMMAND_GET_LEFT_TAB                  = 'treestyletab:get-left-tab';
+export const kCOMMAND_GET_RIGHT_TAB                 = 'treestyletab:get-right-tab';
 export const kCOMMAND_GET_BOUNDING_CLIENT_RECT      = 'treestyletab:get-bounding-client-rect';
 
 export const kCOMMAND_ACTIVATE_TAB            = 'treestyletab:activate-tab';
@@ -212,6 +218,7 @@ export const kTAB_STATE_GROUP_TAB                 = 'group-tab';
 export const kTAB_STATE_NEW_TAB_COMMAND_TAB       = 'newtab-command-tab';
 export const kTAB_STATE_OPENED_FOR_SAME_WEBSITE   = 'opened-for-same-website';
 export const kTAB_STATE_STICKY                    = 'sticky';
+export const kTAB_STATE_STUCK                   = 'stuck'; // virtual state
 export const kTAB_INTERNAL_STATES = new Set([ // TST specific states
   'tab',
   kTAB_STATE_LAST_ROW,
@@ -234,6 +241,7 @@ export const kTAB_INTERNAL_STATES = new Set([ // TST specific states
   kTAB_STATE_FROM_FIREFOX_VIEW,
   kTAB_STATE_OPENED_FOR_SAME_WEBSITE,
   kTAB_STATE_STICKY,
+  kTAB_STATE_STUCK,
 ]);
 export const kTAB_TEMPORARY_STATES = new Set([ // states not trigger updating of cache
   kTAB_STATE_CREATING,
@@ -264,6 +272,7 @@ export const kTAB_SAFE_STATES = new Set([ // exportable via API
   kTAB_STATE_FROM_FIREFOX_VIEW,
   kTAB_STATE_OPENED_FOR_SAME_WEBSITE,
   kTAB_STATE_STICKY,
+  kTAB_STATE_STUCK,
 ]);
 export const kTAB_SAFE_STATES_ARRAY = Array.from(kTAB_SAFE_STATES);
 
